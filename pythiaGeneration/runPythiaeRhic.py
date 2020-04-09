@@ -32,7 +32,7 @@ def runPythia(outfile, protonEnergy, electronEnergy, nEvents, basePath):
     output = outfile + " ! output file name\n"
     leptonBeam = "11 ! lepton beam type\n"
     energies = protonEnergy + "," + electronEnergy + " ! proton and electron beam energy\n"
-    events = nEvents + ",0 ! Number of events, number of events to print to stdout\n"
+    events = nEvents + ","+nEvents+" ! Number of events, number of events to print to stdout\n"
     
     # write all the crap to a dummyfile to be passed to the erhic executable
     finalPythiaFile = open("pythiafile.txt","w")
@@ -43,7 +43,7 @@ def runPythia(outfile, protonEnergy, electronEnergy, nEvents, basePath):
     
     # add the x, q, and y, which we might want to add as arguments later
     finalPythiaFile.write("1e-09, 0.99       ! xmin and xmax\n")
-    finalPythiaFile.write("5e-03,1.00        ! ymin and ymax\n")
+    finalPythiaFile.write("1e-02,1.00        ! ymin and ymax\n")
     finalPythiaFile.write("9,20000         ! Q2min and Q2max\n")
     
     # add all the other parameters
