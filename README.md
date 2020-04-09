@@ -21,3 +21,8 @@ All that is necessary to use this is to run the main `runSimWorkflow.py` with th
 The detector smearing is set in `smear/ePHENIXDetector.cpp`.
 
 The output truth and smeared files can be befriended for further analysis within ROOT.
+
+
+### Other notes
+
+Don't be alarmed if you see "Error in <TROOT::TVector2>" type errors in the smearing. The smearing process sometimes removes a particle completely (e.g. for efficiency loss) and thus root complains when trying to smear a nonexistent particle.
