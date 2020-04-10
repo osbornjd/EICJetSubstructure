@@ -7,13 +7,19 @@
  * $ root] .x exampleMacro.C
  */
 
-#include <fastjet/ClusterSequence.hh>
-#include <fastjet/Selector.hh>
-
+#include "ExampleMacro.h"
 using namespace fastjet;
+
+
+ExampleMacro::ExampleMacro() {
+}
+
+
 void exampleMacro()
 {
- 
+  
+
+
   TFile mcf("../MCData/example/truth.root");
   TTree *mctree = (TTree*)mcf.Get("EICTree");
   mctree->AddFriend("Smeared","../MCData/example/smeared.root");
@@ -27,8 +33,14 @@ void exampleMacro()
   vector<PseudoJet> truthPseudoJets;
   double R=0.7;
   JetDefinition jetDef(antikt_algorithm, R);
-  
+  Selector selectRapidity = SelectorAbsRapMax(4);
+  Selector selectPtMin = SelectorPtMin(5.0);
+  Selector selectBoth = selectPtMin and selectRapidity;
 
+  /// soft drop conditions
+  double zcut = 0.1;
+  double beta = 0;
+  contrib::SoftDrop sd(beta, zcut, R);
 
   for(int event = 0; event < 1; event++)
     {
@@ -66,11 +78,24 @@ void exampleMacro()
 
       /// Make the truth jets
       ClusterSequence cs(truthPseudoJets, jetDef);
-      vector<PseudoJet> truthJets = sorted_by_pt(cs.inclusive_jets());
+      vector<PseudoJet> allTruthJets = sorted_by_pt(cs.inclusive_jets());
+      /// Make the cuts
+      vector<PseudoJet> truthJets = selectBoth(allTruthJets);
+      
       for(int truthJet = 0; truthJet < truthJets.size(); truthJet++)
 	{
+	  /// Look at antikt constituents
 	  vector<PseudoJet> constituents = truthJets[truthJet].constituents();
+	  /// get jet properties
 	  double jetphi = truthJets[truthJet].phi();
+
+	  
+	  /// run soft drop on truth anti-kt jets
+	  PseudoJet softDropJet = sd(truthJets[truthJet]);
+	  
+	  // now you can do stuff with the SD jet
+	  float subJetDR = softDropJet.structure_of<contrib::SoftDrop>().delta_R();
+	  
 	}
 
       for(int part = 0; part < smearEvent->GetNTracks(); part++)
