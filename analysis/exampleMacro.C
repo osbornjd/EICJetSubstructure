@@ -3,12 +3,17 @@
  * To run:
  * $ root -l
  * $ root] gSystem->Load("libeicsmear")
+ * $ root] gSystem->Load("libfastjet")
  * $ root] .x exampleMacro.C
  */
 
+#include <fastjet/ClusterSequence.hh>
+#include <fastjet/Selector.hh>
+
+using namespace fastjet;
 void exampleMacro()
 {
-
+ 
   TFile mcf("../MCData/example/truth.root");
   TTree *mctree = (TTree*)mcf.Get("EICTree");
   mctree->AddFriend("Smeared","../MCData/example/smeared.root");
@@ -18,6 +23,12 @@ void exampleMacro()
 
   mctree->SetBranchAddress("event", &truthEvent);
   mctree->SetBranchAddress("eventS", &smearEvent);
+
+  vector<PseudoJet> truthPseudoJets;
+  double R=0.7;
+  JetDefinition jetDef(antikt_algorithm, R);
+  
+
 
   for(int event = 0; event < 1; event++)
     {
@@ -34,20 +45,32 @@ void exampleMacro()
 	= truthEvent->GetTracks();
 
       int nTruth = truthEvent->GetNTracks();
+      
+      truthPseudoJets.clear();
+
       for(int part = 0; part < nTruth; part++)
 	{
-	  //const erhic::VirtualParticle *truthPart = truthParticles.at(part);
 	  const Particle *truthPart = truthEvent->GetTrack(part);
-	  const Smear::ParticleMCS *smearPart = smearEvent->GetTrack(part);
-	 
+
 	  erhic::Pid pid = truthPart->Id();
 	  double px = truthPart->GetPx();
 	  double py = truthPart->GetPy();
 	  double pz = truthPart->GetPz();
 	  double e = truthPart->GetE();
 	  short status = truthPart->GetStatus();
+	 
+	  truthPseudoJets.push_back(PseudoJet(px,py,pz,e));
 
-	  cout<<part+1<<"  "<<status<<"  "<<pid<<"  "<<px<< "  "<<py<<"  "<<pz<<"  "<<e<<endl;
+	  //cout<<part+1<<"  "<<status<<"  "<<pid<<"  "<<px<< "  "<<py<<"  "<<pz<<"  "<<e<<endl;
+	}
+
+      /// Make the truth jets
+      ClusterSequence cs(truthPseudoJets, jetDef);
+      vector<PseudoJet> truthJets = sorted_by_pt(cs.inclusive_jets());
+      for(int truthJet = 0; truthJet < truthJets.size(); truthJet++)
+	{
+	  vector<PseudoJet> constituents = truthJets[truthJet].constituents();
+	  double jetphi = truthJets[truthJet].phi();
 	}
 
       for(int part = 0; part < smearEvent->GetNTracks(); part++)
