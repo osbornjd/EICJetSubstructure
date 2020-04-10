@@ -26,3 +26,13 @@ The output truth and smeared files can be befriended for further analysis within
 ### Other notes
 
 Don't be alarmed if you see "Error in <TROOT::TVector2>" type errors in the smearing. The smearing process sometimes removes a particle completely (e.g. for efficiency loss) and thus root complains when trying to smear a nonexistent particle.
+
+
+### Analysis
+
+Work in progress - to use the analysis macro, just run the makefile by typing `make` in the analysis directory. The soft drop algorithm linking still has a problem which needs to be fixed. After the makefile is run, you can run the macro by doing
+
+```
+$ root ExampleMacro.so
+$ root] exampleMacro()
+```
