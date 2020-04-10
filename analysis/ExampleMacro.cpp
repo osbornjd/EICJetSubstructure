@@ -8,8 +8,16 @@
  */
 
 #include "ExampleMacro.h"
-using namespace fastjet;
 
+#include <eicsmear/erhic/EventPythia.h>
+#include <eicsmear/smear/EventS.h>
+#include <TFile.h>
+#include <TTree.h>
+#include <TSystem.h>
+
+
+using namespace std;
+using namespace fastjet;
 
 ExampleMacro::ExampleMacro() {
 }
@@ -18,8 +26,13 @@ ExampleMacro::ExampleMacro() {
 void exampleMacro()
 {
   
+  ExampleMacro *ex = new ExampleMacro();
+  ex->execute();
+}
 
-
+void ExampleMacro::execute()
+{
+  
   TFile mcf("../MCData/example/truth.root");
   TTree *mctree = (TTree*)mcf.Get("EICTree");
   mctree->AddFriend("Smeared","../MCData/example/smeared.root");
