@@ -31,14 +31,17 @@ LDFLAGS = -O3 -Wall -g
 SOFLAGS = -shared
 ARCHFLAGS =
 
-#
+EXTRALIBS = $(shell fastjet-config --cxxflags --libs --plugins)
+# EXTRALIBS += -lRecursiveTools
 EXTRALIBS = -L/afs/rhic.bnl.gov/eic/restructured/env/pro/lib -leicsmear -lfastjet -lfastjettools -lRecursiveTools
 LIBS = $(ROOTLIBS) 
 LIBS += $(EXTRALIBS)
 CXXFLAGS += $(ROOTCFLAGS) -I$(HEADRDIR) $(LIBS)
+#CXXFLAGS += -Wno-unused-variable -Wno-sign-compare
 
 GLIBS = $(ROOTGLIBS)
 
+all: $(PROGRAM).so standalone
 
 %/%.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $*.cpp
@@ -46,6 +49,11 @@ GLIBS = $(ROOTGLIBS)
 $(PROGRAM).so: $(OBJS)
 	@echo "Linking $(PROGRAM).so ..."
 	$(LD) $(ARCHFLAGS) $(LDFLAGS) $(SOFLAGS) $(OBJS) $(ROOTLIBS) -o$(PROGRAM).so
+	@echo "linking done"
+
+standalone: standalone.o
+	@echo "Linking standalone ..."
+	$(LD) $(ARCHFLAGS) $(LDFLAGS) standalone.o $(ROOTLIBS) $(EXTRALIBS) -o standalone
 	@echo "linking done"
 
 dict_$(PROGRAM).cpp: $(HDRS)
