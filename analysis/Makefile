@@ -1,13 +1,3 @@
-#-----------------------------------------------------------------------------
-
-PROGRAM = ExampleMacro
-
-HDRS = ExampleMacro.h\
- 
-OBJS = ExampleMacro.o\
-        dict_$(PROGRAM).o
-
-#-----------------------------------------------------------------------------
 ObjSuf = o
 SrcSuf = cpp
 ExeSuf = exe
@@ -36,8 +26,8 @@ SOFLAGS = -shared
 ARCHFLAGS =
 
 EXTRALIBS = $(shell fastjet-config --cxxflags --libs --plugins)
-# EXTRALIBS += -lRecursiveTools
 EXTRALIBS = -L/afs/rhic.bnl.gov/eic/restructured/env/pro/lib -leicsmear -lfastjet -lfastjettools -lRecursiveTools
+
 LIBS = $(ROOTLIBS) 
 LIBS += $(EXTRALIBS)
 CXXFLAGS += $(ROOTCFLAGS) -I$(HEADRDIR) $(LIBS)
@@ -60,12 +50,8 @@ standalone: standalone.o
 	$(LD) $(ARCHFLAGS) $(LDFLAGS) standalone.o $(ROOTLIBS) $(EXTRALIBS) -o standalone
 	@echo "linking done"
 
-dict_$(PROGRAM).cpp: $(HDRS)
-	@echo "Generating dictionary ..."
-	rootcint -f dict_$(PROGRAM).cpp -c -p -I$(HEADRDIR) $(HDRS) Linkdef.h 
-
 clean:
-	@rm -f $(OBJS) $(PROGRAM).so dict_* *.o
+	@rm -f $(OBJS) $(PROGRAM) standalone.o standalone
  
 
 #------------------------------------------------------------------------
