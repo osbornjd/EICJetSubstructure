@@ -27,12 +27,10 @@ The output truth and smeared files can be befriended for further analysis within
 
 Don't be alarmed if you see "Error in <TROOT::TVector2>" type errors in the smearing. The smearing process sometimes removes a particle completely (e.g. for efficiency loss) and thus root complains when trying to smear a nonexistent particle.
 
+### Example
 
-### Analysis
+To execute the runSimWorkflow.py, you can run the following:
 
-Work in progress - to use the analysis macro, just run the makefile by typing `make` in the analysis directory. The soft drop algorithm linking still has a problem which needs to be fixed. After the makefile is run, you can run the macro by doing
+python runSimWorkflow.py smeared truth 100 10 1000
 
-```
-$ root ExampleMacro.so
-$ root] exampleMacro()
-```
+This corresponds to running the workflow and generating a smeared file called “smeared.root”, a truth file called “truth.root”, proton energy = 100 GeV, electron energy = 10 Gev, and for 1000 events.
