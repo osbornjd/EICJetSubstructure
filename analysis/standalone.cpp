@@ -7,11 +7,11 @@
  * $ root] .x exampleMacro.C
  */
 
-#include "ExampleMacro.h"
-
 #include <fastjet/ClusterSequence.hh>
 #include <fastjet/Selector.hh>
 #include <fastjet/contrib/SoftDrop.hh>
+#include <iostream>
+
 
 #include <eicsmear/erhic/EventPythia.h>
 #include <eicsmear/smear/EventS.h>
@@ -23,18 +23,7 @@
 using namespace std;
 using namespace fastjet;
 
-ExampleMacro::ExampleMacro() {
-}
-
-
-void exampleMacro()
-{
-  
-  ExampleMacro *ex = new ExampleMacro();
-  ex->execute();
-}
-
-void ExampleMacro::execute()
+int main()
 {
   
   TFile mcf("../MCData/example/truth.root");
@@ -43,7 +32,6 @@ void ExampleMacro::execute()
 
   erhic::EventPythia* truthEvent(NULL);
   Smear::Event* smearEvent(NULL);
-
 
   mctree->SetBranchAddress("event", &truthEvent);
   mctree->SetBranchAddress("eventS", &smearEvent);
