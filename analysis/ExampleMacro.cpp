@@ -9,6 +9,10 @@
 
 #include "ExampleMacro.h"
 
+#include <fastjet/ClusterSequence.hh>
+#include <fastjet/Selector.hh>
+#include <fastjet/contrib/SoftDrop.hh>
+
 #include <eicsmear/erhic/EventPythia.h>
 #include <eicsmear/smear/EventS.h>
 #include <TFile.h>
@@ -39,6 +43,7 @@ void ExampleMacro::execute()
 
   erhic::EventPythia* truthEvent(NULL);
   Smear::Event* smearEvent(NULL);
+
 
   mctree->SetBranchAddress("event", &truthEvent);
   mctree->SetBranchAddress("eventS", &smearEvent);
