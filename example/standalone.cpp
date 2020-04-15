@@ -1,12 +1,4 @@
 
-/**
- * To run:
- * $ root -l
- * $ root] gSystem->Load("libeicsmear")
- * $ root] gSystem->Load("libfastjet")
- * $ root] .x exampleMacro.C
- */
-
 #include <fastjet/ClusterSequence.hh>
 #include <fastjet/Selector.hh>
 #include <fastjet/contrib/SoftDrop.hh>
