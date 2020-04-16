@@ -13,7 +13,7 @@
 import os
 import sys
 
-def runPythia(outfile, protonEnergy, electronEnergy, nEvents, basePath):
+def runPythia(outfile, protonEnergy, electronEnergy, minQ2, nEvents, basePath):
     """
     This function takes several arguments and runs the pythia truth generation
     with the parameters given as arguments and the "default file", which 
@@ -43,8 +43,8 @@ def runPythia(outfile, protonEnergy, electronEnergy, nEvents, basePath):
     
     # add the x, q, and y, which we might want to add as arguments later
     finalPythiaFile.write("1e-09, 0.99       ! xmin and xmax\n")
-    finalPythiaFile.write("1e-02,1.00        ! ymin and ymax\n")
-    finalPythiaFile.write("9,20000         ! Q2min and Q2max\n")
+    finalPythiaFile.write("1e-04,1.00        ! ymin and ymax\n")
+    finalPythiaFile.write(minQ2 +",20000         ! Q2min and Q2max\n")
     
     # add all the other parameters
     finalPythiaFile.write(defaultPythia)

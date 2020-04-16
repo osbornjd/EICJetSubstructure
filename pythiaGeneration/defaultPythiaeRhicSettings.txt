@@ -1,6 +1,6 @@
 F2PY,1998         ! F2-Model, R-Parametrisation
 0                 ! switch for rad corrections; 0:no, 1:yes, 2:gen.lookup table, requires radgen/ subdir
-0                 ! Pythia-Model = 0 standard GVMD generation in Pythia-x and Q2; = 1 GVMD model with generation in y and Q2 as for radgen  DEFAULT is 1!
+1                 ! Pythia-Model = 0 standard GVMD generation in Pythia-x and Q2; = 1 GVMD model with generation in y and Q2 as for radgen  DEFAULT is 1!
 1,1               ! A-Tar and Z-Tar
 1,1               ! nuclear pdf parameter1: nucleon mass number A, charge number Z
 201               ! nuclear pdf parameter2: correction order x*100+y x= 1:LO, 2:NLO y:error set

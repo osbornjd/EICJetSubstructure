@@ -27,13 +27,15 @@ smearedfile = sys.argv[1]
 truthfile = sys.argv[2]
 protonEnergy = sys.argv[3]
 electronEnergy = sys.argv[4]
-nEvents = sys.argv[5]
+minQ2 = sys.argv[5]
+nEvents = sys.argv[6]
 
 
 # generate events
 runPythiaeRhic.runPythia(truthfile,
                          protonEnergy,
                          electronEnergy,
+                         minQ2,
                          nEvents,
                          basePath)
 
