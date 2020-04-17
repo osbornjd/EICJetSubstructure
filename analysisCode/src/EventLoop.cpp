@@ -31,7 +31,7 @@ int main(int argc, char **argv)
   
   TruthEvent event;
   SmearedEvent smearevent;
-  JetDef jetdef;
+  JetDef jetdef(fastjet::antikt_algorithm, 1.0);
   SoftDropJetDef sd(0.1, 2, 0.5);
   
   mctree->AddFriend("Smeared", smearedFile.c_str());
@@ -40,12 +40,20 @@ int main(int argc, char **argv)
 
   mctree->SetBranchAddress("event", &truthEvent);
   mctree->SetBranchAddress("eventS", &smearEvent);
-
+  std::cout<<"begin event loop"<<std::endl;
   for(int event = 0; event < mctree->GetEntries(); ++event)
     {
+      if(event % 10 == 0)
+	std::cout<<"Processed " << event << " events" << std::endl;
+
       mctree->GetEntry(event);
 
+      SmearedEvent smearedEvent(*truthEvent, *smearEvent);
+      smearedEvent.setSmearedParticles();
+      std::vector<fastjet::PseudoJet> recoR1Jets = 
+	smearedEvent.getReconstructedJets(jetdef);
+      
     }
-
+  std::cout << "Finished EventLoop" << std::endl;
 
 }

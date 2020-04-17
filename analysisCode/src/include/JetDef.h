@@ -19,10 +19,14 @@ class JetDef {
   
   void setRadius(float rad){m_R = rad;}
   void setMinJetPt(float jetPt){m_minJetPt = jetPt;}
-  void setMinJetRapidity(float rap){m_absRapidity = rap;}
+  void setMaxJetRapidity(float rap){m_absRapidity = rap;}
   void setJetAlg(fastjet::JetAlgorithm alg){m_jetAlg = alg;}
   void setJetDef(fastjet::JetDefinition def){m_jetDef = def;}
   void setRecombScheme(fastjet::RecombinationScheme scheme){m_scheme = scheme;}
+
+  fastjet::JetDefinition getJetDef(){ return m_jetDef;}
+  double getMinJetPt() { return m_minJetPt; }
+  double getMaxJetRapidity() { return m_absRapidity; }
 
  protected:
   double m_R;
