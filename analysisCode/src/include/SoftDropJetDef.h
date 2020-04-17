@@ -26,7 +26,7 @@ class SoftDropJetDef : public JetDef
   double m_R;
   double m_zcut;
   double m_beta;
-  /// Must be a pointer because default constructor SD does not exist
+  /// Must be a pointer because default SD constructor does not exist
   fastjet::contrib::SoftDrop *m_sd;
 
 };
