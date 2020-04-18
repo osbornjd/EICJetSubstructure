@@ -1,4 +1,7 @@
 #include "include/TruthEvent.h"
+#include "include/JetDef.h"
+#include "include/SoftDropJetDef.h"
+
 
 #include <iostream>
 
@@ -9,7 +12,7 @@ void TruthEvent::ProcessEvent(erhic::EventPythia* ev)
     
   Set_truthEvent(ev);
   ParticleLoop(ev);
-  //  FindJets();
+  //FindJets();
   // JetLoop();
     
  }
@@ -55,5 +58,5 @@ void TruthEvent::JetLoop()
     }  
   
 }
-
 */
+
