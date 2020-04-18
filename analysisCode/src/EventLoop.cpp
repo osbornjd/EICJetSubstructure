@@ -20,7 +20,24 @@ int main()
 {
   TruthEvent event;
   SmearedEvent smearevent;
-JetDef jetdef;
+  JetDef jetdef;
+
+  TFile mcf("../truth.root");
+  TTree *mctree = (TTree*)mcf.Get("EICTree");
+  mctree->AddFriend("Smeared","../smeared.root");
+
+  erhic::EventPythia* truthEvent(NULL);
+  mctree->SetBranchAddress("event", &truthEvent);
+
+  for (int ev = 0; ev < 5; ev++)
+    {
+      mctree->GetEntry(ev);
+      event.ProcessEvent(truthEvent);
+      cout << event.Get_eventNumber() << endl;
+      cout << event.Get_true_q2() << endl;
+    }
+
+  // Smear::Event* smearEvent(NULL);
   
 
 }
