@@ -11,7 +11,7 @@ import subprocess
 
 # To use this file, change the below python path insert to the directory
 # paths the top directory which contains this script. Needs to end in /
-basePath = '/sphenix/user/jdosbo/EICSmear/git/jetSubstructure/'
+basePath = '/direct/phenix+u/workarea/dillfitz/EIC/EICJetSubstructure/'
 
 
 # set the python path to include the subdirectories with the other scripts
