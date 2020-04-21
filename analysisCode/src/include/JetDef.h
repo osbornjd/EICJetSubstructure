@@ -24,6 +24,8 @@ class JetDef {
   void setJetDef(fastjet::JetDefinition def){m_jetDef = def;}
   void setRecombScheme(fastjet::RecombinationScheme scheme){m_scheme = scheme;}
 
+  fastjet::JetDefinition GetJetDef() {return m_jetDef;}
+
  protected:
   double m_R;
   double m_minJetPt;

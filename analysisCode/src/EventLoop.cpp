@@ -1,4 +1,3 @@
-
 #include <fastjet/ClusterSequence.hh>
 #include <fastjet/Selector.hh>
 #include <fastjet/contrib/SoftDrop.hh>
@@ -28,11 +27,18 @@ int main()
 
  //TFile mc(mcFile.c_str());
  // TTree *mctree = (TTree*)mc.Get("EICTree");
+
+  // Jet Def Stuff 
+  double R = 0.7;
+  JetDef jetDef(antikt_algorithm, R);
+
+  /// soft drop conditions
+  double zcut = 0.1;
+  double beta = 0;
+  SoftDropJetDef softdrop_def(beta, zcut, R);
   
   TruthEvent event;
   SmearedEvent smearevent;
-  JetDef jetdef;
-  SoftDropJetDef sd(0.1, 2, 0.5);
   
   //mctree->AddFriend("Smeared", smearedFile.c_str());
   erhic::EventPythia* truthEvent(NULL);
@@ -41,12 +47,10 @@ int main()
   mctree->SetBranchAddress("event", &truthEvent);
   mctree->SetBranchAddress("eventS", &smearEvent);
 
-  for (int ev = 0; ev < 5; ev++)
+  for (int ev = 0; ev < 10; ev++)
     {
       mctree->GetEntry(ev);
-      event.ProcessEvent(truthEvent);
-      cout << event.Get_eventNumber() << endl;
-      cout << event.Get_true_q2() << endl;
+      event.ProcessEvent( truthEvent, jetDef, softdrop_def );
     }
 
   // Smear::Event* smearEvent(NULL);
