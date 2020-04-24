@@ -22,9 +22,12 @@ class SmearedEvent {
 
   /// Main workhorse function, which is called from event loop
   void processEvent();
+  void setVerbosity(int verb) { m_verbosity = verb; }
 
   std::vector<fastjet::PseudoJet> getRecoJets(JetDef jetDef);
   std::vector<fastjet::PseudoJet> getRecoSoftDropJets(std::vector<fastjet::PseudoJet> recoJets, SoftDropJetDef sdJetDef);
+
+  std::vector<std::vector<fastjet::PseudoJet>> matchTruthRecoJets(std::vector<fastjet::PseudoJet> truthjets, std::vector<fastjet::PseudoJet> recojets);
 
  private:
   /// Need truth event for identifying only final state particles
