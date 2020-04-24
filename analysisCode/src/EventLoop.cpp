@@ -20,6 +20,8 @@
 
 #include <iostream>
 
+
+
 int main(int argc, char **argv)
 {
   /// Collect arguments
@@ -32,7 +34,9 @@ int main(int argc, char **argv)
   TruthEvent event;
   SmearedEvent smearevent;
   JetDef jetdef(fastjet::antikt_algorithm, 1.0);
-  SoftDropJetDef sd(0.1, 2, 0.5);
+  jetdef.setMinJetPt(2.);
+  jetdef.setMaxJetRapidity(4);
+  SoftDropJetDef sd(0.01, 2, jetdef.getR());
   
   mctree->AddFriend("Smeared", smearedFile.c_str());
   erhic::EventPythia* truthEvent(NULL);
@@ -49,11 +53,28 @@ int main(int argc, char **argv)
       mctree->GetEntry(event);
 
       SmearedEvent smearedEvent(*truthEvent, *smearEvent);
-      smearedEvent.setSmearedParticles();
+      smearedEvent.processEvent();
+
       std::vector<fastjet::PseudoJet> recoR1Jets = 
-	smearedEvent.getReconstructedJets(jetdef);
+	smearedEvent.getRecoJets(jetdef);
       
+      std::vector<fastjet::PseudoJet> recoR1SDJets = 
+	smearedEvent.getRecoSoftDropJets(recoR1Jets, sd);
+
+    
+
+  for(int i = 0; i < recoR1Jets.size(); i++)
+    {
+      fastjet::PseudoJet recojet = recoR1Jets.at(i);
+      fastjet::PseudoJet sdjet = recoR1SDJets.at(i);
+      std::cout << "antikt jet: " << recojet.px() << " " << recojet.py()
+		<< " " << recojet.pz() << " " << recojet.e() << std::endl;
+        std::cout << "softdrop jet : "<< sdjet.px() << " " << sdjet.py()
+      	<< " " << sdjet.pz() << " " << sdjet.e() << std::endl;
+
+
     }
+}
   std::cout << "Finished EventLoop" << std::endl;
 
 }

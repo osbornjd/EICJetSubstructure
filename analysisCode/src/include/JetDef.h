@@ -27,11 +27,12 @@ class JetDef {
   fastjet::JetDefinition getJetDef(){ return m_jetDef;}
   double getMinJetPt() { return m_minJetPt; }
   double getMaxJetRapidity() { return m_absRapidity; }
+  double getR() { return m_R; }
 
  protected:
   double m_R;
-  double m_minJetPt;
-  double m_absRapidity;
+  double m_minJetPt = 0;
+  double m_absRapidity = 4;
 
   /// Fastjet jet definition
   fastjet::JetAlgorithm m_jetAlg;
