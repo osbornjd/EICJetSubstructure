@@ -9,11 +9,12 @@ end
 
 source $HOME/.cshrc
 
-cd /sphenix/user/jdosbo/EICSmear
+setenv EIC_LEVEL dev
 
-source setupEIC.csh
+source /afs/rhic.bnl.gov/eic/restructured/etc/eic_cshrc.csh
 
-cd git/jetSubstructure
+# basepath argument
+cd $7
 
 # base path is the directory path to your jetSubstructure git clone
 # so that the various files can be accessed
