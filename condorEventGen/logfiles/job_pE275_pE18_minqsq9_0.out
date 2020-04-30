@@ -1,0 +1,436 @@
+smeared file name: smeared_pE275_pE18_minqsq9
+truth file name: truth_pE275_pE18_minqsq9
+proton beam energy: 275
+electron beam energy: 18
+Min q2: 9
+nEvents: 100
+base path: /sphenix/user/jdosbo/EICSmear/git/jetSubstructure/
+1                                                                              
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ **                                                                          **
+ **              *......*                  Welcome to the Lund Monte Carlo!  **
+ **         *:::!!:::::::::::*                                               **
+ **      *::::::!!::::::::::::::*          PPP  Y   Y TTTTT H   H III   A    **
+ **    *::::::::!!::::::::::::::::*        P  P  Y Y    T   H   H  I   A A   **
+ **   *:::::::::!!:::::::::::::::::*       PPP    Y     T   HHHHH  I  AAAAA  **
+ **   *:::::::::!!:::::::::::::::::*       P      Y     T   H   H  I  A   A  **
+ **    *::::::::!!::::::::::::::::*!       P      Y     T   H   H III A   A  **
+ **      *::::::!!::::::::::::::* !!                                         **
+ **      !! *:::!!:::::::::::*    !!       This is PYTHIA version 6.428      **
+ **      !!     !* -><- *         !!       Last date of change:  5 Sep 2013  **
+ **      !!     !!                !!                                         **
+ **      !!     !!                !!       Now is  0 Jan 2000 at  0:00:00    **
+ **      !!                       !!                                         **
+ **      !!        lh             !!       Disclaimer: this program comes    **
+ **      !!                       !!       without any guarantees. Beware    **
+ **      !!                 hh    !!       of errors and use common sense    **
+ **      !!    ll                 !!       when interpreting results.        **
+ **      !!                       !!                                         **
+ **      !!                                Copyright T. Sjostrand (2011)     **
+ **                                                                          **
+ ** An archive of program versions and documentation is found on the web:    **
+ ** http://www.thep.lu.se/~torbjorn/Pythia.html                              **
+ **                                                                          **
+ ** When you cite this program, the official reference is to the 6.4 manual: **
+ ** T. Sjostrand, S. Mrenna and P. Skands, JHEP05 (2006) 026                 **
+ ** (LU TP 06-13, FERMILAB-PUB-06-052-CD-T) [hep-ph/0603175].                **
+ **                                                                          **
+ ** Also remember that the program, to a large extent, represents original   **
+ ** physics research. Other publications of special relevance to your        **
+ ** studies may therefore deserve separate mention.                          **
+ **                                                                          **
+ ** Main author: Torbjorn Sjostrand; Department of Theoretical Physics,      **
+ **   Lund University, Solvegatan 14A, S-223 62 Lund, Sweden;                **
+ **   phone: + 46 - 46 - 222 48 16; e-mail: torbjorn@thep.lu.se              **
+ ** Author: Stephen Mrenna; Computing Division, GDS Group,                   **
+ **   Fermi National Accelerator Laboratory, MS 234, Batavia, IL 60510, USA; **
+ **   phone: + 1 - 630 - 840 - 2556; e-mail: mrenna@fnal.gov                 **
+ ** Author: Peter Skands; CERN/PH-TH, CH-1211 Geneva, Switzerland            **
+ **   phone: + 41 - 22 - 767 24 47; e-mail: peter.skands@cern.ch             **
+ **                                                                          **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+     MSEL           changed from              1 to              2
+     MSTP(13)       changed from              1 to              1
+     MSTP(14)       changed from             30 to             30
+     MSTP(15)       changed from              0 to              0
+     MSTP(16)       changed from              1 to              1
+     MSTP(17)       changed from              4 to              6
+     MSTP(18)       changed from              3 to              3
+     MSTP(19)       changed from              4 to              1
+     MSTP(20)       changed from              3 to              4
+     MSTP(32)       changed from              8 to              8
+     MSTP(38)       changed from              5 to              4
+     MSTP(51)       changed from              7 to          10042
+     MSTP(52)       changed from              1 to              2
+     MSTP(53)       changed from              3 to              3
+     MSTP(54)       changed from              1 to              1
+     MSTP(55)       changed from              5 to              5
+     MSTP(56)       changed from              1 to              1
+     MSTP(57)       changed from              1 to              1
+     MSTP(58)       changed from              5 to              5
+     MSTP(59)       changed from              1 to              1
+     MSTP(60)       changed from              7 to              7
+     MSTP(61)       changed from              2 to              2
+     MSTP(71)       changed from              1 to              1
+     MSTP(81)       changed from              1 to              0
+     MSTP(82)       changed from              4 to              1
+     MSTP(91)       changed from              1 to              1
+     MSTP(92)       changed from              3 to              3
+     MSTP(93)       changed from              1 to              1
+     MSTP(94)       changed from              3 to              2
+     MSTP(101)      changed from              3 to              1
+     MSTP(102)      changed from              1 to              1
+     MSTP(111)      changed from              1 to              1
+     MSTP(121)      changed from              0 to              0
+     PARP(2)        changed from       10.00000 to        5.00000
+     PARP(13)       changed from        1.00000 to        1.00000
+     PARP(18)       changed from        0.40000 to        0.17000
+     PARP(81)       changed from        1.90000 to        1.90000
+     PARP(89)       changed from     1800.00000 to     1800.00000
+     PARP(90)       changed from        0.25000 to        0.16000
+     PARP(91)       changed from        2.00000 to        0.40000
+     PARP(93)       changed from        5.00000 to        5.00000
+     PARP(97)       changed from        1.00000 to        6.00000
+     PARP(99)       changed from        1.00000 to        0.40000
+     PARP(100)      changed from        5.00000 to        5.00000
+     PARP(102)      changed from        0.28000 to        0.28000
+     PARP(103)      changed from        1.00000 to        1.00000
+     PARP(104)      changed from        0.80000 to        0.80000
+     PARP(111)      changed from        2.00000 to        2.00000
+     PARP(161)      changed from        2.20000 to        3.00000
+     PARP(162)      changed from       23.60000 to       24.60000
+     PARP(163)      changed from       18.40000 to       18.80000
+     PARP(164)      changed from       11.50000 to       11.50000
+     PARP(165)      changed from        0.50000 to        0.47679
+     PARP(166)      changed from        0.00000 to        0.67597
+     PARJ(1)        changed from        0.10000 to        0.10000
+     PARJ(2)        changed from        0.30000 to        0.30000
+     PARJ(3)        changed from        0.40000 to        0.40000
+     PARJ(11)       changed from        0.50000 to        0.50000
+     PARJ(12)       changed from        0.60000 to        0.60000
+     PARJ(21)       changed from        0.36000 to        0.40000
+     PARJ(32)       changed from        1.00000 to        1.00000
+     PARJ(33)       changed from        0.80000 to        0.80000
+     PARJ(41)       changed from        0.30000 to        0.30000
+     PARJ(42)       changed from        0.58000 to        0.58000
+     PARJ(45)       changed from        0.50000 to        0.50000
+     PARJ(170)      changed from        0.36000 to        0.20000
+     MSTJ(1)        changed from              1 to              1
+     MSTJ(12)       changed from              2 to              1
+     MSTJ(45)       changed from              5 to              5
+     MSTU(16)       changed from              1 to              2
+     MSTU(112)      changed from              5 to              5
+     MSTU(113)      changed from              3 to              5
+     MSTU(114)      changed from              5 to              5
+     CKIN(1)        changed from        2.00000 to        1.00000
+     CKIN(2)        changed from       -1.00000 to       -1.00000
+     CKIN(3)        changed from        0.00000 to        0.00000
+     CKIN(4)        changed from       -1.00000 to       -1.00000
+     CKIN(5)        changed from        1.00000 to        1.00000
+     CKIN(6)        changed from        1.00000 to        1.00000
+     CKIN(7)        changed from      -10.00000 to      -10.00000
+     CKIN(8)        changed from       10.00000 to       10.00000
+     CKIN(9)        changed from      -40.00000 to      -40.00000
+     CKIN(10)       changed from       40.00000 to       40.00000
+     CKIN(11)       changed from      -40.00000 to      -40.00000
+     CKIN(12)       changed from       40.00000 to       40.00000
+     CKIN(13)       changed from      -40.00000 to      -40.00000
+     CKIN(14)       changed from       40.00000 to       40.00000
+     CKIN(15)       changed from      -40.00000 to      -40.00000
+     CKIN(16)       changed from       40.00000 to       40.00000
+     CKIN(17)       changed from       -1.00000 to       -1.00000
+     CKIN(18)       changed from        1.00000 to        1.00000
+     CKIN(19)       changed from       -1.00000 to       -1.00000
+     CKIN(20)       changed from        1.00000 to        1.00000
+     CKIN(21)       changed from        0.00000 to        0.00000
+     CKIN(22)       changed from        1.00000 to        1.00000
+     CKIN(23)       changed from        0.00000 to        0.00000
+     CKIN(24)       changed from        1.00000 to        1.00000
+     CKIN(25)       changed from       -1.00000 to       -1.00000
+     CKIN(26)       changed from        1.00000 to        1.00000
+     CKIN(27)       changed from       -1.00000 to       -1.00000
+     CKIN(28)       changed from        1.00000 to        1.00000
+     CKIN(31)       changed from        2.00000 to        2.00000
+     CKIN(32)       changed from       -1.00000 to       -1.00000
+     CKIN(35)       changed from        0.00000 to        0.00000
+     CKIN(36)       changed from       -1.00000 to       -1.00000
+     CKIN(37)       changed from        0.00000 to        0.00000
+     CKIN(38)       changed from       -1.00000 to       -1.00000
+     CKIN(39)       changed from        4.00000 to        4.00000
+     CKIN(40)       changed from       -1.00000 to       -1.00000
+     CKIN(65)       changed from        0.00000 to        0.00000
+     CKIN(66)       changed from       -1.00000 to       -1.00000
+     CKIN(67)       changed from        0.00000 to        0.00000
+     CKIN(68)       changed from       -1.00000 to       -1.00000
+     CKIN(77)       changed from        2.00000 to        2.00000
+     CKIN(78)       changed from       -1.00000 to       -1.00000
+ *********************************************
+ NOW all parameters are read by PYTHIA
+ *********************************************
+ SEED =   1183479527
+ RANLUX LUXURY LEVEL SET BY RLUXGO : 4     P= 389
+ RANLUX INITIALIZED BY RLUXGO FROM SEEDS  1183479527           0           0
+   10551.365172875518        18.000000000000000       -10551.365172875518       -18.0000000    
+ *********************************************
+ proton beam momentum:   275.000000     GeV
+ lepton beam momentum:   18.0000000     GeV
+ resulting sqrt(s):   140.71580784804993      GeV
+ *********************************************
+1****************** PYINIT: initialization of PYTHIA routines *****************
+ ==== PYTHIA WILL USE LHAPDF ====
+ *************************************
+ *       LHAPDF Version 5.9.1        *
+ *   Configured for the following:   *
+ *             All PDFs              *
+ *         FULL MEMORY option        *
+ *    Maximum  3 concurrent set(s)   *
+ *************************************
+
+ >>>>>> PDF description: <<<<<<
+ CTEQ6L1 - LO with LO alpha_s                                    
+ Reference:                                                      
+ J. Pumplin, D.R. Stump, J. Huston, H.L. Lai, P. Nadolsky,       
+ W.K. Tung                                                       
+ hep-ph/0201195                                                  
+ >>>>>>                   <<<<<<
+
+ Parametrization: CTEQ6           
+
+ ==============================================
+ PDFset name /gpfs/mnt/gpfs01/eic/data/LHAPDF59SHARE/lhapdf/PDFsets/cteq6ll.LHpdf            
+ with          1 members
+ ====  initialized. ===========================
+ Strong coupling at Mz for PDF is:  0.12978
+
+ ==============================================================================
+ I                                                                            I
+ I      PYTHIA will be initialized for gamma/e- on p+ user configuration      I
+ I                                                                            I
+ I                  px (GeV/c)   py (GeV/c)   pz (GeV/c)      E (GeV)         I
+ I        gamma/e-       0.000        0.000      -18.000       18.000         I
+ I        p+             0.000        0.000      275.000      275.002         I
+ I                                                                            I
+ I           corresponding to    140.716 GeV center-of-mass energy            I
+ I                                                                            I
+ ==============================================================================
+
+ ******** PYMAXI: summary of differential cross-section maximum search ********
+
+           ==========================================================
+           I                                      I                 I
+           I  ISUB  Subprocess name               I  Maximum value  I
+           I                                      I                 I
+           ==========================================================
+           I                                      I                 I
+           I   91   Elastic scattering            I    2.2633D-03   I
+           I   92   Single diffractive (XB)       I    1.5559D-03   I
+           I   93   Single diffractive (AX)       I    1.2608D-03   I
+           I   94   Double  diffractive           I    1.3445D-03   I
+           I   95   Low-pT scattering             I    9.1933D-03   I
+           I   96   Semihard QCD 2 -> 2           I    1.0155D-01   I
+           I                                      I                 I
+           ==========================================================
+
+ ******** PYMAXI: summary of differential cross-section maximum search ********
+
+           ==========================================================
+           I                                      I                 I
+           I  ISUB  Subprocess name               I  Maximum value  I
+           I                                      I                 I
+           ==========================================================
+           I                                      I                 I
+           I  131   f + gamma*_T -> f + g         I    8.7409D-04   I
+           I  132   f + gamma*_L -> f + g         I    4.7378D-05   I
+           I  135   g + gamma*_T -> f + fbar      I    4.1106D-03   I
+           I  136   g + gamma*_L -> f + fbar      I    7.3506D-04   I
+           I                                      I                 I
+           ==========================================================
+
+ ******** PYMAXI: summary of differential cross-section maximum search ********
+
+           ==========================================================
+           I                                      I                 I
+           I  ISUB  Subprocess name               I  Maximum value  I
+           I                                      I                 I
+           ==========================================================
+           I                                      I                 I
+           I   91   Elastic scattering            I    1.0923D-04   I
+           I   92   Single diffractive (XB)       I    7.6313D-05   I
+           I   93   Single diffractive (AX)       I    5.9997D-05   I
+           I   94   Double  diffractive           I    6.5535D-05   I
+           I   95   Low-pT scattering             I    4.8072D-04   I
+           I   96   Semihard QCD 2 -> 2           I    9.6238D-02   I
+           I                                      I                 I
+           ==========================================================
+
+ ******** PYMAXI: summary of differential cross-section maximum search ********
+
+           ==========================================================
+           I                                      I                 I
+           I  ISUB  Subprocess name               I  Maximum value  I
+           I                                      I                 I
+           ==========================================================
+           I                                      I                 I
+           I   99   q + gamma* -> q               I    1.6290D-02   I
+           I                                      I                 I
+           ==========================================================
+
+ ********************** PYINIT: initialization completed **********************
+ the outputfile will be named: truth_pE275_pE18_minqsq9                                                                                                                                                                                                                                        
+
+
+
+                            Event listing (standard)
+
+    I  particle/jet  K(I,1)   K(I,2) K(I,3)     K(I,4)      K(I,5)       P(I,1)       P(I,2)       P(I,3)       P(I,4)       P(I,5)
+
+    1  !e-!              21        11    0           3           4      0.00000      0.00000    -18.00000     18.00000      0.00051
+    2  !p+!              21      2212    0           5           0     -0.00000      0.00000    275.00000    275.00160      0.93827
+ ==================================================================================================================================
+    3  !e-!              21        11    1           0           0      1.97638      2.54262    -13.91679     14.28454      0.00051
+    4  !gamma!           21        22    1           0           0     -1.97638     -2.54262     -4.08321      3.71546     -3.63853
+    5  !p+!              21      2212    2           0           0     -0.00000     -0.00000    275.00000    275.00160      0.93827
+    6  !gamma!           21        22    4           0           0     -1.97678     -2.54314     -4.08370      3.71657     -3.63853
+    7  !u!               21         2    5           0           0      0.00000      0.00000      0.84862      0.84862      0.00000
+    8  !gamma!           21        22    6           0           0     -1.97678     -2.54314     -4.08370      3.71657     -3.63853
+    9  !u!               21         2    7           0           0      0.00000      0.00000      0.84862      0.84862      0.00000
+   10  !u!               21         2    9           0           0     -1.97678     -2.54314     -3.23508      4.56519      0.00000
+ ==================================================================================================================================
+   11  e-                 1        11    3           0           0      1.97638      2.54262    -13.91679     14.28454      0.00051
+   12  (ud_0)        A   12      2101    5          17          25      0.66448     -0.15042    272.89845    272.89991      0.57933
+   13  (g)           I   12        21   10          17          25      0.76081     -1.46010     -0.60819      1.75517      0.00000
+   14  (g)           I   12        21   10          17          25     -3.16787     -1.18583     -0.94540      3.51217      0.00000
+   15  (u)           V   11         2   10          17          25     -0.23381      0.25374     -0.42806      0.54980      0.00000
+ ==================================================================================================================================
+   16  (string)          11        92   12          17          25     -1.97638     -2.54262    270.91679    278.71706     65.39816
+   17  n0                 1      2112   12           0           0      0.24731      0.14495    203.02542    203.02779      0.93957
+   18  pi+                1       211   12           0           0      0.43230      0.16667     33.31707     33.32058      0.13957
+   19  (pi0)             11       111   12          26          27      0.20259     -0.65911     12.74438     12.76373      0.13498
+   20  (rho-)            11      -213   12          28          29     -0.41692     -0.11142     21.23347     21.26221      1.01743
+   21  (pi0)             11       111   15          30          31     -0.17816     -0.02699      0.16566      0.27952      0.13498
+   22  nbar0              1     -2112   15           0           0      0.62046      0.62996      1.59328      2.05016      0.93957
+   23  n0                 1      2112   15           0           0     -0.38889     -2.06965      0.31876      2.32789      0.93957
+   24  (K*bar0)          11      -313   15          32          33     -0.77625      0.32103     -0.71468      1.39508      0.85431
+   25  (K*+)             11       323   15          34          35     -1.71882     -0.93807     -0.76656      2.29008      0.90694
+   26  gamma              1        22   19           0           0      0.01005     -0.17465      2.51319      2.51927      0.00000
+   27  gamma              1        22   19           0           0      0.19253     -0.48446     10.23119     10.24446      0.00000
+   28  pi-                1      -211   20           0           0     -0.44131     -0.45847     16.95059     16.96311      0.13957
+   29  (pi0)             11       111   20          36          37      0.02439      0.34705      4.28288      4.29911      0.13498
+   30  gamma              1        22   21           0           0     -0.10825      0.05117      0.07866      0.14326      0.00000
+   31  gamma              1        22   21           0           0     -0.06991     -0.07817      0.08700      0.13625      0.00000
+   32  K-                 1      -321   24           0           0     -0.72747      0.45448     -0.52611      1.12080      0.49360
+   33  pi+                1       211   24           0           0     -0.04878     -0.13345     -0.18857      0.27428      0.13957
+   34  (K0)              11       311   25          38          38     -1.63815     -0.72454     -0.79319      2.02122      0.49767
+   35  pi+                1       211   25           0           0     -0.08067     -0.21353      0.02662      0.26887      0.13957
+   36  gamma              1        22   29           0           0     -0.05533      0.15662      2.03376      2.04054      0.00000
+   37  gamma              1        22   29           0           0      0.07972      0.19043      2.24912      2.25857      0.00000
+   38  K_L0               1       130   34           0           0     -1.63815     -0.72454     -0.79319      2.02122      0.49767
+ ==================================================================================================================================
+                   sum charge:  0.00   sum momentum and inv. mass:     -0.00000     -0.00000    257.00000    293.00160    140.71581
+1********* PYSTAT:  Statistics on Number of Events and Cross-sections *********
+
+ ==============================================================================
+ I                                  I                            I            I
+ I            Subprocess            I      Number of points      I    Sigma   I
+ I                                  I                            I            I
+ I----------------------------------I----------------------------I    (mb)    I
+ I                                  I                            I            I
+ I N:o Type                         I    Generated         Tried I            I
+ I                                  I                            I            I
+ ==============================================================================
+ I                                  I                            I            I
+ I   0 All included subprocesses    I          100         45850 I  8.459D-05 I
+ I  11 f + f' -> f + f' (QCD)       I            0             0 I  0.000D+00 I
+ I  12 f + fbar -> f' + fbar'       I            0             0 I  0.000D+00 I
+ I  13 f + fbar -> g + g            I            0             0 I  0.000D+00 I
+ I  28 f + g -> f + g               I            0             0 I  0.000D+00 I
+ I  53 g + g -> f + fbar            I            0             0 I  0.000D+00 I
+ I  68 g + g -> g + g               I            0             0 I  0.000D+00 I
+ I  91 Elastic scattering           I            3          2734 I  1.944D-06 I
+ I  92 Single diffractive (XB)      I            1          1915 I  9.291D-07 I
+ I  93 Single diffractive (AX)      I            3          1530 I  8.103D-07 I
+ I  94 Double  diffractive          I            2          2162 I  5.801D-07 I
+ I  95 Low-pT scattering            I            1           753 I  2.273D-06 I
+ I  99 q + gamma* -> q              I           89         18645 I  7.575D-05 I
+ I 131 f + gamma*_T -> f + g        I            0          1057 I  6.386D-07 I
+ I 132 f + gamma*_L -> f + g        I            0            61 I  5.292D-08 I
+ I 135 g + gamma*_T -> f + fbar     I            1          4569 I  1.171D-06 I
+ I 136 g + gamma*_L -> f + fbar     I            0           847 I  4.414D-07 I
+ I                                  I                            I            I
+ ==============================================================================
+ I                                  I                            I            I
+ I   1 VMD * hadron                 I            8         19129 I  5.747D-06 I
+ I   2 direct * hadron              I            1          6534 I  2.304D-06 I
+ I   3 anomalous * hadron           I            2          1542 I  7.900D-07 I
+ I   4 DIS * hadron                 I           89         18645 I  7.575D-05 I
+ I                                  I                            I            I
+ ==============================================================================
+
+ ********* Total number of errors, excluding junctions =        0 *************
+ ********* Total number of errors, including junctions =        0 *************
+ ********* Total number of warnings =                           0 *************
+ ********* Fraction of events that fail fragmentation cuts =  0.00990 *********
+
+1************ PYSTAT: User-Defined Limits on Kinematical Variables ************
+
+ ==============================================================================
+ I                                                                            I
+ I                 0.000D+00 <  m_hard (GeV/c^2)  <  1.374D+01                I
+ I    0.000D+00 ( 1.000D+00) <  p_T_hard (GeV/c)  <  6.868D+00                I
+ I                             m_finite (GeV/c^2) =  1.000D+00                I
+ I                -1.000D+01 <    y*_subsystem    <  1.000D+01                I
+ I                -4.000D+01 <      y*_large      <  4.000D+01                I
+ I                -4.000D+01 <      y*_small      <  4.000D+01                I
+ I                -4.000D+01 <     eta*_large     <  4.000D+01                I
+ I                -4.000D+01 <     eta*_small     <  4.000D+01                I
+ I                -1.000D+00 < cos(theta*)_large  <  1.000D+00                I
+ I                -1.000D+00 < cos(theta*)_small  <  1.000D+00                I
+ I                 0.000D+00 <        x_1         <  1.000D+00                I
+ I                 0.000D+00 <        x_2         <  1.000D+00                I
+ I                -1.000D+00 <        x_F         <  1.000D+00                I
+ I                -1.000D+00 <  cos(theta_hard)   <  1.000D+00                I
+ I                 2.000D+00 < m'_hard (GeV/c^2)  <  1.374D+01                I
+ I                                                                            I
+ ==============================================================================
+ The charm mass used is:    1.5000000000000000     
+ ===================================================
+ Pythia total cross section normalisation:   8.4588840056030554E-002  microbarn
+ Total Number of generated events         100
+ Total Number of trials         100
+ ===================================================
+
+ ===== PDFSTA statistics for PDF under/over-flows ====
+
+ ====== STRUCTM statistics for nucleon/pion PDFs =====
+
+   total # of calls    14897.000000000000     
+   X  below PDF min    0.0000000000000000       or    0.0000000000000000       %
+   X  above PDF max    0.0000000000000000       or    0.0000000000000000       %
+   Q2 below PDF min    0.0000000000000000       or    0.0000000000000000       %
+   Q2 above PDF max    0.0000000000000000       or    0.0000000000000000       %
+
+ ========= STRUCTP statistics for photon PDFs ========
+
+   total # of calls    0.0000000000000000     
+
+
+Processing truth_pE275_pE18_minqsq9
+
+Processed truth_pE275_pE18_minqsq9
+TFile**		./truth_pE275_pE18_minqsq9.root	
+ TFile*		./truth_pE275_pE18_minqsq9.root	
+  OBJ: TTree	EICTree	my EIC tree : 0 at: 0x45b66a0
+  KEY: TProcessID	ProcessID0;1	c96d2466-8afe-11ea-90da-8898c782beef
+  KEY: TTree	EICTree;1	my EIC tree
+Began on Thu Apr 30 12:22:39 2020
+Ended on Thu Apr 30 12:22:39 2020
+Processed 100 events containing 4429 particles in 0.335322 seconds (0.00335322 sec/event)
+/-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-/
+/  Commencing Smearing of 100 events.
+/-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-/
+|~~~~~~~~~~~~~~~~~~ Completed Successfully ~~~~~~~~~~~~~~~~~~~|
+(int) 0

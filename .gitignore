@@ -6,3 +6,6 @@ analysisCode/EventLoop
 *.so
 *~
 dict_*.*
+*.err
+*.out
+*.log
