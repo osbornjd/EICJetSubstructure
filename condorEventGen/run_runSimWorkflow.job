@@ -1,0 +1,31 @@
+Universe        = vanilla
+
+Notification    = Never
+Priority        = 1
+
+
+proton          = 275
+electron        = 18
+minq2           = 9
+nevents         = 100
+smear           = smeared_pE$(proton)_pE$(electron)_minqsq$(minq2)
+truth           = truth_pE$(proton)_pE$(electron)_minqsq$(minq2)
+basepath        = /sphenix/user/jdosbo/EICSmear/git/jetSubstructure/
+
+Arguments       = $(smear) $(truth) $(proton) $(electron) $(minq2) $(nevents) $(basepath) $(Process)
+
+Initialdir      = /sphenix/user/jdosbo/EICSmear/git/jetSubstructure/condorEventGen/
+Executable      = $(Initialdir)/run_runSimWorkflow.csh
+Output          = $(Initialdir)/logfiles/job_pE$(proton)_pE$(electron)_minqsq$(minq2)_$(Process).out
+Error           = $(Initialdir)/logfiles/job_pE$(proton)_pE$(electron)_minqsq$(minq2)_$(Process).err
+Log             = $(Initialdir)/logfiles/job_pE$(proton)_pE$(electron)_minqsq$(minq2)_$(Process).log
+
+
+Queue    1
+
+proton          = 100
+electron        = 10
+
+Arguments       = $(smear) $(truth) $(proton) $(electron) $(minq2) $(nevents) $(basepath) $(Process)
+
+Queue    1
