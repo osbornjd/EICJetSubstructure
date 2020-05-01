@@ -25,18 +25,19 @@
 #include <vector>
 
 using PseudoJetVec = std::vector<fastjet::PseudoJet>;
+using TLorentzVectorVec = std::vector<TLorentzVector>;
+using JetConstPair = std::pair<TLorentzVector, std::vector<TLorentzVector>>;
+using JetConstVec = std::vector<JetConstPair>;
 
 PseudoJetVec getTruthJets(fastjet::ClusterSequence *truthcs, 
 			  erhic::EventPythia *truthEvent, 
 			  JetDef jetdef);
 
-void setupTree(TTree *tree);
+void setupJetTree(TTree *tree);
 
-std::vector<std::pair<TLorentzVector, std::vector<TLorentzVector>>>
-  convertToTLorentzVectors(std::vector<fastjet::PseudoJet> pseudoJets);
+JetConstVec convertToTLorentzVectors(PseudoJetVec pseudoJets);
 
-std::vector<std::pair<TLorentzVector, std::vector<TLorentzVector>>> 
-  truthR1Jets, recoR1Jets, recoR1SDJets;
+JetConstVec truthR1Jets, recoR1Jets, recoR1SDJets;
 
 std::vector<PseudoJetVec> matchedR1Jets;
 

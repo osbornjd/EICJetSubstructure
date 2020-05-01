@@ -20,10 +20,8 @@ int main(int argc, char **argv)
   
   TFile *outfile = new TFile(outputFile.c_str(), "recreate");
   jetTree = new TTree("jettree", "A tree with jets");
-  jetTree->Branch("truthR1Jets", &truthR1Jets);
-  jetTree->Branch("recoR1Jets", &recoR1Jets);
-  jetTree->Branch("recoR1SDJets", &recoR1SDJets);
-  jetTree->Branch("matchedR1Jets", &matchedR1Jets);
+
+  setupJetTree(jetTree);
 
   TruthEvent event;
   SmearedEvent smearevent;
@@ -107,31 +105,34 @@ std::vector<fastjet::PseudoJet> getTruthJets(fastjet::ClusterSequence *truthcs,
 
   truthcs = new fastjet::ClusterSequence(truthJets, jetdef.getJetDef());
 
-  std::vector<fastjet::PseudoJet> allTruthJets = fastjet::sorted_by_pt(truthcs->inclusive_jets());
+  PseudoJetVec allTruthJets = fastjet::sorted_by_pt(truthcs->inclusive_jets());
   /// Make eta/pt selections
   fastjet::Selector selectPt = fastjet::SelectorPtMin(jetdef.getMinJetPt());
   fastjet::Selector selectEta = fastjet::SelectorAbsRapMax(jetdef.getMaxJetRapidity());
   fastjet::Selector select = selectPt and selectEta;
   
-  std::vector<fastjet::PseudoJet> selectTruthJets = select(allTruthJets);
+  PseudoJetVec selectTruthJets = select(allTruthJets);
   
   return selectTruthJets;
 }
 
 
-void setupTree(TTree *tree)
+void setupJetTree(TTree *tree)
 {
+
+  jetTree->Branch("truthR1Jets", &truthR1Jets);
+  jetTree->Branch("recoR1Jets", &recoR1Jets);
+  jetTree->Branch("recoR1SDJets", &recoR1SDJets);
+  jetTree->Branch("matchedR1Jets", &matchedR1Jets);
 
 
   return;
 }
 
 
-std::vector<std::pair<TLorentzVector, std::vector<TLorentzVector>>>
-   convertToTLorentzVectors(
-       std::vector<fastjet::PseudoJet> pseudoJets)
+JetConstVec convertToTLorentzVectors(PseudoJetVec pseudoJets)
 {
-  std::vector<std::pair<TLorentzVector, std::vector<TLorentzVector>>> jets;
+  JetConstVec jets;
 
   for(int jet = 0; jet < pseudoJets.size(); jet++)
     {
@@ -145,8 +146,8 @@ std::vector<std::pair<TLorentzVector, std::vector<TLorentzVector>>>
 		      pseudojet.e());
       
       /// Get jet constituents
-      std::vector<fastjet::PseudoJet> constituents = pseudojet.constituents();
-      std::vector<TLorentzVector> tConstituents;
+      PseudoJetVec constituents = pseudojet.constituents();
+      TLorentzVectorVec tConstituents;
       for(int con = 0; con < constituents.size(); con++)
 	{
 	  fastjet::PseudoJet fjConstituent = constituents.at(con);
