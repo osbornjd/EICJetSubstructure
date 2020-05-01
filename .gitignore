@@ -10,4 +10,4 @@ dict_*.*
 *.out
 *.log
 *.d
-*_dict_*
+*_dict*
