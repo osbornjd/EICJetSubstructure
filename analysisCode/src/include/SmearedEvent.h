@@ -1,6 +1,9 @@
 #ifndef SMEAREDEVENT_H
 #define SMEAREDEVENT_H
 
+#include <utility>
+#include <tuple>
+
 #include <eicsmear/smear/EventS.h>
 #include <eicsmear/erhic/EventPythia.h>
 
@@ -8,6 +11,11 @@
 
 #include "JetDef.h"
 #include "SoftDropJetDef.h"
+
+using PseudoJetVec = std::vector<fastjet::PseudoJet>;
+using TLorentzVectorVec = std::vector<TLorentzVector>;
+using JetConstPair = std::pair<TLorentzVector, std::vector<TLorentzVector>>;
+using JetConstVec = std::vector<JetConstPair>;
 
 class SmearedEvent {
   
@@ -24,10 +32,14 @@ class SmearedEvent {
   void processEvent();
   void setVerbosity(int verb) { m_verbosity = verb; }
 
-  std::vector<fastjet::PseudoJet> getRecoJets(JetDef jetDef);
-  std::vector<fastjet::PseudoJet> getRecoSoftDropJets(std::vector<fastjet::PseudoJet> recoJets, SoftDropJetDef sdJetDef);
+  PseudoJetVec getRecoJets(fastjet::ClusterSequence *cs,
+			   JetDef jetDef);
+  PseudoJetVec getRecoSoftDropJets(PseudoJetVec recoJets, 
+				   SoftDropJetDef sdJetDef);
 
-  std::vector<std::vector<fastjet::PseudoJet>> matchTruthRecoJets(std::vector<fastjet::PseudoJet> truthjets, std::vector<fastjet::PseudoJet> recojets);
+  std::vector<PseudoJetVec> matchTruthRecoJets(PseudoJetVec truthjets, 
+					       PseudoJetVec recojets);
+
 
  private:
   /// Need truth event for identifying only final state particles
@@ -36,10 +48,8 @@ class SmearedEvent {
 
   const Smear::ParticleMCS *m_scatLepton;
 
-  std::vector<std::vector<fastjet::PseudoJet>> m_matchedJets;
-  std::vector<fastjet::PseudoJet> m_particles;
-
-  fastjet::ClusterSequence *cs;
+  std::vector<PseudoJetVec> m_matchedJets;
+  PseudoJetVec m_particles;
 
   int m_verbosity = 0;
 

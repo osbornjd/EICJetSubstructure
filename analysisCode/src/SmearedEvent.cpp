@@ -48,16 +48,17 @@ void SmearedEvent::setSmearedParticles()
       /// Skip the scattered electron, since it is special
       if(particle->GetE() == m_scatLepton->GetE())
 	continue;
-   
-      std::cout << "Truth  : "<<truthParticle->Id() 
-		<< " " <<truthParticle->GetPx() << " " 
-		<< truthParticle->GetPy() << " " << truthParticle->GetPz()
-		<< " " << truthParticle->GetE() << std::endl;
-      
-      std::cout << "Smeared : " << particle->GetPx() << " " 
-		<< particle->GetPy() << " " << particle->GetPz() << " " 
-		<< particle->GetE() << std::endl;
-      
+      if(m_verbosity > 0)
+	{
+	  std::cout << "Truth  : "<<truthParticle->Id() 
+		    << " " <<truthParticle->GetPx() << " " 
+		    << truthParticle->GetPy() << " " << truthParticle->GetPz()
+		    << " " << truthParticle->GetE() << std::endl;
+	  
+	  std::cout << "Smeared : " << particle->GetPx() << " " 
+		    << particle->GetPy() << " " << particle->GetPz() << " " 
+		    << particle->GetE() << std::endl;
+	}
 
       m_particles.push_back(fastjet::PseudoJet(particle->GetPx(),
 					       particle->GetPy(),
@@ -68,12 +69,13 @@ void SmearedEvent::setSmearedParticles()
   return;
 }
 
-std::vector<fastjet::PseudoJet> SmearedEvent::getRecoJets(JetDef jetDef)
+PseudoJetVec SmearedEvent::getRecoJets(fastjet::ClusterSequence *cs, 
+				       JetDef jetDef)
 {
   /// Create the cluster sequence
   cs = new fastjet::ClusterSequence(m_particles, jetDef.getJetDef());
   
-  std::vector<fastjet::PseudoJet> allRecoJets = fastjet::sorted_by_pt(cs->inclusive_jets());
+  PseudoJetVec allRecoJets = fastjet::sorted_by_pt(cs->inclusive_jets());
 
   if(m_verbosity > 1)
     {
@@ -86,18 +88,18 @@ std::vector<fastjet::PseudoJet> SmearedEvent::getRecoJets(JetDef jetDef)
   fastjet::Selector selectEta = fastjet::SelectorAbsRapMax(jetDef.getMaxJetRapidity());
   fastjet::Selector select = selectPt and selectEta;
   
-  std::vector<fastjet::PseudoJet> selectJets = select(allRecoJets);
+  PseudoJetVec selectJets = select(allRecoJets);
 
   return selectJets;
 
 }
 
-std::vector<fastjet::PseudoJet> SmearedEvent::getRecoSoftDropJets(std::vector<fastjet::PseudoJet> recoJets, SoftDropJetDef sdJetDef)
+PseudoJetVec SmearedEvent::getRecoSoftDropJets(PseudoJetVec recoJets, SoftDropJetDef sdJetDef)
 {
 
   fastjet::contrib::SoftDrop sd(sdJetDef.getSoftDrop());
   
-  std::vector<fastjet::PseudoJet> softDropJets;
+  PseudoJetVec softDropJets;
  
   for(int jet = 0; jet < recoJets.size(); ++jet)
     {
@@ -110,12 +112,12 @@ std::vector<fastjet::PseudoJet> SmearedEvent::getRecoSoftDropJets(std::vector<fa
 }
 
 
-std::vector<std::vector<fastjet::PseudoJet>> SmearedEvent::matchTruthRecoJets(
-	    std::vector<fastjet::PseudoJet> truthjets,
-	    std::vector<fastjet::PseudoJet> recojets)
+std::vector<PseudoJetVec> SmearedEvent::matchTruthRecoJets(
+	    PseudoJetVec truthjets,
+	    PseudoJetVec recojets)
 {
-  std::vector<fastjet::PseudoJet> matchJetPair;
-  std::vector<std::vector<fastjet::PseudoJet>> matchedVector;
+  PseudoJetVec matchJetPair;
+  std::vector<PseudoJetVec> matchedVector;
   
 
   for(int reco = 0; reco < recojets.size(); ++reco)
@@ -156,3 +158,5 @@ std::vector<std::vector<fastjet::PseudoJet>> SmearedEvent::matchTruthRecoJets(
   return matchedVector;
 
 }
+
+
