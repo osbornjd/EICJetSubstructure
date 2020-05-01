@@ -18,7 +18,7 @@ You need to also change the base path in the main file, `runSimWorkflow.py`, to 
 ### Usage
 All that is necessary to use this is to run the main `runSimWorkflow.py` with the arguments as documented in the file. The output is a truth root file, which contains a tree with truth particle information from PYTHIA, and a smeared root file, which contains the particles after undergoing detector smearing.
 
-The detector smearing is set in `smear/ePHENIXDetector.cpp`.
+The detector smearing is set in `smear/ePHENIXDetector.cpp` and `smear/smearHandBook.cxx`.
 
 The output truth and smeared files can be befriended for further analysis within ROOT.
 
@@ -31,6 +31,10 @@ Don't be alarmed if you see "Error in <TROOT::TVector2>" type errors in the smea
 
 To execute the runSimWorkflow.py, you can run the following:
 
-python runSimWorkflow.py smeared truth 100 10 1000
+python runSimWorkflow.py smeared truth 100 10 9 1000 /base/path/to/your/jetSubstructure
 
-This corresponds to running the workflow and generating a smeared file called “smeared.root”, a truth file called “truth.root”, proton energy = 100 GeV, electron energy = 10 Gev, and for 1000 events.
+This corresponds to running the workflow and generating a smeared file called “smeared.root”, a truth file called “truth.root”, proton energy = 100 GeV, electron energy = 10 Gev, minimum Q2=9 GeV, and for 1000 events. The path argument is the base path on RCF to wherever you cloned this jetSubstructure repository.
+
+### Condor Submission
+
+RCF also has a condor batch processing system available. Condor submission jobs are available in the `condorEventGen` directory. The `csh` script can be run with similar arguments to the python `runSimWorkflow.py` script. The condor `.job` file is used to submit jobs to condor and can be used with the usual condor calls. See also the README in the directory `condorEventGen` directory.
