@@ -68,7 +68,8 @@ void SmearedEvent::setSmearedParticles()
   return;
 }
 
-std::vector<fastjet::PseudoJet> SmearedEvent::getRecoJets(JetDef jetDef)
+std::vector<fastjet::PseudoJet> SmearedEvent::getRecoJets(fastjet::ClusterSequence *cs, 
+							  JetDef jetDef)
 {
   /// Create the cluster sequence
   cs = new fastjet::ClusterSequence(m_particles, jetDef.getJetDef());
@@ -156,3 +157,5 @@ std::vector<std::vector<fastjet::PseudoJet>> SmearedEvent::matchTruthRecoJets(
   return matchedVector;
 
 }
+
+

@@ -1,43 +1,37 @@
-/// Fastjet includes
-#include <fastjet/ClusterSequence.hh>
-#include <fastjet/Selector.hh>
-#include <fastjet/contrib/SoftDrop.hh>
+#include "include/EventLoop.h"
 
-/// Root includes
-#include <TFile.h>
-#include <TTree.h>
-#include <TSystem.h>
-
-/// EIC smear includes
-#include <eicsmear/erhic/EventPythia.h>
-#include <eicsmear/smear/EventS.h>
-
-/// Local includes
-#include "include/TruthEvent.h"
-#include "include/SmearedEvent.h"
-#include "include/JetDef.h"
-#include "include/SoftDropJetDef.h"
-
-#include <iostream>
-
-std::vector<fastjet::PseudoJet> getTruthJets(erhic::EventPythia *truthEvent, JetDef jetdef);
 
 int main(int argc, char **argv)
 {
+  /// Link the libraries to be able to write std::vector<TLorentzVector>
+  /// and std::pairs to TTreess
+  gROOT->ProcessLine(".L src/fastJetLinker.C+");
+  
   /// Collect arguments
+  /// Truth MC file
   std::string mcFile = argv[1];
+  /// Smeared MC file
   std::string smearedFile = argv[2];
+  /// Name of output root file for trees to reside
+  std::string outputFile = argv[3];
 
   TFile mc(mcFile.c_str());
   TTree *mctree = (TTree*)mc.Get("EICTree");
   
+  TFile *outfile = new TFile(outputFile.c_str(), "recreate");
+  jetTree = new TTree("jettree", "A tree with jets");
+  jetTree->Branch("truthR1Jets", &truthR1Jets);
+  jetTree->Branch("recoR1Jets", &recoR1Jets);
+  jetTree->Branch("recoR1SDJets", &recoR1SDJets);
+  jetTree->Branch("matchedR1Jets", &matchedR1Jets);
+
   TruthEvent event;
   SmearedEvent smearevent;
 
-  JetDef jetdef(fastjet::antikt_algorithm, 1.0);
-  jetdef.setMinJetPt(2.);
-  jetdef.setMaxJetRapidity(4);
-  SoftDropJetDef sd(0.01, 2, jetdef.getR());
+  JetDef R1jetdef(fastjet::antikt_algorithm, 1.0);
+  R1jetdef.setMinJetPt(2.);
+  R1jetdef.setMaxJetRapidity(4);
+  SoftDropJetDef R1sd(0.01, 2, R1jetdef.getR());
   
   mctree->AddFriend("Smeared", smearedFile.c_str());
   erhic::EventPythia* truthEvent(NULL);
@@ -49,7 +43,7 @@ int main(int argc, char **argv)
   std::cout<<"begin event loop"<<std::endl;
   for(int event = 0; event < mctree->GetEntries(); ++event)
     {
-      //if(event % 10 == 0)
+      if(event % 10 == 0)
 	std::cout<<"Processed " << event << " events" << std::endl;
 
       mctree->GetEntry(event);
@@ -58,28 +52,36 @@ int main(int argc, char **argv)
       smearedEvent.setVerbosity(0);
       smearedEvent.processEvent();
 
-      std::vector<fastjet::PseudoJet> truthjets = getTruthJets(truthEvent, 
-							       jetdef);
-
-      std::vector<fastjet::PseudoJet> recoR1Jets = 
-	smearedEvent.getRecoJets(jetdef);
-
-      std::vector<std::vector<fastjet::PseudoJet>> matchedJets = 
-	smearedEvent.matchTruthRecoJets(truthjets, recoR1Jets);
       
-      std::vector<fastjet::PseudoJet> recoR1SDJets = 
-	smearedEvent.getRecoSoftDropJets(recoR1Jets, sd);
+      PseudoJetVec fjrecoR1Jets = smearedEvent.getRecoJets(cs, R1jetdef);
+      PseudoJetVec fjtruthR1Jets = getTruthJets(truthcs, truthEvent, R1jetdef);
+      matchedR1Jets = smearedEvent.matchTruthRecoJets(fjtruthR1Jets, fjrecoR1Jets);
+      PseudoJetVec fjrecoR1SDJets = smearedEvent.getRecoSoftDropJets(fjrecoR1Jets, R1sd);
 
-
+      truthR1Jets  = convertToTLorentzVectors(fjtruthR1Jets);
+      recoR1Jets   = convertToTLorentzVectors(fjrecoR1Jets);
+      recoR1SDJets = convertToTLorentzVectors(fjrecoR1SDJets);
       
+      jetTree->Fill();
     }
+  
+  outfile->cd();
+  jetTree->Write();
+  outfile->Close();
+  mc.Close();
+
   std::cout << "Finished EventLoop" << std::endl;
 
 }
 
 
-
-std::vector<fastjet::PseudoJet> getTruthJets(erhic::EventPythia* truthEvent, JetDef jetdef)
+/**
+ * function to get some truth jets for testing. will remove later once 
+ * truthevent class is finished
+ */
+std::vector<fastjet::PseudoJet> getTruthJets(fastjet::ClusterSequence *truthcs, 
+					     erhic::EventPythia* truthEvent, 
+					     JetDef jetdef)
 {
   std::vector<fastjet::PseudoJet> truthJets;
   
@@ -90,7 +92,7 @@ std::vector<fastjet::PseudoJet> getTruthJets(erhic::EventPythia* truthEvent, Jet
       /// skip the beam particles
       if( i < 3 )
 	continue;
-      // oly final state particles
+      // only final state particles
       if(truthPart->GetStatus() != 1)
 	continue;
       /// skip scattered electron
@@ -102,9 +104,10 @@ std::vector<fastjet::PseudoJet> getTruthJets(erhic::EventPythia* truthEvent, Jet
 					     truthPart->GetPz(),
 					     truthPart->GetE()));
     }
-  
-  fastjet::ClusterSequence truthcs(truthJets, jetdef.getJetDef());
-  std::vector<fastjet::PseudoJet> allTruthJets = fastjet::sorted_by_pt(truthcs.inclusive_jets());
+
+  truthcs = new fastjet::ClusterSequence(truthJets, jetdef.getJetDef());
+
+  std::vector<fastjet::PseudoJet> allTruthJets = fastjet::sorted_by_pt(truthcs->inclusive_jets());
   /// Make eta/pt selections
   fastjet::Selector selectPt = fastjet::SelectorPtMin(jetdef.getMinJetPt());
   fastjet::Selector selectEta = fastjet::SelectorAbsRapMax(jetdef.getMaxJetRapidity());
@@ -113,4 +116,54 @@ std::vector<fastjet::PseudoJet> getTruthJets(erhic::EventPythia* truthEvent, Jet
   std::vector<fastjet::PseudoJet> selectTruthJets = select(allTruthJets);
   
   return selectTruthJets;
+}
+
+
+void setupTree(TTree *tree)
+{
+
+
+  return;
+}
+
+
+std::vector<std::pair<TLorentzVector, std::vector<TLorentzVector>>>
+   convertToTLorentzVectors(
+       std::vector<fastjet::PseudoJet> pseudoJets)
+{
+  std::vector<std::pair<TLorentzVector, std::vector<TLorentzVector>>> jets;
+
+  for(int jet = 0; jet < pseudoJets.size(); jet++)
+    {
+      fastjet::PseudoJet pseudojet = pseudoJets.at(jet);
+      
+      /// swap fastjet::pseudojet with a TLorentzVector
+      TLorentzVector tJet;
+      tJet.SetPxPyPzE(pseudojet.px(),
+		      pseudojet.py(),
+		      pseudojet.pz(),
+		      pseudojet.e());
+      
+      /// Get jet constituents
+      std::vector<fastjet::PseudoJet> constituents = pseudojet.constituents();
+      std::vector<TLorentzVector> tConstituents;
+      for(int con = 0; con < constituents.size(); con++)
+	{
+	  fastjet::PseudoJet fjConstituent = constituents.at(con);
+
+	  TLorentzVector tConstituent;
+	  tConstituent.SetPxPyPzE(fjConstituent.px(),
+				  fjConstituent.py(),
+				  fjConstituent.pz(),
+				  fjConstituent.e());
+
+	  tConstituents.push_back(tConstituent);
+
+	}
+      
+      jets.push_back(std::make_pair(tJet, tConstituents));
+    }
+
+  return jets;
+
 }
