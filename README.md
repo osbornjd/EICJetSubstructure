@@ -8,8 +8,8 @@ This repository is intended to setup a software workflow for using the EIC smear
 This has only been tested on RCF, where access to the EIC environment is present. In order to use this, it is expected you have setup this environment via
 
 ```
-setenv EIC_LEVEL pro 
-source /afs/rhic.bnl.gov/eic/restructured/etc/eic_cshrc.csh
+$ setenv EIC_LEVEL pro 
+$ source /afs/rhic.bnl.gov/eic/restructured/etc/eic_cshrc.csh
 
 ```
 
@@ -31,6 +31,6 @@ Don't be alarmed if you see "Error in <TROOT::TVector2>" type errors in the smea
 
 To execute the runSimWorkflow.py, you can run the following:
 
-python runSimWorkflow.py smeared truth 100 10 1 1000
+$ python runSimWorkflow.py smeared truth 100 10 1 1000
 
 This corresponds to running the workflow and generating a smeared file called “smeared.root”, a truth file called “truth.root”, proton energy = 100 GeV, electron energy = 10 Gev, minimum Q2 of 1 GeV^2,  and for 1000 events.

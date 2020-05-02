@@ -1,82 +1,123 @@
 #include "include/TruthEvent.h"
+
+#include "include/BreitFrame.h"
+
+#include <fastjet/Selector.hh>
+#include <fastjet/ClusterSequence.hh>
+#include <fastjet/contrib/SoftDrop.hh>
+
 #include <iostream>
 
-TruthEvent::TruthEvent(){cout << "A truth event" << endl;}
 
-void TruthEvent::ProcessEvent(erhic::EventPythia* ev, JetDef def, SoftDropJetDef softdrop_def)
-{ 
-  contrib::SoftDrop softdrop = softdrop_def.getSoftDrop(); 
-  Set_truthEvent(ev);
-  //PrintEvent();
-  ParticleLoop(ev);
-  JetLoop(def, softdrop);   
- }
-
-void TruthEvent::ParticleLoop(erhic::EventPythia* ev) 
+void TruthEvent::processEvent()
 {
-  // initialize variables for boost to Breit frame -- this will be moved
-  double Px,Py,Pz,P0,qx,qy,qz,q0;
-  for (int part = 0; part < nTracks; part++)
+  setScatteredLepton();
+  setTruthParticles();
+
+}
+
+
+void TruthEvent::setScatteredLepton()
+{
+  m_scatLepton = m_truthEvent->ScatteredLepton();
+  if(m_verbosity > 1)
     {
-      const Particle *truthPart = ev->GetTrack(part);
-      Set_truthPart(truthPart);
+      std::cout<< "Scattered lepton : "<< m_scatLepton->GetPx() << " "
+	       << m_scatLepton->GetPy() << " " << m_scatLepton->GetPz()
+	       << " " << m_scatLepton->GetE() << std::endl;
+    }
+}
 
-      // Block for boost to Breit frame -- this will be moved //
-      if (part==1)
+void TruthEvent::setTruthParticles()
+{
+
+  for(int part = 0; part < m_truthEvent->GetNTracks(); ++part)
+    {
+      /// Skip the beam
+      if( part < 3 )
+	continue;
+      
+      const Particle *truthParticle = m_truthEvent->GetTrack(part);
+      
+      /// only want final state particles
+      if(truthParticle->GetStatus() != 1)
+	continue;
+      
+      /// Skip the scattered electron, since it is special
+      if(truthParticle->GetE() == m_scatLepton->GetE())
+	continue;
+      if(m_verbosity > 2)
 	{
-	  Px = part_px; Py = part_py; Pz = part_pz; P0 = part_E;
+	  std::cout << "Lab Truth  : " <<truthParticle->Id() 
+		    << " " <<truthParticle->GetPx() << " " 
+		    << truthParticle->GetPy() << " " << truthParticle->GetPz()
+		    << " " << truthParticle->GetE() << std::endl;	  
 	}
-      if (part==3) 
-	{ 
-	  qx = part_px; qy = part_py; qz = part_pz; q0 = part_E;
-	}
-      double E_breit = 2*true_x*P0 + q0;
-      TVector3 breit((2*true_x*Px+qx)/E_breit,(2*true_x*Py+qy)/E_breit, (2*true_x*Pz+qz)/E_breit);
-      //PrintParticle();
-      TLorentzVector part_4vec = truthPart->PxPyPzE();
-      //cout << " Lab frame... " << endl;
-      //part_4vec.Print();
-      part_4vec.Boost(breit);
-      //cout << " Breit frame... " << endl; 
-      //part_4vec.Print();
-      truthPseudoJets.push_back(PseudoJet(part_px, part_py, part_pz, part_E));
-      //truthPseudoJets.push_back(PseudoJet(part_4vec));
 
-      // End Breit Block //
+      // Transform Particle 4 Vectors to the Breit Frame 
+      TLorentzVector *partFourVec = new TLorentzVector( truthParticle->PxPyPzE() );
+      labToBreit( partFourVec, m_truthEvent);
+      
+      if(m_verbosity > 0)
+	{
+	  std::cout << "Breit Truth  : " <<truthParticle->Id() 
+		    << " " <<partFourVec->Px() << " " 
+		    << partFourVec->Py() << " " << partFourVec->Pz()
+		    << " " << partFourVec->E() << std::endl;	  
+	}
+
+
+      m_particles.push_back(fastjet::PseudoJet(partFourVec->Px(),
+					       partFourVec->Py(),
+					       partFourVec->Pz(),
+					       partFourVec->E()));
+    }
+
+  return;
+}
+
+PseudoJetVec TruthEvent::getTruthJets(fastjet::ClusterSequence *cs, 
+				       JetDef jetDef)
+{
+  /// Create the cluster sequence
+  cs = new fastjet::ClusterSequence(m_particles, jetDef.getJetDef());
+  
+  PseudoJetVec allTruthJets = fastjet::sorted_by_pt(cs->inclusive_jets());
+
+  if(m_verbosity > 1)
+    {
+      std::cout << "Finding jets for jet pT>" << jetDef.getMinJetPt() 
+		<< " and |eta|<" << jetDef.getMaxJetRapidity() << std::endl;
     }
   
-}
-
-void TruthEvent::JetLoop(JetDef def, contrib::SoftDrop sd) 
-{ 
-  Selector selectRapidity = SelectorAbsRapMax(4);
-  Selector selectPtMin = SelectorPtMin(5.0);
-  Selector selectBoth = selectPtMin and selectRapidity;
-
-  /// Make the truth jets
-  ClusterSequence cs(truthPseudoJets, def.GetJetDef());
-  vector<PseudoJet> allTruthJets = sorted_by_pt(cs.inclusive_jets());
-  /// Make the cuts
-  truthJets = selectBoth(allTruthJets);
-  cout << "truthjets : " << truthJets.size() << endl;
+  /// Make eta/pt selections
+  fastjet::Selector selectPt = fastjet::SelectorPtMin(jetDef.getMinJetPt());
+  fastjet::Selector selectEta = fastjet::SelectorAbsRapMax(jetDef.getMaxJetRapidity());
+  fastjet::Selector select = selectPt and selectEta;
   
-  for(int truthJet = 0; truthJet < truthJets.size(); truthJet++)
-    {
-      /// Look at antikt constituents
-      vector<PseudoJet> constituents = truthJets[truthJet].constituents();
-      /// get jet properties
-      // double jetphi = truthJets[truthJet].phi();
-      Set_truthJet(truthJets[truthJet]);
-      PrintJet();
-      
-      /// run soft drop on truth anti-kt jets
-      PseudoJet softDropJet = sd(truthJets[truthJet]);
-      
-      // now you can do stuff with the SD jet
-      //float subJetDR = softDropJet.structure_of<contrib::SoftDrop>().delta_R(); 
-      Set_groomed_truthJet(softDropJet);
-      // PrintGroomedJet();
-    }  
+  PseudoJetVec selectJets = select(allTruthJets);
+
+  return selectJets;
+
 }
+
+PseudoJetVec TruthEvent::getTruthSoftDropJets(PseudoJetVec truthJets, SoftDropJetDef sdJetDef)
+{
+
+  fastjet::contrib::SoftDrop sd(sdJetDef.getSoftDrop());
+  
+  PseudoJetVec softDropJets;
+ 
+  for(int jet = 0; jet < truthJets.size(); ++jet)
+    {
+      fastjet::PseudoJet softDropJet = sd(truthJets[jet]);
+      softDropJets.push_back(softDropJet);
+    }
+
+  return softDropJets;
+
+}
+
+
 
 

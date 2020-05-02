@@ -28,17 +28,13 @@ int main()
  //TFile mc(mcFile.c_str());
  // TTree *mctree = (TTree*)mc.Get("EICTree");
 
-  // Jet Def Stuff 
+  JetDef R1jetdef(fastjet::antikt_algorithm, 1.0);
+  R1jetdef.setMinJetPt(2.);
+  R1jetdef.setMaxJetRapidity(4);
+  SoftDropJetDef R1sd(0.01, 2, R1jetdef.getR());  // Jet Def Stuff 
   double R = 0.7;
   JetDef jetDef(antikt_algorithm, R);
-
-  /// soft drop conditions
-  double zcut = 0.1;
-  double beta = 0;
-  SoftDropJetDef softdrop_def(beta, zcut, R);
-  
-  TruthEvent event;
-  SmearedEvent smearevent;
+ 
   
   //mctree->AddFriend("Smeared", smearedFile.c_str());
   erhic::EventPythia* truthEvent(NULL);
@@ -47,13 +43,17 @@ int main()
   mctree->SetBranchAddress("event", &truthEvent);
   mctree->SetBranchAddress("eventS", &smearEvent);
 
-  for (int ev = 0; ev < 10; ev++)
+  for (int event = 0; event < 2; event++)
     {
-      mctree->GetEntry(ev);
-      event.ProcessEvent( truthEvent, jetDef, softdrop_def );
-    }
 
-  // Smear::Event* smearEvent(NULL);
-  
+      if(event % 10 == 0)
+	std::cout<<"Processed " << event << " events" << std::endl;
+
+      mctree->GetEntry(event);
+
+      TruthEvent trueEvent(*truthEvent);
+      trueEvent.setVerbosity(0);
+      trueEvent.processEvent( );
+    }  
 
 }
