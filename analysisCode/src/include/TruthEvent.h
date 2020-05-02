@@ -37,15 +37,7 @@ class TruthEvent {
   PseudoJetVec getTruthSoftDropJets(PseudoJetVec recoJets, 
 				   SoftDropJetDef sdJetDef);
 
-  //void setTruthEvent(erhic::EventPythia* ev);
 
-  //void particleLoop(erhic::EventPythia* ev); 
-  //void jetLoop(JetDef def, contrib::SoftDrop sd);
-  
-  //void printEvent();
-  //void PrintJet();
-  //void PrintGroomedJet();
-  
  private:
   erhic::EventPythia *m_truthEvent;
 
