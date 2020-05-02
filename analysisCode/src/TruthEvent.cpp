@@ -1,7 +1,5 @@
 #include "include/TruthEvent.h"
 
-#include "include/BreitFrame.h"
-
 #include <fastjet/Selector.hh>
 #include <fastjet/ClusterSequence.hh>
 #include <fastjet/contrib/SoftDrop.hh>
@@ -48,7 +46,7 @@ void TruthEvent::setTruthParticles()
 	continue;
       if(m_verbosity > 2)
 	{
-	  std::cout << "Lab Truth  : " <<truthParticle->Id() 
+	  std::cout << "Truth (lab) : " <<truthParticle->Id() 
 		    << " " <<truthParticle->GetPx() << " " 
 		    << truthParticle->GetPy() << " " << truthParticle->GetPz()
 		    << " " << truthParticle->GetE() << std::endl;	  
@@ -60,17 +58,18 @@ void TruthEvent::setTruthParticles()
       
       if(m_verbosity > 0)
 	{
-	  std::cout << "Breit Truth  : " <<truthParticle->Id() 
+	  std::cout << "Truth  : " <<truthParticle->Id() 
 		    << " " <<partFourVec->Px() << " " 
 		    << partFourVec->Py() << " " << partFourVec->Pz()
 		    << " " << partFourVec->E() << std::endl;	  
 	}
 
-
+      
       m_particles.push_back(fastjet::PseudoJet(partFourVec->Px(),
 					       partFourVec->Py(),
 					       partFourVec->Pz(),
 					       partFourVec->E()));
+      
     }
 
   return;

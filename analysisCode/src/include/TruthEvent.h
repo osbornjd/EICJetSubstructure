@@ -21,7 +21,7 @@ class TruthEvent {
   
  public:
 
-  TruthEvent();
+  TruthEvent() {}
   TruthEvent(erhic::EventPythia &truthEvent)
    : m_truthEvent(&truthEvent)
   {}

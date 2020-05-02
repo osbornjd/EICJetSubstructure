@@ -25,16 +25,16 @@ def runPythia(outfile, protonEnergy, electronEnergy, minQ2, nEvents, basePath):
     """
 
     # get the default pythia parameters that we don't want to fuss with
-    defaultPythiaFile = open(basePath + "pythiaGeneration/defaultPythiaeRhicSettings.txt", "r")
+    defaultPythiaFile = open(basePath + "pythiaGeneration/pythiaeRHICSettingsHera.txt", "r")
     defaultPythia = defaultPythiaFile.read()
     
     # construct the header with the arguments 
     output = outfile + " ! output file name\n"
     leptonBeam = "11 ! lepton beam type\n"
     energies = protonEnergy + "," + electronEnergy + " ! proton and electron beam energy\n"
-    events = nEvents + ","+nEvents+" ! Number of events, number of events to print to stdout\n"
+    events = nEvents + ",1 ! Number of events, number of events to print to stdout\n"
     
-    # write all the crap to a dummyfile to be passed to the erhic executable
+    # write all the stuff to a dummyfile to be passed to the erhic executable
     finalPythiaFile = open("pythiafile.txt","w")
     finalPythiaFile.write(output)
     finalPythiaFile.write(leptonBeam)
