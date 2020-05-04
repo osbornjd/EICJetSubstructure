@@ -49,17 +49,25 @@ int main(int argc, char **argv)
       SmearedEvent smearedEvent(*truthEvent, *smearEvent);
       smearedEvent.setVerbosity(0);
       smearedEvent.processEvent();
-
-      
+  
       PseudoJetVec fjrecoR1Jets = smearedEvent.getRecoJets(cs, R1jetdef);
       PseudoJetVec fjtruthR1Jets = getTruthJets(truthcs, truthEvent, R1jetdef);
-      matchedR1Jets = smearedEvent.matchTruthRecoJets(fjtruthR1Jets, fjrecoR1Jets);
-      PseudoJetVec fjrecoR1SDJets = smearedEvent.getRecoSoftDropJets(fjrecoR1Jets, R1sd);
+      std::vector<PseudoJetVec> fjmatchedR1Jets = 
+	smearedEvent.matchTruthRecoJets(fjtruthR1Jets, fjrecoR1Jets);
+      PseudoJetVec fjrecoR1SDJets = 
+	smearedEvent.getRecoSoftDropJets(fjrecoR1Jets, R1sd);
 
       truthR1Jets  = convertToTLorentzVectors(fjtruthR1Jets);
       recoR1Jets   = convertToTLorentzVectors(fjrecoR1Jets);
       recoR1SDJets = convertToTLorentzVectors(fjrecoR1SDJets);
-      
+      for(int i=0; i<fjmatchedR1Jets.size(); i++)
+	{
+	  PseudoJetVec pair = fjmatchedR1Jets.at(i);
+	  JetConstVec tlpair = convertToTLorentzVectors(pair);
+	  
+	  matchedR1Jets.push_back(tlpair);
+	}
+
       jetTree->Fill();
     }
   
