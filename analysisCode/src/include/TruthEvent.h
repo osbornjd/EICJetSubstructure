@@ -1,13 +1,13 @@
 #ifndef TRUTHEVENT_H
 #define TRUTHEVENT_H
 
+#include <utility>
+#include <tuple>
+
 #include <eicsmear/erhic/EventPythia.h>
 #include <eicsmear/smear/EventS.h>
 
-#include <fastjet/ClusterSequence.hh>
-#include <fastjet/Selector.hh>
-#include <fastjet/contrib/SoftDrop.hh>
-#include <vector>
+#include <TLorentzVector.h>
 
 #include "JetDef.h"
 #include "SoftDropJetDef.h"

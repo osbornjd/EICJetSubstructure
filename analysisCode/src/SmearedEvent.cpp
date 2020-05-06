@@ -66,7 +66,7 @@ void SmearedEvent::setSmearedParticles()
       breit.labToBreitTruth( truthPartFourVec );
 
       TLorentzVector *partFourVec = new TLorentzVector( particle->PxPyPzE() );
-      breit.labToBreitSmear( partFourVec );
+      breit.labToBreitTruth( partFourVec );
 
 
       if(m_verbosity > 0)
