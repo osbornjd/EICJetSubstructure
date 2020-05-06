@@ -66,8 +66,6 @@ void SmearedEvent::setSmearedParticles()
       breit.labToBreitTruth( truthPartFourVec );
 
       TLorentzVector *partFourVec = new TLorentzVector( particle->PxPyPzE() );
-      //TLorentzVector q_test = (m_scatLepton->PxPyPzE() - m_smearEvent->BeamLepton()->PxPyPzE());
-      //m_scatLepton->Print();
       breit.labToBreitSmear( partFourVec );
 
 

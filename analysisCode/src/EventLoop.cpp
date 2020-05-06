@@ -6,7 +6,7 @@ int main(int argc, char **argv)
   /// Link the libraries to be able to write std::vector<TLorentzVector>
   /// and std::pairs to TTreess
   gROOT->ProcessLine(".L src/fastJetLinker.C+");
-   
+  
   /// Collect arguments
   /// Truth MC file
   std::string mcFile = argv[1];
@@ -23,7 +23,8 @@ int main(int argc, char **argv)
 
   setupJetTree(jetTree);
 
-
+  TruthEvent event;
+  SmearedEvent smearevent;
 
   JetDef R1jetdef(fastjet::antikt_algorithm, 1.0);
   R1jetdef.setMinJetPt(2.);
@@ -31,8 +32,6 @@ int main(int argc, char **argv)
   SoftDropJetDef R1sd(0.01, 2, R1jetdef.getR());
   
   mctree->AddFriend("Smeared", smearedFile.c_str());
-  
-
   erhic::EventPythia* truthEvent(NULL);
   Smear::Event* smearEvent(NULL);
 
@@ -40,32 +39,36 @@ int main(int argc, char **argv)
   mctree->SetBranchAddress("eventS", &smearEvent);
 
   std::cout<<"begin event loop"<<std::endl;
-  for(int event = 0; event < 55; ++event)
+  for(int event = 0; event < mctree->GetEntries(); ++event)
     {
       if(event % 10 == 0)
 	std::cout<<"Processed " << event << " events" << std::endl;
 
       mctree->GetEntry(event);
 
-      TruthEvent trueEvent(*truthEvent);
-      trueEvent.setVerbosity(0);
-      trueEvent.processEvent();
-
       SmearedEvent smearedEvent(*truthEvent, *smearEvent);
       smearedEvent.setVerbosity(0);
       smearedEvent.processEvent();
-
-      PseudoJetVec fjtruthR1Jets = trueEvent.getTruthJets(truthcs, R1jetdef);
+  
       PseudoJetVec fjrecoR1Jets = smearedEvent.getRecoJets(cs, R1jetdef);
-      matchedR1Jets = smearedEvent.matchTruthRecoJets(fjtruthR1Jets, fjrecoR1Jets);
-      PseudoJetVec fjtruthR1SDJets = trueEvent.getTruthSoftDropJets(fjtruthR1Jets, R1sd);
-      PseudoJetVec fjrecoR1SDJets = smearedEvent.getRecoSoftDropJets(fjrecoR1Jets, R1sd);
+      PseudoJetVec fjtruthR1Jets = getTruthJets(truthcs, truthEvent, R1jetdef);
+      std::vector<PseudoJetVec> fjmatchedR1Jets = 
+	smearedEvent.matchTruthRecoJets(fjtruthR1Jets, fjrecoR1Jets);
+      PseudoJetVec fjrecoR1SDJets = 
+	smearedEvent.getRecoSoftDropJets(fjrecoR1Jets, R1sd);
 
       truthR1Jets  = convertToTLorentzVectors(fjtruthR1Jets);
       recoR1Jets   = convertToTLorentzVectors(fjrecoR1Jets);
       recoR1SDJets = convertToTLorentzVectors(fjrecoR1SDJets);
-      
-       jetTree->Fill();
+      for(int i=0; i<fjmatchedR1Jets.size(); i++)
+	{
+	  PseudoJetVec pair = fjmatchedR1Jets.at(i);
+	  JetConstVec tlpair = convertToTLorentzVectors(pair);
+	  
+	  matchedR1Jets.push_back(tlpair);
+	}
+
+      jetTree->Fill();
     }
   
   outfile->cd();
@@ -75,6 +78,50 @@ int main(int argc, char **argv)
 
   std::cout << "Finished EventLoop" << std::endl;
 
+}
+
+
+/**
+ * function to get some truth jets for testing. will remove later once 
+ * truthevent class is finished
+ */
+std::vector<fastjet::PseudoJet> getTruthJets(fastjet::ClusterSequence *truthcs, 
+					     erhic::EventPythia* truthEvent, 
+					     JetDef jetdef)
+{
+  std::vector<fastjet::PseudoJet> truthJets;
+  
+  /// Just making a truth jet finder place holder, will remove later
+  for(int i=0; i<truthEvent->GetNTracks(); ++i)
+    {
+      const Particle *truthPart = truthEvent->GetTrack(i);
+      /// skip the beam particles
+      if( i < 3 )
+	continue;
+      // only final state particles
+      if(truthPart->GetStatus() != 1)
+	continue;
+      /// skip scattered electron
+      if(truthPart->GetE() == truthEvent->ScatteredLepton()->GetE())
+	continue;
+      
+      truthJets.push_back(fastjet::PseudoJet(truthPart->GetPx(),
+					     truthPart->GetPy(),
+					     truthPart->GetPz(),
+					     truthPart->GetE()));
+    }
+
+  truthcs = new fastjet::ClusterSequence(truthJets, jetdef.getJetDef());
+
+  PseudoJetVec allTruthJets = fastjet::sorted_by_pt(truthcs->inclusive_jets());
+  /// Make eta/pt selections
+  fastjet::Selector selectPt = fastjet::SelectorPtMin(jetdef.getMinJetPt());
+  fastjet::Selector selectEta = fastjet::SelectorAbsRapMax(jetdef.getMaxJetRapidity());
+  fastjet::Selector select = selectPt and selectEta;
+  
+  PseudoJetVec selectTruthJets = select(allTruthJets);
+  
+  return selectTruthJets;
 }
 
 
