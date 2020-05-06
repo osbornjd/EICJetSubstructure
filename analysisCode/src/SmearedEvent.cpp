@@ -28,6 +28,7 @@ void SmearedEvent::setScatteredLepton()
 void SmearedEvent::setSmearedParticles()
 {
 
+  BreitFrame breit(*m_truthEvent, *m_smearEvent);
   for(int part = 0; part < m_smearEvent->GetNTracks(); ++part)
     {
       /// Skip the beam
@@ -48,22 +49,43 @@ void SmearedEvent::setSmearedParticles()
       /// Skip the scattered electron, since it is special
       if(particle->GetE() == m_scatLepton->GetE())
 	continue;
-      if(m_verbosity > 0)
+      if(m_verbosity > 2)
 	{
-	  std::cout << "Truth  : "<<truthParticle->Id() 
+	  std::cout << "Truth (lab) : "<<truthParticle->Id() 
 		    << " " <<truthParticle->GetPx() << " " 
 		    << truthParticle->GetPy() << " " << truthParticle->GetPz()
 		    << " " << truthParticle->GetE() << std::endl;
 	  
-	  std::cout << "Smeared : " << particle->GetPx() << " " 
+	  std::cout << "Smeared (lab) : " << particle->GetPx() << " " 
 		    << particle->GetPy() << " " << particle->GetPz() << " " 
 		    << particle->GetE() << std::endl;
 	}
 
-      m_particles.push_back(fastjet::PseudoJet(particle->GetPx(),
-					       particle->GetPy(),
-					       particle->GetPz(),
-					       particle->GetE()));
+      // Transform Particle 4 Vectors to the Breit Frame 
+      TLorentzVector *truthPartFourVec = new TLorentzVector( truthParticle->PxPyPzE() );
+      breit.labToBreitTruth( truthPartFourVec );
+
+      TLorentzVector *partFourVec = new TLorentzVector( particle->PxPyPzE() );
+      breit.labToBreitTruth( partFourVec );
+
+
+      if(m_verbosity > 0)
+	{
+	  std::cout << "Truth : " <<truthParticle->Id() 
+		    << " " <<truthPartFourVec->Px() << " " 
+		    << truthPartFourVec->Py() << " " << truthPartFourVec->Pz()
+		    << " " << truthPartFourVec->E() << std::endl;
+
+	  std::cout << "Smeared : " <<partFourVec->Px() << " " 
+		    << partFourVec->Py() << " " << partFourVec->Pz()
+		    << " " << partFourVec->E() << std::endl;		  
+	}
+
+
+      m_particles.push_back(fastjet::PseudoJet(partFourVec->Px(),
+					       partFourVec->Py(),
+					       partFourVec->Pz(),
+					       partFourVec->E()));
     }
 
   return;

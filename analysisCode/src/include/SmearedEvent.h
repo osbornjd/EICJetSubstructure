@@ -11,6 +11,7 @@
 
 #include "JetDef.h"
 #include "SoftDropJetDef.h"
+#include "BreitFrame.h"
 
 using PseudoJetVec = std::vector<fastjet::PseudoJet>;
 using TLorentzVectorVec = std::vector<TLorentzVector>;

@@ -33,7 +33,7 @@ CXXFLAGS += $(ROOTCFLAGS) -I$(HEADRDIR) $(LIBS)
 CXXFLAGS += -Wno-unused-variable -Wno-sign-compare
 
 # to add a class just add the corresponding .o library here
-MODULES = src/TruthEvent.o src/SmearedEvent.o src/EventLoop.o 
+MODULES = src/TruthEvent.o src/SmearedEvent.o src/BreitFrame.o src/EventLoop.o
 
 
 all: EventLoop
