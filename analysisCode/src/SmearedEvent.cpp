@@ -28,6 +28,7 @@ void SmearedEvent::setScatteredLepton()
 void SmearedEvent::setSmearedParticles()
 {
 
+  BreitFrame breit(*m_truthEvent, *m_smearEvent);
   for(int part = 0; part < m_smearEvent->GetNTracks(); ++part)
     {
       /// Skip the beam
@@ -62,10 +63,12 @@ void SmearedEvent::setSmearedParticles()
 
       // Transform Particle 4 Vectors to the Breit Frame 
       TLorentzVector *truthPartFourVec = new TLorentzVector( truthParticle->PxPyPzE() );
-      labToBreit( truthPartFourVec, m_truthEvent);
+      breit.labToBreitTruth( truthPartFourVec );
 
       TLorentzVector *partFourVec = new TLorentzVector( particle->PxPyPzE() );
-      labToBreit( partFourVec, m_truthEvent);
+      //TLorentzVector q_test = (m_scatLepton->PxPyPzE() - m_smearEvent->BeamLepton()->PxPyPzE());
+      //m_scatLepton->Print();
+      breit.labToBreitSmear( partFourVec );
 
 
       if(m_verbosity > 0)

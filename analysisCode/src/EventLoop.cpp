@@ -40,7 +40,7 @@ int main(int argc, char **argv)
   mctree->SetBranchAddress("eventS", &smearEvent);
 
   std::cout<<"begin event loop"<<std::endl;
-  for(int event = 0; event < mctree->GetEntries(); ++event)
+  for(int event = 0; event < 55; ++event)
     {
       if(event % 10 == 0)
 	std::cout<<"Processed " << event << " events" << std::endl;
@@ -55,7 +55,7 @@ int main(int argc, char **argv)
       smearedEvent.setVerbosity(0);
       smearedEvent.processEvent();
 
-      PseudoJetVec fjtruthR1Jets = trueEvent.getTruthJets(cs, R1jetdef);
+      PseudoJetVec fjtruthR1Jets = trueEvent.getTruthJets(truthcs, R1jetdef);
       PseudoJetVec fjrecoR1Jets = smearedEvent.getRecoJets(cs, R1jetdef);
       matchedR1Jets = smearedEvent.matchTruthRecoJets(fjtruthR1Jets, fjrecoR1Jets);
       PseudoJetVec fjtruthR1SDJets = trueEvent.getTruthSoftDropJets(fjtruthR1Jets, R1sd);

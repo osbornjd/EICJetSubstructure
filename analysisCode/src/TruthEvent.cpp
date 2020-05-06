@@ -9,6 +9,7 @@
 
 void TruthEvent::processEvent()
 {
+
   setScatteredLepton();
   setTruthParticles();
 
@@ -29,6 +30,7 @@ void TruthEvent::setScatteredLepton()
 void TruthEvent::setTruthParticles()
 {
 
+  BreitFrame breit(*m_truthEvent);
   for(int part = 0; part < m_truthEvent->GetNTracks(); ++part)
     {
       /// Skip the beam
@@ -54,7 +56,7 @@ void TruthEvent::setTruthParticles()
 
       // Transform Particle 4 Vectors to the Breit Frame 
       TLorentzVector *partFourVec = new TLorentzVector( truthParticle->PxPyPzE() );
-      labToBreit( partFourVec, m_truthEvent);
+      breit.labToBreitTruth( partFourVec );
       
       if(m_verbosity > 0)
 	{
