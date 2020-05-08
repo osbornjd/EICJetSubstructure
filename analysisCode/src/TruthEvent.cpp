@@ -15,6 +15,20 @@ void TruthEvent::processEvent()
 
 }
 
+TLorentzVector TruthEvent::getExchangeBoson()
+{
+  TLorentzVector *vector = new TLorentzVector( m_truthEvent->ExchangeBoson()->Get4Vector());
+  
+  if(m_breitFrame){
+    
+    BreitFrame breit(*m_truthEvent);
+    breit.labToBreitTruth( vector );
+    
+  }
+    
+  return *vector;
+
+}
 bool TruthEvent::passCuts()
 {
   double y = m_truthEvent->GetTrueY();
@@ -60,6 +74,10 @@ void TruthEvent::setTruthParticles()
       if(truthParticle->GetE() == m_scatLepton->GetE())
 	continue;
 
+      /// Check that eta is within nominal detector acceptance
+      if(fabs(truthParticle->GetEta()) > 3.5)
+	continue;
+
       if(m_verbosity > 2)
 	{
 	  std::cout << "Truth (lab) : " <<truthParticle->Id() 
@@ -70,7 +88,8 @@ void TruthEvent::setTruthParticles()
 
       // Transform Particle 4 Vectors to the Breit Frame 
       TLorentzVector *partFourVec = new TLorentzVector( truthParticle->PxPyPzE() );
-      breit.labToBreitTruth( partFourVec );
+      if(m_breitFrame)
+	breit.labToBreitTruth( partFourVec );
       
       if(m_verbosity > 0)
 	{

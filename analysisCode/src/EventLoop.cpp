@@ -15,6 +15,8 @@ int main(int argc, char **argv)
   /// Name of output root file for trees to reside
   std::string outputFile = argv[3];
 
+  int breitFrame = std::stoi(argv[4]);
+
   TFile mc(mcFile.c_str());
   TTree *mctree = (TTree*)mc.Get("EICTree");
   
@@ -43,16 +45,24 @@ int main(int argc, char **argv)
 
       mctree->GetEntry(event);
 
+      truex = truthEvent->GetTrueX();
+      truey = truthEvent->GetTrueY();
+      trueq2 = truthEvent->GetTrueQ2();
+     
       TruthEvent trueEvent(*truthEvent);
       trueEvent.setVerbosity(0);
+      trueEvent.useBreitFrame(breitFrame);
+      exchangeBoson = trueEvent.getExchangeBoson();
+
       /// Set event level cuts
       trueEvent.setMinQ2(16);
       trueEvent.setMinY(0.01);
       trueEvent.setMaxY(0.95);
       trueEvent.setMinX(0.00001);
       /// Check the cuts
-      if(!trueEvent.passCuts())
+      if(!trueEvent.passCuts()){
 	continue;
+      }
 
       trueEvent.processEvent();
 
@@ -60,12 +70,12 @@ int main(int argc, char **argv)
       PseudoJetVec fjtruthR1SDJets = trueEvent.getTruthSoftDropJets(fjtruthR1Jets, R1sd);
       if(fjtruthR1Jets.size() == 0)
 	{
-	  std::cout<<"no truth jets"<<std::endl;
 	  continue;
 	}
 
       SmearedEvent smearedEvent(*truthEvent, *smearEvent);
-      smearedEvent.setVerbosity(0);
+      smearedEvent.setVerbosity(0);     
+      smearedEvent.useBreitFrame(breitFrame);
       smearedEvent.processEvent();
 
       PseudoJetVec fjrecoR1Jets = smearedEvent.getRecoJets(cs, R1jetdef);
@@ -107,7 +117,10 @@ void setupJetTree(TTree *tree)
   jetTree->Branch("recoR1Jets", &recoR1Jets);
   jetTree->Branch("recoR1SDJets", &recoR1SDJets);
   jetTree->Branch("matchedR1Jets", &matchedR1Jets);
-
+  jetTree->Branch("exchangeBoson", &exchangeBoson);
+  jetTree->Branch("truex",&truex,"truex/D");
+  jetTree->Branch("truey",&truey,"truey/D");
+  jetTree->Branch("trueq2",&trueq2,"trueq2/D");
 
   return;
 }

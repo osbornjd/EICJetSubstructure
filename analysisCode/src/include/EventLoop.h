@@ -38,7 +38,8 @@ void setupJetTree(TTree *tree);
 JetConstVec convertToTLorentzVectors(PseudoJetVec pseudoJets);
 
 JetConstVec truthR1Jets, recoR1Jets, recoR1SDJets;
-
+double truex, truey, trueq2;
+TLorentzVector exchangeBoson;
 std::vector<std::vector<JetConstPair>> matchedR1Jets;
 
 fastjet::ClusterSequence *cs, *truthcs;

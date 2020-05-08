@@ -37,12 +37,13 @@ class TruthEvent {
   PseudoJetVec getTruthSoftDropJets(PseudoJetVec recoJets, 
 				   SoftDropJetDef sdJetDef);
 
-
+  void useBreitFrame(bool yesorno) { m_breitFrame = yesorno; }
   void setMinQ2(double q2) { m_minq2 = q2; }
   void setMinY(double y) {m_minY = y; }
   void setMaxY(double y) {m_maxY = y; }
   void setMinX(double x) {m_minX = x; }
   bool passCuts();
+  TLorentzVector getExchangeBoson();
 
  private:
 
@@ -50,6 +51,7 @@ class TruthEvent {
   double m_minY;
   double m_maxY;
   double m_minX;
+  bool m_breitFrame;
 
   erhic::EventPythia *m_truthEvent;
 
