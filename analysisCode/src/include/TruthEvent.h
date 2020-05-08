@@ -38,7 +38,19 @@ class TruthEvent {
 				   SoftDropJetDef sdJetDef);
 
 
+  void setMinQ2(double q2) { m_minq2 = q2; }
+  void setMinY(double y) {m_minY = y; }
+  void setMaxY(double y) {m_maxY = y; }
+  void setMinX(double x) {m_minX = x; }
+  bool passCuts();
+
  private:
+
+  double m_minq2;
+  double m_minY;
+  double m_maxY;
+  double m_minX;
+
   erhic::EventPythia *m_truthEvent;
 
   const erhic::ParticleMC *m_scatLepton;
