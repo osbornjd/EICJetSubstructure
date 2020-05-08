@@ -44,7 +44,7 @@ EventLoop: $(MODULES)
 	@echo "linking done"
 
 clean:
-	@rm -rf $(OBJS) $(PROGRAM) src/*.o EventLoop
+	@rm -rf $(OBJS) $(PROGRAM) src/*.o EventLoop src/fastJetLinker_*.*
 
 
 #------------------------------------------------------------------------
