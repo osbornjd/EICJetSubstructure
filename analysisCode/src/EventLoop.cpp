@@ -15,6 +15,8 @@ int main(int argc, char **argv)
   /// Name of output root file for trees to reside
   std::string outputFile = argv[3];
 
+  int breitFrame = std::stoi(argv[4]);
+
   TFile mc(mcFile.c_str());
   TTree *mctree = (TTree*)mc.Get("EICTree");
   
@@ -45,6 +47,7 @@ int main(int argc, char **argv)
 
       TruthEvent trueEvent(*truthEvent);
       trueEvent.setVerbosity(0);
+      trueEvent.useBreitFrame(breitFrame);
       /// Set event level cuts
       trueEvent.setMinQ2(16);
       trueEvent.setMinY(0.01);
@@ -65,7 +68,8 @@ int main(int argc, char **argv)
 	}
 
       SmearedEvent smearedEvent(*truthEvent, *smearEvent);
-      smearedEvent.setVerbosity(0);
+      smearedEvent.setVerbosity(0);     
+      smearedEvent.useBreitFrame(breitFrame);
       smearedEvent.processEvent();
 
       PseudoJetVec fjrecoR1Jets = smearedEvent.getRecoJets(cs, R1jetdef);

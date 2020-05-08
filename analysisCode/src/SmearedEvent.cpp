@@ -27,8 +27,9 @@ void SmearedEvent::setScatteredLepton()
 
 void SmearedEvent::setSmearedParticles()
 {
-
+  double epsilon = 1e-7;
   BreitFrame breit(*m_truthEvent, *m_smearEvent);
+
   for(int part = 0; part < m_smearEvent->GetNTracks(); ++part)
     {
       /// Skip the beam
@@ -41,15 +42,24 @@ void SmearedEvent::setSmearedParticles()
       /// only want final state particles
       if(truthParticle->GetStatus() != 1)
 	continue;
+      /// only particles that could nominally be in the detector
+      if(fabs(truthParticle->GetEta()) > 3.5)
+	continue;
 
       /// If truth particle wasn't smeared (e.g. out of acceptance), skip
-      if(particle == NULL || particle->GetE() == 0)
+      if(particle == NULL || 
+	 (fabs(particle->GetE()) <= epsilon && fabs(particle->GetP()) <= epsilon))
 	continue;
       
-      /// Skip the scattered electron, since it is special
+      /// Skip the scattered electron, since it is special (nd we don't want it in jet finding, anyway)
       if(particle->GetE() == m_scatLepton->GetE())
 	continue;
       
+      double px = particle->GetPx();
+      double py = particle->GetPy();
+      double pz = particle->GetPz();
+      double e = particle->GetE();
+
       if(m_verbosity > 2)
 	{
 	  std::cout << "Truth (lab) : "<<truthParticle->Id() 
@@ -62,10 +72,54 @@ void SmearedEvent::setSmearedParticles()
 		    << particle->GetE() << std::endl;
 	}
 
-  
-      TLorentzVector *partFourVec = new TLorentzVector( particle->PxPyPzE() );
-      breit.labToBreitSmear( partFourVec );
+      /// We need to handle edge cases from EICsmear where e.g. a track
+      /// is found but not connected to a calorimeter cluster
+      double p = particle->GetP();
+    
+      /// Track found but not connected to calo cluster
+      if(fabs(p) > epsilon && fabs(e) <= epsilon)
+	{
+	  /// The EIC framework ditches hadron/emcal info, so we need 
+	  /// to cheat and find out what kind of particle it is
+	  auto abspid = std::abs(truthParticle->GetPdgCode());
+	  bool EM = abspid == 22 || abspid == 11;
+	  if(EM)
+	    {
+	      /// must be an electron since there is a track
+	      e = std::sqrt(p * p + 0.000511 * 0.000511);
+	    } else {
+	    ///else assume a charged pion
+	    e = std::sqrt(p * p + 0.139 * 0.139);
+	  }
+				 
+	}
+      
+      /// Cal cluster only, no momentum info
+      if( fabs(p) <= epsilon && fabs(e) > epsilon)
+	{
+	  /// again, cheat to figure out whether emcal or hcal
+	  auto abspid = std::abs(truthParticle->GetPdgCode());
+	  bool EM = abspid == 22 || abspid == 11;
+	  if(EM){
+	    /// assume m =0 since electron mass is so small
+	    p = e;	    
+	  } else {
+	    //// assume pion mass
+	    p = std::sqrt(e * e - 0.139 * 0.139);
+	  }
 
+	  auto phi = particle->GetPhi();
+	  auto theta = particle->GetTheta();
+	  px = p * sin(theta) * cos(phi);
+	  py = p * sin(theta) * sin(phi);
+	  pz = p * cos(theta);
+	}
+
+      TLorentzVector *partFourVec = new TLorentzVector();
+      partFourVec->SetPxPyPzE(px,py,pz,e);
+
+      if(m_breitFrame)
+	breit.labToBreitSmear( partFourVec );
 
       if(m_verbosity > 0)
 	{
@@ -73,7 +127,6 @@ void SmearedEvent::setSmearedParticles()
 		    << partFourVec->Py() << " " << partFourVec->Pz()
 		    << " " << partFourVec->E() << std::endl;		  
 	}
-
 
       m_particles.push_back(fastjet::PseudoJet(partFourVec->Px(),
 					       partFourVec->Py(),

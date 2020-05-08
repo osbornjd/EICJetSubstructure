@@ -41,14 +41,14 @@ class SmearedEvent {
   std::vector<PseudoJetVec> matchTruthRecoJets(PseudoJetVec truthjets, 
 					       PseudoJetVec recojets);
 
-
+  void useBreitFrame(bool yesorno) { m_breitFrame = yesorno; }
  private:
   /// Need truth event for identifying only final state particles
   erhic::EventPythia *m_truthEvent;
   Smear::Event *m_smearEvent;
 
   const Smear::ParticleMCS *m_scatLepton;
-
+  bool m_breitFrame;
   std::vector<PseudoJetVec> m_matchedJets;
   PseudoJetVec m_particles;
 
