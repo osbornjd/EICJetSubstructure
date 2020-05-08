@@ -45,6 +45,15 @@ int main(int argc, char **argv)
 
       TruthEvent trueEvent(*truthEvent);
       trueEvent.setVerbosity(0);
+      /// Set event level cuts
+      trueEvent.setMinQ2(16);
+      trueEvent.setMinY(0.01);
+      trueEvent.setMaxY(0.95);
+      trueEvent.setMinX(0.00001);
+      /// Check the cuts
+      if(!trueEvent.passCuts())
+	continue;
+
       trueEvent.processEvent();
 
       PseudoJetVec fjtruthR1Jets = trueEvent.getTruthJets(truthcs, R1jetdef);

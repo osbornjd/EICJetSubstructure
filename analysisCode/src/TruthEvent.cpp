@@ -15,7 +15,20 @@ void TruthEvent::processEvent()
 
 }
 
-
+bool TruthEvent::passCuts()
+{
+  double y = m_truthEvent->GetTrueY();
+  double x = m_truthEvent->GetTrueX();
+  double q2 = m_truthEvent->GetTrueQ2();
+  
+  if(m_verbosity > 3)
+    {
+      std::cout << "Truth x, q2, and y: " << x << "," << q2
+		<< "," << y << std::endl;
+    }
+  
+  return x > m_minX && y > m_minY && y < m_maxY && q2 > m_minq2;
+}
 void TruthEvent::setScatteredLepton()
 {
   m_scatLepton = m_truthEvent->ScatteredLepton();
