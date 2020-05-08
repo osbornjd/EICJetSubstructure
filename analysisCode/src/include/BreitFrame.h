@@ -4,6 +4,7 @@
 #include <eicsmear/erhic/EventPythia.h>
 #include <eicsmear/smear/EventS.h>
 
+#include <iostream>
 
 class BreitFrame {
   
