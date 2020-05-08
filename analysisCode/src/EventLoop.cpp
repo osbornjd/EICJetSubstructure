@@ -14,7 +14,7 @@ int main(int argc, char **argv)
   std::string smearedFile = argv[2];
   /// Name of output root file for trees to reside
   std::string outputFile = argv[3];
-
+  /// int whether or not to use breit frame or lab frame. 0 = lab, 1 = breit
   int breitFrame = std::stoi(argv[4]);
 
   TFile mc(mcFile.c_str());
@@ -25,11 +25,6 @@ int main(int argc, char **argv)
 
   setupJetTree(jetTree);
 
-  JetDef R1jetdef(fastjet::antikt_algorithm, 1.0);
-  R1jetdef.setMinJetPt(2.);
-  R1jetdef.setMaxJetRapidity(4);
-  SoftDropJetDef R1sd(0.01, 2, R1jetdef.getR());
-  
   mctree->AddFriend("Smeared", smearedFile.c_str());
   erhic::EventPythia* truthEvent(NULL);
   Smear::Event* smearEvent(NULL);
@@ -37,10 +32,16 @@ int main(int argc, char **argv)
   mctree->SetBranchAddress("event", &truthEvent);
   mctree->SetBranchAddress("eventS", &smearEvent);
 
+  JetDef R1jetdef(fastjet::antikt_algorithm, 1.0);
+  R1jetdef.setMinJetPt(2.);
+  R1jetdef.setMaxJetRapidity(4);
+  SoftDropJetDef R1sd(0.01, 2, R1jetdef.getR());
+  
+
   std::cout<<"begin event loop"<<std::endl;
   for(int event = 0; event < mctree->GetEntries(); ++event)
     {
-      if(event % 10 == 0)
+      if(event % 1000 == 0)
 	std::cout<<"Processed " << event << " events" << std::endl;
 
       mctree->GetEntry(event);
@@ -81,21 +82,18 @@ int main(int argc, char **argv)
       PseudoJetVec fjrecoR1Jets = smearedEvent.getRecoJets(cs, R1jetdef);
       std::vector<PseudoJetVec> fjmatchedR1Jets = 
       	smearedEvent.matchTruthRecoJets(fjtruthR1Jets, fjrecoR1Jets);
+
       PseudoJetVec fjrecoR1SDJets = 
 	smearedEvent.getRecoSoftDropJets(fjrecoR1Jets, R1sd);
+      std::vector<PseudoJetVec> fjmatchedR1SDJets = 
+	smearedEvent.matchTruthRecoJets(fjtruthR1SDJets, fjrecoR1SDJets);
 
       truthR1Jets  = convertToTLorentzVectors(fjtruthR1Jets);
       recoR1Jets   = convertToTLorentzVectors(fjrecoR1Jets);
       recoR1SDJets = convertToTLorentzVectors(fjrecoR1SDJets);
       
-      
-      for(int i=0; i<fjmatchedR1Jets.size(); i++)
-	{
-	  PseudoJetVec pair = fjmatchedR1Jets.at(i);
-	  JetConstVec tlpair = convertToTLorentzVectors(pair);
-	  
-	  matchedR1Jets.push_back(tlpair);
-	}
+      matchedR1Jets = convertMatchedJetVec(fjmatchedR1Jets);
+      matchedR1SDJets = convertMatchedJetVec(fjmatchedR1SDJets);
       
       jetTree->Fill();
     }
@@ -109,6 +107,19 @@ int main(int argc, char **argv)
 
 }
 
+std::vector<std::vector<JetConstPair>> convertMatchedJetVec(std::vector<PseudoJetVec> vec)
+{
+  std::vector<std::vector<JetConstPair>> matchedJets;
+  for(int i = 0; i < vec.size(); i++)
+    {
+      PseudoJetVec pair = vec.at(i);
+      JetConstVec TLpair = convertToTLorentzVectors(pair);
+
+      matchedJets.push_back(TLpair);
+    }
+
+  return matchedJets;
+}
 
 void setupJetTree(TTree *tree)
 {
@@ -117,6 +128,7 @@ void setupJetTree(TTree *tree)
   jetTree->Branch("recoR1Jets", &recoR1Jets);
   jetTree->Branch("recoR1SDJets", &recoR1SDJets);
   jetTree->Branch("matchedR1Jets", &matchedR1Jets);
+  jetTree->Branch("matchedR1SDJets", &matchedR1SDJets);
   jetTree->Branch("exchangeBoson", &exchangeBoson);
   jetTree->Branch("truex",&truex,"truex/D");
   jetTree->Branch("truey",&truey,"truey/D");
