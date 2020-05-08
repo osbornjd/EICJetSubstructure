@@ -46,6 +46,7 @@ void TruthEvent::setTruthParticles()
       /// Skip the scattered electron, since it is special
       if(truthParticle->GetE() == m_scatLepton->GetE())
 	continue;
+
       if(m_verbosity > 2)
 	{
 	  std::cout << "Truth (lab) : " <<truthParticle->Id() 

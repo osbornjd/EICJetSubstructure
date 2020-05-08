@@ -49,6 +49,7 @@ void SmearedEvent::setSmearedParticles()
       /// Skip the scattered electron, since it is special
       if(particle->GetE() == m_scatLepton->GetE())
 	continue;
+      
       if(m_verbosity > 2)
 	{
 	  std::cout << "Truth (lab) : "<<truthParticle->Id() 
@@ -61,21 +62,13 @@ void SmearedEvent::setSmearedParticles()
 		    << particle->GetE() << std::endl;
 	}
 
-      // Transform Particle 4 Vectors to the Breit Frame 
-      TLorentzVector *truthPartFourVec = new TLorentzVector( truthParticle->PxPyPzE() );
-      breit.labToBreitTruth( truthPartFourVec );
-
+  
       TLorentzVector *partFourVec = new TLorentzVector( particle->PxPyPzE() );
-      breit.labToBreitTruth( partFourVec );
+      breit.labToBreitSmear( partFourVec );
 
 
       if(m_verbosity > 0)
 	{
-	  std::cout << "Truth : " <<truthParticle->Id() 
-		    << " " <<truthPartFourVec->Px() << " " 
-		    << truthPartFourVec->Py() << " " << truthPartFourVec->Pz()
-		    << " " << truthPartFourVec->E() << std::endl;
-
 	  std::cout << "Smeared : " <<partFourVec->Px() << " " 
 		    << partFourVec->Py() << " " << partFourVec->Pz()
 		    << " " << partFourVec->E() << std::endl;		  

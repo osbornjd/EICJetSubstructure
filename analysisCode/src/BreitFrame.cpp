@@ -18,9 +18,13 @@ void BreitFrame::labToBreitTruth( TLorentzVector *l )
 
 void BreitFrame::labToBreitSmear( TLorentzVector *l )
 {
+  TLorentzVector lprime(m_smearEvent->ScatteredLepton()->Get4Vector());
+  TLorentzVector lo(m_smearEvent->BeamLepton()->Get4Vector());
 
-  TLorentzVector q = (m_smearEvent->ScatteredLepton()->PxPyPzE() - m_smearEvent->BeamLepton()->PxPyPzE() );
+  TLorentzVector q = lo - lprime;
+
   TLorentzVector P = m_smearEvent->BeamHadron()->PxPyPzE();
+
   double E_breit =  2*m_smearEvent->GetX()*P.E() + q.E();
   TVector3 beta(  2*m_smearEvent->GetX()*P.Vect() + q.Vect() );
   beta *= 1/E_breit;
