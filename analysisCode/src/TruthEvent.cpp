@@ -15,6 +15,20 @@ void TruthEvent::processEvent()
 
 }
 
+TLorentzVector TruthEvent::getExchangeBoson()
+{
+  TLorentzVector *vector = new TLorentzVector( m_truthEvent->ExchangeBoson()->Get4Vector());
+  
+  if(m_breitFrame){
+    
+    BreitFrame breit(*m_truthEvent);
+    breit.labToBreitTruth( vector );
+    
+  }
+    
+  return *vector;
+
+}
 bool TruthEvent::passCuts()
 {
   double y = m_truthEvent->GetTrueY();

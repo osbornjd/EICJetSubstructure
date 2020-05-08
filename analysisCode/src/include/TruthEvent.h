@@ -43,6 +43,7 @@ class TruthEvent {
   void setMaxY(double y) {m_maxY = y; }
   void setMinX(double x) {m_minX = x; }
   bool passCuts();
+  TLorentzVector getExchangeBoson();
 
  private:
 

@@ -91,7 +91,6 @@ void SmearedEvent::setSmearedParticles()
 	    ///else assume a charged pion
 	    e = std::sqrt(p * p + 0.139 * 0.139);
 	  }
-				 
 	}
       
       /// Cal cluster only, no momentum info
@@ -101,11 +100,11 @@ void SmearedEvent::setSmearedParticles()
 	  auto abspid = std::abs(truthParticle->GetPdgCode());
 	  bool EM = abspid == 22 || abspid == 11;
 	  if(EM){
-	    /// assume m =0 since electron mass is so small
+	    /// assume m = 0 since electron mass is so small
 	    p = e;	    
 	  } else {
-	    //// assume pion mass
-	    p = std::sqrt(e * e - 0.139 * 0.139);
+	    //// assume neutron mass
+	    p = std::sqrt(e * e -0.939 * 0.939);
 	  }
 
 	  auto phi = particle->GetPhi();
@@ -113,6 +112,13 @@ void SmearedEvent::setSmearedParticles()
 	  px = p * sin(theta) * cos(phi);
 	  py = p * sin(theta) * sin(phi);
 	  pz = p * cos(theta);
+
+	}
+
+      if(m_verbosity > 3)
+	{
+	  std::cout<<"particle to be smeared "<<std::endl;
+	  std::cout<<"("<<px<<","<<py<<","<<pz<<","<<e<<")"<<std::endl;
 	}
 
       TLorentzVector *partFourVec = new TLorentzVector();
