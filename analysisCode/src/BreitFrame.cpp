@@ -29,7 +29,7 @@ void BreitFrame::labToBreitSmear( TLorentzVector *l )
   beta *= 1/E_breit;
   TVector3 z_axis(0,0,-1);
   l->Boost(-beta);
- 
+  q.Boost(-beta);
   // Double check signage or if inverse rotation is needed... 
   l->Rotate(q.Vect().Angle(z_axis), q.Vect().Cross(z_axis).Unit());
 
