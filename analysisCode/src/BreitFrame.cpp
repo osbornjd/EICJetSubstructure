@@ -24,7 +24,6 @@ void BreitFrame::labToBreitSmear( TLorentzVector *l )
   TLorentzVector q = lo - lprime;
 
   TLorentzVector P = m_smearEvent->BeamHadron()->PxPyPzE();
-
   double E_breit =  2*m_smearEvent->GetX()*P.E() + q.E();
   TVector3 beta(  2*m_smearEvent->GetX()*P.Vect() + q.Vect() );
   beta *= 1/E_breit;

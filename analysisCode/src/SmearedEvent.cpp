@@ -67,14 +67,14 @@ void SmearedEvent::setSmearedParticles()
 		    << truthParticle->GetPy() << " " << truthParticle->GetPz()
 		    << " " << truthParticle->GetE() << std::endl;
 	  
-	  std::cout << "Smeared (lab) : " << particle->GetPx() << " " 
-		    << particle->GetPy() << " " << particle->GetPz() << " " 
-		    << particle->GetE() << std::endl;
+	  std::cout << "Smeared (lab) : " << px << " " 
+		    << py << " " << pz << " " 
+		    << e << std::endl;
 	}
 
       /// We need to handle edge cases from EICsmear where e.g. a track
       /// is found but not connected to a calorimeter cluster
-      double p = particle->GetP();
+      double p = sqrt(px * px + py * py + pz * pz);
     
       /// Track found but not connected to calo cluster
       if(fabs(p) > epsilon && fabs(e) <= epsilon)
@@ -103,21 +103,26 @@ void SmearedEvent::setSmearedParticles()
 	    /// assume m = 0 since electron mass is so small
 	    p = e;	    
 	  } else {
-	    //// assume neutron mass
-	    p = std::sqrt(e * e -0.939 * 0.939);
+	    /// check truth mass
+	    double m = truthParticle->GetM();
+	    p = std::sqrt(e * e - m * m);
+	    /// if particle was smeared such that e*e-m*m is negative, just set to e
+	    if(p != p)
+	      p = e;
 	  }
 
 	  auto phi = particle->GetPhi();
 	  auto theta = particle->GetTheta();
+	
 	  px = p * sin(theta) * cos(phi);
 	  py = p * sin(theta) * sin(phi);
 	  pz = p * cos(theta);
-
+	  
 	}
 
       if(m_verbosity > 3)
 	{
-	  std::cout<<"particle to be smeared "<<std::endl;
+	  std::cout<<"particle to be boosted "<<std::endl;
 	  std::cout<<"("<<px<<","<<py<<","<<pz<<","<<e<<")"<<std::endl;
 	}
 
@@ -146,10 +151,26 @@ void SmearedEvent::setSmearedParticles()
 PseudoJetVec SmearedEvent::getRecoJets(fastjet::ClusterSequence *cs, 
 				       JetDef jetDef)
 {
+  PseudoJetVec allRecoJets;
+
+  /// Check that there weren't any weird EICSmear edge cases
+  for(int i = 0; i< m_particles.size(); i++)
+    {
+      double px = m_particles.at(i).px();
+      double py = m_particles.at(i).py();
+      double pz = m_particles.at(i).pz();
+      double e = m_particles.at(i).e();
+      /// If any of the particles have nan components, the clustering will fail
+      /// so we don't want this event anyway because it indicates an edge 
+      /// case in EICsmear, so just return an empty vector
+      if(px != px || py != py || pz != pz || e!=e)
+	return allRecoJets;
+    }
+
   /// Create the cluster sequence
   cs = new fastjet::ClusterSequence(m_particles, jetDef.getJetDef());
   
-  PseudoJetVec allRecoJets = fastjet::sorted_by_pt(cs->inclusive_jets());
+  allRecoJets = fastjet::sorted_by_pt(cs->inclusive_jets());
 
   if(m_verbosity > 1)
     {
