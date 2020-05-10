@@ -24,13 +24,12 @@ void BreitFrame::labToBreitSmear( TLorentzVector *l )
   TLorentzVector q = lo - lprime;
 
   TLorentzVector P = m_smearEvent->BeamHadron()->PxPyPzE();
-
   double E_breit =  2*m_smearEvent->GetX()*P.E() + q.E();
   TVector3 beta(  2*m_smearEvent->GetX()*P.Vect() + q.Vect() );
   beta *= 1/E_breit;
   TVector3 z_axis(0,0,-1);
   l->Boost(-beta);
-  q.Boost(-beta);
+ 
   // Double check signage or if inverse rotation is needed... 
   l->Rotate(q.Vect().Angle(z_axis), q.Vect().Cross(z_axis).Unit());
 
