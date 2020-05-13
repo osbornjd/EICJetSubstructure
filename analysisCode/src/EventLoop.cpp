@@ -41,7 +41,7 @@ int main(int argc, char **argv)
   std::cout<<"begin event loop"<<std::endl;
   for(int event = 0; event < mctree->GetEntries(); ++event)
     {
-      if(event % 1000 == 0)
+      if(event % 20000 == 0)
 	std::cout<<"Processed " << event << " events" << std::endl;
 
       mctree->GetEntry(event);
@@ -78,7 +78,10 @@ int main(int argc, char **argv)
       smearedEvent.setVerbosity(0);     
       smearedEvent.useBreitFrame(breitFrame);
       smearedEvent.processEvent();
-
+      recx = smearedEvent.getSmearedX();
+      recy = smearedEvent.getSmearedY();
+      recq2 = smearedEvent.getSmearedQ2();
+      
       PseudoJetVec fjrecoR1Jets = smearedEvent.getRecoJets(cs, R1jetdef);
       std::vector<PseudoJetVec> fjmatchedR1Jets = 
       	smearedEvent.matchTruthRecoJets(fjtruthR1Jets, fjrecoR1Jets);
@@ -133,6 +136,9 @@ void setupJetTree(TTree *tree)
   jetTree->Branch("truex",&truex,"truex/D");
   jetTree->Branch("truey",&truey,"truey/D");
   jetTree->Branch("trueq2",&trueq2,"trueq2/D");
+  jetTree->Branch("recx",&recx,"recx/D");
+  jetTree->Branch("recy",&recy,"recy/D");
+  jetTree->Branch("recq2",&recq2,"recq2/D");
 
   return;
 }
