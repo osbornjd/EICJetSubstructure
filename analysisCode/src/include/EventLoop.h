@@ -26,7 +26,7 @@
 
 using PseudoJetVec = std::vector<fastjet::PseudoJet>;
 using TLorentzVectorVec = std::vector<TLorentzVector>;
-/// A JetConstPAir is a pair of a jet 4 vector and vector of jet constituents
+/// A JetConstPair is a pair of a jet 4 vector and vector of jet constituents
 using JetConstPair = std::pair<TLorentzVector, std::vector<TLorentzVector>>;
 using JetConstVec = std::vector<JetConstPair>;
 

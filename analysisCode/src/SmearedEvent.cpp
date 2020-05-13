@@ -46,7 +46,6 @@ void SmearedEvent::setScatteredLepton()
   m_nu = init.E() - scat.E();
   m_x = m_q2 / (2. * p.Dot(q));
   m_y = (q.Dot(p)) / (init.Dot(p));
-  
 
 }
 
