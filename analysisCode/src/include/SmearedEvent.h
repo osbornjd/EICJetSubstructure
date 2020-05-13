@@ -33,6 +33,14 @@ class SmearedEvent {
   void processEvent();
   void setVerbosity(int verb) { m_verbosity = verb; }
 
+  double getSmearedX() {return m_x;}
+  double getSmearedQ2() {return m_q2;}
+  double getSmearedY() {return m_y;}
+  double getSmearedNu() {return m_nu;}
+
+  void setScatteredLepton();
+  void setSmearedParticles();
+  
   PseudoJetVec getRecoJets(fastjet::ClusterSequence *cs,
 			   JetDef jetDef);
   PseudoJetVec getRecoSoftDropJets(PseudoJetVec recoJets, 
@@ -50,13 +58,12 @@ class SmearedEvent {
   const Smear::ParticleMCS *m_scatLepton;
   bool m_breitFrame;
   std::vector<PseudoJetVec> m_matchedJets;
+  
   PseudoJetVec m_particles;
-
+  double m_x, m_y, m_q2, m_nu;
   int m_verbosity = 0;
 
-  void setScatteredLepton();
-  void setSmearedParticles();
-  
+ 
 
 };
 

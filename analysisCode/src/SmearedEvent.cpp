@@ -13,7 +13,6 @@ void SmearedEvent::processEvent()
   setSmearedParticles();
 }
 
-
 void SmearedEvent::setScatteredLepton()
 {
   m_scatLepton = m_smearEvent->ScatteredLepton();
@@ -23,6 +22,32 @@ void SmearedEvent::setScatteredLepton()
 	       << m_scatLepton->GetPy() << " " << m_scatLepton->GetPz()
 	       << " " << m_scatLepton->GetE() << std::endl;
     }
+  
+  /// calculate q2, x, y
+  TLorentzVector scat, init, q, p;
+  p.SetPxPyPzE(m_truthEvent->BeamHadron()->GetPx(),
+	       m_truthEvent->BeamHadron()->GetPy(),
+	       m_truthEvent->BeamHadron()->GetPz(),
+	       m_truthEvent->BeamHadron()->GetE());
+  
+  scat.SetPxPyPzE(m_scatLepton->GetPx(),
+		  m_scatLepton->GetPy(),
+		  m_scatLepton->GetPz(),
+		  m_scatLepton->GetE());
+  
+  init.SetPxPyPzE(m_truthEvent->BeamLepton()->GetPx(),
+		  m_truthEvent->BeamLepton()->GetPy(),
+		  m_truthEvent->BeamLepton()->GetPz(),
+		  m_truthEvent->BeamLepton()->GetE());
+
+  q = init - scat;
+
+  m_q2 = -1 * q.Mag2();
+  m_nu = init.E() - scat.E();
+  m_x = m_q2 / (2. * p.Dot(q));
+  m_y = (q.Dot(p)) / (init.Dot(p));
+  
+
 }
 
 void SmearedEvent::setSmearedParticles()
