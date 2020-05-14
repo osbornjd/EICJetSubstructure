@@ -77,6 +77,8 @@ void TruthEvent::setTruthParticles()
       /// Check that eta is within nominal detector acceptance
       if(fabs(truthParticle->GetEta()) > 3.5)
 	continue;
+      if(truthParticle->GetPt() < 0.25)
+	continue;
 
       if(m_verbosity > 2)
 	{

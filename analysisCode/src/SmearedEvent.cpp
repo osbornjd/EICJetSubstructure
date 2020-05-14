@@ -150,6 +150,11 @@ void SmearedEvent::setSmearedParticles()
 	  std::cout<<"("<<px<<","<<py<<","<<pz<<","<<e<<")"<<std::endl;
 	}
 
+
+      // Check if it passes some nominal pT cut
+      if(sqrt(px * px + py * py) < 0.25)
+	continue;
+
       TLorentzVector *partFourVec = new TLorentzVector();
       partFourVec->SetPxPyPzE(px,py,pz,e);
 
