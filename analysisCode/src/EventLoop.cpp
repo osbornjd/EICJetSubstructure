@@ -78,9 +78,10 @@ int main(int argc, char **argv)
       smearedEvent.setVerbosity(0);     
       smearedEvent.useBreitFrame(breitFrame);
       smearedEvent.processEvent();
-      recx = smearedEvent.getSmearedX();
-      recy = smearedEvent.getSmearedY();
-      recq2 = smearedEvent.getSmearedQ2();
+      recx = smearEvent->GetX();
+      recy = smearEvent->GetY();
+      recq2 = smearEvent->GetQ2();
+      smearExchangeBoson = smearedEvent.getExchangeBoson();
       
       PseudoJetVec fjrecoR1Jets = smearedEvent.getRecoJets(cs, R1jetdef);
       std::vector<PseudoJetVec> fjmatchedR1Jets = 
@@ -133,6 +134,7 @@ void setupJetTree(TTree *tree)
   jetTree->Branch("matchedR1Jets", &matchedR1Jets);
   jetTree->Branch("matchedR1SDJets", &matchedR1SDJets);
   jetTree->Branch("exchangeBoson", &exchangeBoson);
+  jetTree->Branch("smearExchangeBoson", &smearExchangeBoson);
   jetTree->Branch("truex",&truex,"truex/D");
   jetTree->Branch("truey",&truey,"truey/D");
   jetTree->Branch("trueq2",&trueq2,"trueq2/D");

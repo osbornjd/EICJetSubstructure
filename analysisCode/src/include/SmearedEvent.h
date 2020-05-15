@@ -32,11 +32,8 @@ class SmearedEvent {
   /// Main workhorse function, which is called from event loop
   void processEvent();
   void setVerbosity(int verb) { m_verbosity = verb; }
+  TLorentzVector getExchangeBoson();
 
-  double getSmearedX() {return m_x;}
-  double getSmearedQ2() {return m_q2;}
-  double getSmearedY() {return m_y;}
-  double getSmearedNu() {return m_nu;}
 
   void setScatteredLepton();
   void setSmearedParticles();
@@ -60,7 +57,6 @@ class SmearedEvent {
   std::vector<PseudoJetVec> m_matchedJets;
   
   PseudoJetVec m_particles;
-  double m_x, m_y, m_q2, m_nu;
   int m_verbosity = 0;
 
  

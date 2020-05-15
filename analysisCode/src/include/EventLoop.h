@@ -42,7 +42,7 @@ std::vector<std::vector<JetConstPair>> convertMatchedJetVec(std::vector<PseudoJe
 JetConstVec truthR1Jets, recoR1Jets, recoR1SDJets;
 double truex, truey, trueq2;
 double recx, recy, recq2;
-TLorentzVector exchangeBoson;
+TLorentzVector exchangeBoson, smearExchangeBoson;
 
 /// This structure is a vector of vector of matched truth-reco jets. 
 /// Each entry of std::vector<JetConstPair> is length 2 - first the truth
