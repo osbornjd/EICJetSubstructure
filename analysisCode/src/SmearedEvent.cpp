@@ -46,7 +46,6 @@ void SmearedEvent::setScatteredLepton()
   m_nu = init.E() - scat.E();
   m_x = m_q2 / (2. * p.Dot(q));
   m_y = (q.Dot(p)) / (init.Dot(p));
-  
 
 }
 
@@ -150,6 +149,11 @@ void SmearedEvent::setSmearedParticles()
 	  std::cout<<"particle to be boosted "<<std::endl;
 	  std::cout<<"("<<px<<","<<py<<","<<pz<<","<<e<<")"<<std::endl;
 	}
+
+
+      // Check if it passes some nominal pT cut
+      if(sqrt(px * px + py * py) < 0.25)
+	continue;
 
       TLorentzVector *partFourVec = new TLorentzVector();
       partFourVec->SetPxPyPzE(px,py,pz,e);
