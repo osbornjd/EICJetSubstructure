@@ -22,33 +22,25 @@ void SmearedEvent::setScatteredLepton()
 	       << m_scatLepton->GetPy() << " " << m_scatLepton->GetPz()
 	       << " " << m_scatLepton->GetE() << std::endl;
     }
-  
-  /// calculate q2, x, y
-  TLorentzVector scat, init, q, p;
-  p.SetPxPyPzE(m_truthEvent->BeamHadron()->GetPx(),
-	       m_truthEvent->BeamHadron()->GetPy(),
-	       m_truthEvent->BeamHadron()->GetPz(),
-	       m_truthEvent->BeamHadron()->GetE());
-  
-  scat.SetPxPyPzE(m_scatLepton->GetPx(),
-		  m_scatLepton->GetPy(),
-		  m_scatLepton->GetPz(),
-		  m_scatLepton->GetE());
-  
-  init.SetPxPyPzE(m_truthEvent->BeamLepton()->GetPx(),
-		  m_truthEvent->BeamLepton()->GetPy(),
-		  m_truthEvent->BeamLepton()->GetPz(),
-		  m_truthEvent->BeamLepton()->GetE());
-
-  q = init - scat;
-
-  m_q2 = -1 * q.Mag2();
-  m_nu = init.E() - scat.E();
-  m_x = m_q2 / (2. * p.Dot(q));
-  m_y = (q.Dot(p)) / (init.Dot(p));
-
 }
 
+TLorentzVector SmearedEvent::getExchangeBoson()
+{
+  //TLorentzVector *init = new TLorentzVector( m_smearEvent->BeamLepton()->Get4Vector());
+  //TLorentzVector *scat = new TLorentzVector( m_smearEvent->ScatteredLepton()->Get4Vector());
+  TLorentzVector init(m_smearEvent->BeamLepton()->Get4Vector());
+  TLorentzVector scat(m_smearEvent->ScatteredLepton()->Get4Vector());
+  
+  TLorentzVector exchangeBoson = init - scat;
+
+  if(m_breitFrame)
+    {
+      BreitFrame breit(*m_truthEvent, *m_smearEvent);
+      breit.labToBreitSmear(&exchangeBoson);
+    }
+  return exchangeBoson;
+
+}
 void SmearedEvent::setSmearedParticles()
 {
   double epsilon = 1e-7;
@@ -172,6 +164,11 @@ void SmearedEvent::setSmearedParticles()
 					       partFourVec->Py(),
 					       partFourVec->Pz(),
 					       partFourVec->E()));
+      /// vectors will have a one-to-one correspondance
+      m_truthParticles.push_back(fastjet::PseudoJet(truthParticle->GetPx(),
+						    truthParticle->GetPy(),
+						    truthParticle->GetPz(),
+						    truthParticle->GetE()));
     }
 
   return;
@@ -216,6 +213,26 @@ PseudoJetVec SmearedEvent::getRecoJets(fastjet::ClusterSequence *cs,
 
   return selectJets;
 
+}
+
+TLorentzPairVec SmearedEvent::getMatchedParticles()
+{
+  TLorentzPairVec pairVec;
+  for(int i = 0; i < m_particles.size(); i++)
+    {
+      fastjet::PseudoJet truth = m_truthParticles.at(i);
+      fastjet::PseudoJet reco = m_particles.at(i);
+      TLorentzVector tlTruth, tlReco;
+      tlTruth.SetPxPyPzE(truth.px(), truth.py(), truth.pz(), truth.e());
+      tlReco.SetPxPyPzE(reco.px(), reco.py(), reco.pz(), reco.e());
+
+      std::pair<TLorentzVector, TLorentzVector> pair = 
+	std::make_pair(tlTruth, tlReco);
+
+      pairVec.push_back(pair);
+    }
+
+  return pairVec;
 }
 
 PseudoJetVec SmearedEvent::getRecoSoftDropJets(PseudoJetVec recoJets, SoftDropJetDef sdJetDef)

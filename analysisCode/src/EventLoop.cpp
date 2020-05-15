@@ -78,10 +78,12 @@ int main(int argc, char **argv)
       smearedEvent.setVerbosity(0);     
       smearedEvent.useBreitFrame(breitFrame);
       smearedEvent.processEvent();
-      recx = smearedEvent.getSmearedX();
-      recy = smearedEvent.getSmearedY();
-      recq2 = smearedEvent.getSmearedQ2();
-      
+      recx = smearEvent->GetX();
+      recy = smearEvent->GetY();
+      recq2 = smearEvent->GetQ2();
+      smearExchangeBoson = smearedEvent.getExchangeBoson();
+      matchedParticles = smearedEvent.getMatchedParticles();      
+
       PseudoJetVec fjrecoR1Jets = smearedEvent.getRecoJets(cs, R1jetdef);
       std::vector<PseudoJetVec> fjmatchedR1Jets = 
       	smearedEvent.matchTruthRecoJets(fjtruthR1Jets, fjrecoR1Jets);
@@ -113,11 +115,12 @@ int main(int argc, char **argv)
 std::vector<std::vector<JetConstPair>> convertMatchedJetVec(std::vector<PseudoJetVec> vec)
 {
   std::vector<std::vector<JetConstPair>> matchedJets;
+  //num jets per event
   for(int i = 0; i < vec.size(); i++)
     {
       PseudoJetVec pair = vec.at(i);
       JetConstVec TLpair = convertToTLorentzVectors(pair);
-
+      
       matchedJets.push_back(TLpair);
     }
 
@@ -133,13 +136,14 @@ void setupJetTree(TTree *tree)
   jetTree->Branch("matchedR1Jets", &matchedR1Jets);
   jetTree->Branch("matchedR1SDJets", &matchedR1SDJets);
   jetTree->Branch("exchangeBoson", &exchangeBoson);
+  jetTree->Branch("smearExchangeBoson", &smearExchangeBoson);
   jetTree->Branch("truex",&truex,"truex/D");
   jetTree->Branch("truey",&truey,"truey/D");
   jetTree->Branch("trueq2",&trueq2,"trueq2/D");
   jetTree->Branch("recx",&recx,"recx/D");
   jetTree->Branch("recy",&recy,"recy/D");
   jetTree->Branch("recq2",&recq2,"recq2/D");
-
+  jetTree->Branch("matchedParticles",&matchedParticles);
   return;
 }
 
