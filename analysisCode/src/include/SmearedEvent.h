@@ -17,6 +17,8 @@ using PseudoJetVec = std::vector<fastjet::PseudoJet>;
 using TLorentzVectorVec = std::vector<TLorentzVector>;
 using JetConstPair = std::pair<TLorentzVector, std::vector<TLorentzVector>>;
 using JetConstVec = std::vector<JetConstPair>;
+using TLorentzPair = std::pair<TLorentzVector, TLorentzVector>;
+using TLorentzPairVec = std::vector<TLorentzPair>;
 
 class SmearedEvent {
   
@@ -37,7 +39,8 @@ class SmearedEvent {
 
   void setScatteredLepton();
   void setSmearedParticles();
-  
+  TLorentzPairVec getMatchedParticles();
+
   PseudoJetVec getRecoJets(fastjet::ClusterSequence *cs,
 			   JetDef jetDef);
   PseudoJetVec getRecoSoftDropJets(PseudoJetVec recoJets, 
@@ -47,6 +50,7 @@ class SmearedEvent {
 					       PseudoJetVec recojets);
 
   void useBreitFrame(bool yesorno) { m_breitFrame = yesorno; }
+
  private:
   /// Need truth event for identifying only final state particles
   erhic::EventPythia *m_truthEvent;
@@ -57,6 +61,7 @@ class SmearedEvent {
   std::vector<PseudoJetVec> m_matchedJets;
   
   PseudoJetVec m_particles;
+  PseudoJetVec m_truthParticles;
   int m_verbosity = 0;
 
  

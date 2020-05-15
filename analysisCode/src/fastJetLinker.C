@@ -6,4 +6,5 @@
 #pragma link C++ class std::vector<TLorentzVector>+;
 #pragma link C++ class std::vector<std::pair<TLorentzVector, std::vector<TLorentzVector>>>+;
 #pragma link C++ class std::vector<std::vector<std::pair<TLorentzVector, std::vector<TLorentzVector>>>>+;
+#pragma link C++ class std::vector<std::pair<TLorentzVector,TLorentzVector>>+;
 #endif
