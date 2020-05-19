@@ -93,12 +93,14 @@ int main(int argc, char **argv)
       std::vector<PseudoJetVec> fjmatchedR1SDJets = 
 	smearedEvent.matchTruthRecoJets(fjtruthR1SDJets, fjrecoR1SDJets);
 
-      truthR1Jets  = convertToTLorentzVectors(fjtruthR1Jets);
-      recoR1Jets   = convertToTLorentzVectors(fjrecoR1Jets);
-      recoR1SDJets = convertToTLorentzVectors(fjrecoR1SDJets);
-      
-      matchedR1Jets = convertMatchedJetVec(fjmatchedR1Jets);
-      matchedR1SDJets = convertMatchedJetVec(fjmatchedR1SDJets);
+      truthR1Jets  = convertToTLorentzVectors(fjtruthR1Jets, false);
+      recoR1Jets   = convertToTLorentzVectors(fjrecoR1Jets, false);
+
+      recoR1SDJets = convertToTLorentzVectors(fjrecoR1SDJets, true);
+      truthR1SDJets = convertToTLorentzVectors(fjtruthR1SDJets, true);
+
+      matchedR1Jets = convertMatchedJetVec(fjmatchedR1Jets, false);
+      matchedR1SDJets = convertMatchedJetVec(fjmatchedR1SDJets, true);
       
       jetTree->Fill();
     }
@@ -112,14 +114,14 @@ int main(int argc, char **argv)
 
 }
 
-std::vector<std::vector<JetConstPair>> convertMatchedJetVec(std::vector<PseudoJetVec> vec)
+std::vector<std::vector<JetConstPair>> convertMatchedJetVec(std::vector<PseudoJetVec> vec, bool SDJet)
 {
   std::vector<std::vector<JetConstPair>> matchedJets;
   //num jets per event
   for(int i = 0; i < vec.size(); i++)
     {
       PseudoJetVec pair = vec.at(i);
-      JetConstVec TLpair = convertToTLorentzVectors(pair);
+      JetConstVec TLpair = convertToTLorentzVectors(pair, SDJet);
       
       matchedJets.push_back(TLpair);
     }
@@ -144,11 +146,12 @@ void setupJetTree(TTree *tree)
   jetTree->Branch("recy",&recy,"recy/D");
   jetTree->Branch("recq2",&recq2,"recq2/D");
   jetTree->Branch("matchedParticles",&matchedParticles);
+  jetTree->Branch("truthR1SDJets", &truthR1SDJets);
   return;
 }
 
 
-JetConstVec convertToTLorentzVectors(PseudoJetVec pseudoJets)
+JetConstVec convertToTLorentzVectors(PseudoJetVec pseudoJets, bool SDJet)
 {
   JetConstVec jets;
 
@@ -162,10 +165,29 @@ JetConstVec convertToTLorentzVectors(PseudoJetVec pseudoJets)
 		      pseudojet.py(),
 		      pseudojet.pz(),
 		      pseudojet.e());
-      
+    
+   
+      TLorentzVectorVec tConstituents;
+      /// If it is SDJets first add the two subjets
+      if(SDJet)
+	{
+	  /// This is always size 2 since it has two subjets by definition
+	  PseudoJetVec subjets = pseudojet.pieces();
+	  TLorentzVector subjet1, subjet2;
+	  subjet1.SetPxPyPzE(subjets.at(0).px(),
+			     subjets.at(0).py(),
+			     subjets.at(0).pz(),
+			     subjets.at(0).e());
+	  subjet2.SetPxPyPzE(subjets.at(1).px(),
+			     subjets.at(1).py(),
+			     subjets.at(1).pz(),
+			     subjets.at(1).e());
+	  tConstituents.push_back(subjet1);
+	  tConstituents.push_back(subjet2);
+	}
+
       /// Get jet constituents
       PseudoJetVec constituents = pseudojet.constituents();
-      TLorentzVectorVec tConstituents;
       for(int con = 0; con < constituents.size(); con++)
 	{
 	  fastjet::PseudoJet fjConstituent = constituents.at(con);
