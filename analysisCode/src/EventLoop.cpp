@@ -174,14 +174,24 @@ JetConstVec convertToTLorentzVectors(PseudoJetVec pseudoJets, bool SDJet)
 	  /// This is always size 2 since it has two subjets by definition
 	  PseudoJetVec subjets = pseudojet.pieces();
 	  TLorentzVector subjet1, subjet2;
-	  subjet1.SetPxPyPzE(subjets.at(0).px(),
-			     subjets.at(0).py(),
-			     subjets.at(0).pz(),
-			     subjets.at(0).e());
-	  subjet2.SetPxPyPzE(subjets.at(1).px(),
-			     subjets.at(1).py(),
-			     subjets.at(1).pz(),
-			     subjets.at(1).e());
+	  if(subjets.size() != 2)
+	    {
+	      /// no grooming performed
+	      subjet1.SetPxPyPzE(-999,-999,-999,-999);
+	      subjet2.SetPxPyPzE(-999,-999,-999,-999);
+	    }
+	  else
+	    {
+	      subjet1.SetPxPyPzE(subjets.at(0).px(),
+				 subjets.at(0).py(),
+				 subjets.at(0).pz(),
+				 subjets.at(0).e());
+	      subjet2.SetPxPyPzE(subjets.at(1).px(),
+				 subjets.at(1).py(),
+				 subjets.at(1).pz(),
+				 subjets.at(1).e());
+	    }
+	  
 	  tConstituents.push_back(subjet1);
 	  tConstituents.push_back(subjet2);
 	}
