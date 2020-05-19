@@ -2,9 +2,9 @@
 #include "analyzeJets.h"
 
 
-void analyzeJets()
+void analyzeJets(std::string file)
 {
-  std::string filename = "pE275_pE18_minqsq9_breit.root";
+  std::string filename = file;
   infile = TFile::Open(filename.c_str());
 
   /// If filename contains breit
@@ -57,7 +57,10 @@ void write()
   recotruejeteta->Write();
   recotruejetp->Write();
   recotruejete->Write();
-
+  
+  truerecoz->Write();
+  truerecojt->Write();
+  truerecor->Write();
   outfile->Write();
 
   outfile->Close();
@@ -101,6 +104,9 @@ void instantiateHistos()
   recotruejetp = new TH2F("recotruejetp",";p^{jet,true} [GeV];p^{jet,reco} [GeV]", npbins, pbins, npbins, pbins);
   recotruejete = new TH2F("recotruejete",";E^{jet,true} [GeV]; E^{jet,reco} [GeV]", npbins, pbins, npbins, pbins);
 
+  truerecoz = new TH2F("truerecoz",";z_{true};z_{reco}",nzbins,zbins,nzbins,zbins);
+  truerecojt = new TH2F("truerecojt",";j_{T}^{true} [GeV];j_{T}^{reco} [GeV]",njtbins,jtbins,njtbins,jtbins);
+  truerecor = new TH2F("truerecor",";r_{true}; r_{reco}",nrbins,rbins,nrbins,rbins);
 
 }
 
@@ -182,7 +188,7 @@ void loop()
 
       float highestTruthJetPt = truthJetAnalysis(truthJets);
 
-      analyzeMatchedJets(matchedJets);
+      analyzeMatchedJets(matchedJets, matchedParticles);
 
       /// Event level kinematics
       truerecx->Fill(truex,recx);
@@ -197,7 +203,8 @@ void loop()
 
 }
 
-void analyzeMatchedJets(MatchedJets *matchedjets)
+void analyzeMatchedJets(MatchedJets *matchedjets,
+			TLorentzPairVec *matchedparticles)
 {
   for(int i = 0; i < matchedjets->size(); i++)
     {
@@ -215,6 +222,78 @@ void analyzeMatchedJets(MatchedJets *matchedjets)
       
       recotruejetp->Fill(truthJet.P(), recoJet.P());
       recotruejete->Fill(truthJet.E(), recoJet.E());
+
+      /// Match constituents up
+      for(int j = 0; j< recoConst.size(); j++)
+	{
+	  TLorentzVector recoCon = recoConst.at(j);
+	  TLorentzVector truthMatch;
+	  
+	  for(int k =0; k< matchedparticles->size(); k++)
+	    {
+	      TLorentzVector matchreco = matchedparticles->at(k).second;
+	      if(matchreco.Px() == recoCon.Px() &&
+		 matchreco.Py() == recoCon.Py() &&
+		 matchreco.Pz() == recoCon.Pz())
+		{
+		  truthMatch = matchedparticles->at(k).first;
+		}
+	    }
+
+	  bool matched = false;
+	  /// now check that the truth particle was actually in the jet
+	  for(int k = 0; k < truthConst.size(); k++)
+	    {
+	      TLorentzVector truthCon = truthConst.at(k);
+	      if(truthCon.Px() == truthMatch.Px() &&
+		 truthCon.Py() == truthMatch.Py() &&
+		 truthCon.Pz() == truthMatch.Pz())
+		{
+		  matched = true;
+		  break;
+		}
+	    }
+	  if(matched)
+	    {
+	      /// Found a matched truth constituent and it was in the truth jet
+	      ///recoCon and truthMatch
+	      ////truthJet and recoJet
+	      TVector3 truthJet3, recoJet3, recoCon3, truthMatch3;
+	      truthJet3.SetXYZ(truthJet.Px(), 
+			       truthJet.Py(), truthJet.Pz());
+	      recoJet3.SetXYZ(recoJet.Px(), 
+			      recoJet.Py(), recoJet.Pz());
+	      recoCon3.SetXYZ(recoCon.Px(), 
+			      recoCon.Py(), recoCon.Pz());
+	      truthMatch3.SetXYZ(truthMatch.Px(),
+				 truthMatch.Py(), truthMatch.Pz());
+
+	      float recoz = recoJet3.Dot(recoCon3) / (recoJet3.Mag2());
+	      float truthz = truthJet3.Dot(truthMatch3) / (truthJet3.Mag2());
+	      TVector3 truecross = truthJet3.Cross(truthMatch3);
+	      TVector3 recocross = recoJet3.Cross(recoCon3);
+	      float recojt = recocross.Mag() / recoJet3.Mag();
+	      float truejt = truecross.Mag() / truthJet3.Mag();
+	      float recodphi = checkdPhi(recoJet.Phi() - recoCon.Phi());
+	      float truedphi = checkdPhi(truthJet.Phi() - truthMatch.Phi());
+	      
+
+	      float recor = sqrt(pow(recodphi ,2) +
+				 pow(recoJet.Rapidity() - recoCon.Rapidity(), 2));
+	      float truer = sqrt(pow(truedphi ,2) +
+				 pow(truthJet.Rapidity() - truthMatch.Rapidity(),2));
+	      
+	      truerecoz->Fill(truthz, recoz);
+	      truerecojt->Fill(truejt,recojt);
+	      truerecor->Fill(truer, recor);
+	    }
+	  else
+	    {
+	      /// If a match couldn't be found, reco jet const was mistakenly
+	      /// reconstructed within jet
+	    }
+
+	}
     }
 
 }
@@ -235,6 +314,18 @@ void setupTree()
   jettree->SetBranchAddress("matchedR1Jets", &matchedJets);
   jettree->SetBranchAddress("matchedR1SDJets", &matchedSDJets);
   jettree->SetBranchAddress("exchangeBoson", &truthExchangeBoson);
+  jettree->SetBranchAddress("matchedParticles", &matchedParticles);
+  jettree->SetBranchAddress("smearedExchangeBoson", &smearedExchangeBoson);
+}
 
+float checkdPhi(float dphi)
+{
+  float newdphi = dphi;
+  if(dphi < -1 * PI)
+    newdphi += 2. * PI;
+  else if(dphi > PI)
+    newdphi -= 2. * PI;
+
+  return newdphi;
 
 }
