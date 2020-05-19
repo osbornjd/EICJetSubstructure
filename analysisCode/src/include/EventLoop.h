@@ -32,16 +32,15 @@ using TLorentzPairVec = std::vector<TLorentzPair>;
 using JetConstPair = std::pair<TLorentzVector, std::vector<TLorentzVector>>;
 using JetConstVec = std::vector<JetConstPair>;
 
-PseudoJetVec getTruthJets(fastjet::ClusterSequence *truthcs, 
-			  erhic::EventPythia *truthEvent, 
-			  JetDef jetdef);
 
 void setupJetTree(TTree *tree);
 
-JetConstVec convertToTLorentzVectors(PseudoJetVec pseudoJets);
-std::vector<std::vector<JetConstPair>> convertMatchedJetVec(std::vector<PseudoJetVec>);
+JetConstVec convertToTLorentzVectors(PseudoJetVec pseudoJets, bool SDJet);
+std::vector<std::vector<JetConstPair>> convertMatchedJetVec(std::vector<PseudoJetVec> vec, bool SDJet);
 
-JetConstVec truthR1Jets, recoR1Jets, recoR1SDJets;
+/// Note - for SDJets, the first two entries in the constituent vector, i.e.
+/// first two entries in the second of the pair list are the two subjets
+JetConstVec truthR1Jets, recoR1Jets, recoR1SDJets, truthR1SDJets;
 double truex, truey, trueq2;
 double recx, recy, recq2;
 TLorentzVector exchangeBoson, smearExchangeBoson;
