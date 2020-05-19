@@ -35,8 +35,7 @@ int main(int argc, char **argv)
   JetDef R1jetdef(fastjet::antikt_algorithm, 1.0);
   R1jetdef.setMinJetPt(2.);
   R1jetdef.setMaxJetRapidity(4);
-  SoftDropJetDef R1sd(0.01, 2, R1jetdef.getR());
-  
+  SoftDropJetDef R1sd(0.1, 0, R1jetdef.getR());
 
   std::cout<<"begin event loop"<<std::endl;
   for(int event = 0; event < mctree->GetEntries(); ++event)

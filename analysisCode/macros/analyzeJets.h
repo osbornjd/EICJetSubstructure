@@ -16,35 +16,39 @@ using MatchedJets = std::vector<JetConstVec>;
 using TLorentzPair = std::pair<TLorentzVector, TLorentzVector>;
 using TLorentzPairVec = std::vector<TLorentzPair>;
 
+
 void setupTree();
 void instantiateHistos();
 void loop();
 void write();
+
 
 void recoJetAnalysis(JetConstVec *recojets);
 /// Returns highest truth jet pt in event
 double truthJetAnalysis(JetConstVec *truthjets);
 void analyzeMatchedJets(MatchedJets *matchedjets, 
 			TLorentzPairVec *matchedparticles);
+void recoSDJetAnalysis(JetConstVec *recojets);
+void truthSDJetAnalysis(JetConstVec *truthjets);
+void analyzeMatchedSDJets(MatchedJets *matchedjets);
+void compareAKTSDTruthJets(JetConstVec *truthjets, JetConstVec *truthsdjets);
+
 float checkdPhi(float dphi);
+
 
 TLorentzPairVec *matchedParticles;
 TLorentzVector *truthExchangeBoson, *smearedExchangeBoson;
-JetConstVec *truthJets, *recoJets, *recoSDJets;
+JetConstVec *truthJets, *recoJets, *recoSDJets, *truthSDJets;
 MatchedJets *matchedJets, *matchedSDJets;
 double recx, recy, recq2, truey, truex, trueq2;
 
 TFile *infile, *outfile;
 TTree *jettree;
 
-TH2 *truerecoz, *truerecojt, *truerecor;
-TH2 *recojetpteta, *recojetptphi;
-TH2 *truerecx, *truerecy, *truerecq2;
-TH2 *trueQ2x, *trueQ2pT;
-TH2 *truejetpteta, *truejetptphi;
-TH2 *recojetptz, *recojetptjt, *recojetptr;
-TH2 *recotruejetpt, *recotruejeteta, *recotruejetphi, 
-  *recotruejetp, *recotruejete;
+
+const float minjetpt = 4;
+const float maxjeteta = 2.5;
+
 
 const int nxbins = 41;
 const int nq2bins = 101;
@@ -53,6 +57,9 @@ const int npbins = 42;
 const int nzbins = 55;
 const int njtbins = 44;
 const int nrbins = 25;
+const int nzgbins = 20;
+
+float zgbins[nzgbins+1] = {0.0,0.025,0.05,0.075,0.1,0.125,0.15,0.175,0.2,0.225,0.25,0.275,0.3,0.325,0.35,0.375,0.4,0.425,0.45,0.475,0.5};
 
 float pbins[npbins+1] = {2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,24,26,28,30,32,34,36,38,40,44,48,52,56,60,70,80,90,100,120,140,160,180,200};
 

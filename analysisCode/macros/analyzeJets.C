@@ -1,6 +1,6 @@
 
 #include "analyzeJets.h"
-
+#include "HistoManager.h"
 
 void analyzeJets(std::string file)
 {
@@ -35,80 +35,6 @@ void analyzeJets(std::string file)
   write();
 }
 
-void write()
-{
-  outfile = new TFile("histos.root","RECREATE");
-  
-  truerecx->Write();
-  truerecy->Write();
-  truerecq2->Write();
-  trueQ2x->Write();
-  
-  trueQ2pT->Write();
-  truejetpteta->Write();
-  truejetptphi->Write();
-  recojetptr->Write();
-  recojetptjt->Write();
-  recojetptz->Write();
-  recojetpteta->Write();
-  recojetptphi->Write();
-  recotruejetpt->Write();
-  recotruejetphi->Write();
-  recotruejeteta->Write();
-  recotruejetp->Write();
-  recotruejete->Write();
-  
-  truerecoz->Write();
-  truerecojt->Write();
-  truerecor->Write();
-  outfile->Write();
-
-  outfile->Close();
-
-}
-void instantiateHistos()
-{
-  
-  truerecx = new TH2F("truerecx",";x_{true}; x_{rec}",nxbins, xbins, 
-		      nxbins, xbins);
-  truerecy = new TH2F("truerecy",";y_{true}; y_{rec}",100,0,1,100,0,1);
-  truerecq2 = new TH2F("truerecq2",
-		       ";Q^{2}_{true} [GeV^{2}]; Q^{2}_{reco} [GeV^{2}]",
-		       nq2bins,qbins,nq2bins,qbins);
-  trueQ2x = new TH2F("trueq2x",";x_{true};Q^{2}_{true} [GeV^{2}]",
-		     nxbins,xbins,nq2bins,qbins);
-  
-  trueQ2pT = new TH2F("trueq2pt",";Q_{true}^{2} [GeV^{2}]; p_{T}^{true} [GeV]",
-		      nq2bins,qbins,nptbins,ptbins);
-  truejetpteta = new TH2F("truejetpteta",";p_{T}^{true} [GeV]; #eta",
-			  30,4,34,50,-3,3);
-  truejetptphi = new TH2F("truejetptphi",";p_{T}^{true} [GeV]; #phi [rad]",
-			  30,4,34,50,-3.14159,3.14159);
-  recojetptz = new TH2F("recojetptz",";z_{reco};p_{T}^{jet,reco} [GeV]",
-			nzbins,zbins,nptbins,ptbins);
-  recojetptjt = new TH2F("recojetptjt",
-			 ";j_{T}^{reco} [GeV]; p_{T}^{jet,reco} [GeV]",
-			 njtbins,jtbins,nptbins,ptbins);
-  recojetptr = new TH2F("recojetptr",";r_{reco}; p_{T}^{jet,reco} [GeV]",
-			nrbins,rbins,nptbins,ptbins);
-  recojetpteta = new TH2F("recojetpteta", ";p_{T}^{jet,reco} [GeV]; #eta",
-			  30,4,34,50,-3,3);
-  recojetptphi = new TH2F("recojetptphi",";p_{T}^{jet,reco} [GeV]; #phi",
-			  30,4,34,50,-3.14159,3.14159);
-  recotruejetpt = new TH2F("recotruejetpt",";p_{T}^{jet,true} [GeV]; p_{T}^{jet,reco} [GeV]",
-			   nptbins, ptbins, nptbins, ptbins);
-  recotruejetphi = new TH2F("recotruejetphi",";#phi_{true} [rad];#phi_{reco} [rad]",
-			    200, -3.14159,3.14159, 200,-3.14159, 3.14159);
-  recotruejeteta = new TH2F("recotruejeteta",";#eta_{true}; #eta_{reco}",
-			    200,-3,3, 200,-3,3);
-  recotruejetp = new TH2F("recotruejetp",";p^{jet,true} [GeV];p^{jet,reco} [GeV]", npbins, pbins, npbins, pbins);
-  recotruejete = new TH2F("recotruejete",";E^{jet,true} [GeV]; E^{jet,reco} [GeV]", npbins, pbins, npbins, pbins);
-
-  truerecoz = new TH2F("truerecoz",";z_{true};z_{reco}",nzbins,zbins,nzbins,zbins);
-  truerecojt = new TH2F("truerecojt",";j_{T}^{true} [GeV];j_{T}^{reco} [GeV]",njtbins,jtbins,njtbins,jtbins);
-  truerecor = new TH2F("truerecor",";r_{true}; r_{reco}",nrbins,rbins,nrbins,rbins);
-
-}
 
 void recoJetAnalysis(JetConstVec *recojets)
 {
@@ -119,6 +45,11 @@ void recoJetAnalysis(JetConstVec *recojets)
       jet = recojets->at(i).first;
 
       float jetpt = jet.Pt();
+      if(jetpt < minjetpt )
+	continue;
+      if(fabs(jet.Eta()) > maxjeteta)
+	continue;
+
       recojetpteta->Fill(jetpt, jet.Eta());
       recojetptphi->Fill(jetpt, jet.Phi());
 
@@ -135,7 +66,7 @@ void recoJetAnalysis(JetConstVec *recojets)
 	  
 	  float z = jet3.Dot(con3) / (jet3.Mag2());
 	  float jt = cross.Mag() / jet3.Mag();
-	  float r = sqrt(pow(jet.Phi() - con.Phi(), 2) + pow(jet.Rapidity() - con.Rapidity(),2));
+	  float r = sqrt(pow(checkdPhi(jet.Phi() - con.Phi()), 2) + pow(jet.Eta() - con.Eta(),2));
 
 	  recojetptz->Fill(z, jetpt);
 	  recojetptjt->Fill(jt, jetpt);
@@ -156,19 +87,31 @@ double truthJetAnalysis(JetConstVec *truthjets)
       if(jetVec.Pt() > jetpt)
 	jetpt = jetVec.Pt();
       
-      if(jetVec.Pt() < 4)
+      if(jetVec.Pt() < minjetpt)
 	continue;
-      if(fabs(jetVec.Eta()) > 2)
+      if(fabs(jetVec.Eta()) > maxjeteta)
 	continue;
       
       truejetptphi->Fill(jetVec.Pt(), jetVec.Phi());
       truejetpteta->Fill(jetVec.Pt(), jetVec.Eta());
-      
-      for(int con = 0; con < truthJets->at(jet).second.size(); ++con)
+      TVector3 jet3;
+      jet3.SetXYZ(jetVec.Px(), jetVec.Py(), jetVec.Pz());
+
+      for(int i = 0; i < truthJets->at(jet).second.size(); ++i)
 	{
-	  TLorentzVector constituent;
-	  constituent = truthJets->at(jet).second.at(con);
+	  TLorentzVector con;
+	  con = truthJets->at(jet).second.at(i);
+	  TVector3 con3;
+	  con3.SetXYZ(con.Px(), con.Py(), con.Pz());
+	  TVector3 cross = jet3.Cross(con3);
 	  
+	  float z = jet3.Dot(con3) / (jet3.Mag2());
+	  float jt = cross.Mag() / jet3.Mag();
+	  float r = sqrt(pow(checkdPhi(jetVec.Phi() - con.Phi()), 2) + pow(jetVec.Eta() - con.Eta(),2));
+
+	  truejetptz->Fill(z, jetpt);
+	  truejetptjt->Fill(jt, jetpt);
+	  truejetptr->Fill(r, jetpt);
 	} 
     }
 
@@ -190,15 +133,34 @@ void loop()
 
       analyzeMatchedJets(matchedJets, matchedParticles);
 
+      recoSDJetAnalysis(recoSDJets);
+      truthSDJetAnalysis(truthSDJets);
+      analyzeMatchedSDJets(matchedSDJets);
+
+      compareAKTSDTruthJets(truthJets, truthSDJets);
+
       /// Event level kinematics
       truerecx->Fill(truex,recx);
       truerecy->Fill(truey,recy);
       truerecq2->Fill(trueq2,recq2);
       trueQ2x->Fill(truex,trueq2);
   
-      trueQ2pT->Fill(truthExchangeBoson->Mag2(),highestTruthJetPt);
+      trueQ2pT->Fill(trueq2, highestTruthJetPt);
       
 
+    }
+
+}
+
+void compareAKTSDTruthJets(JetConstVec *truthjets, JetConstVec *truthsdjets)
+{
+  for(int i=0; i<truthjets->size(); ++i)
+    {
+
+      TLorentzVector aktjet = truthjets->at(i).first;
+      TLorentzVector sdjet = truthsdjets->at(i).first;
+    
+      sdenergygroomed->Fill(sdjet.E() / aktjet.E());
     }
 
 }
@@ -215,7 +177,17 @@ void analyzeMatchedJets(MatchedJets *matchedjets,
       TLorentzVector recoJet = recoJetConst.first;
       TLorentzVectorVec truthConst = truthJetConst.second;
       TLorentzVectorVec recoConst = recoJetConst.second;
-      
+
+      if(truthJet.Pt() < minjetpt || fabs(truthJet.Eta()) > maxjeteta)
+	continue;
+      if(recoJet.Pt() >minjetpt && fabs(recoJet.Eta()) < maxjeteta)
+	{
+	  recojetptetatruejetpt->Fill(truthJet.Pt(), truthJet.Eta());
+	}
+      matchedJetDr->Fill((float)truthJet.DeltaR(recoJet));
+      matchedJetdPhi->Fill((float)truthJet.DeltaPhi(recoJet));
+      matchedJetdEta->Fill((float)truthJet.Eta() - recoJet.Eta());
+
       recotruejetpt->Fill(truthJet.Pt(), recoJet.Pt());
       recotruejeteta->Fill(truthJet.Eta(), recoJet.Eta());
       recotruejetphi->Fill(truthJet.Phi(), recoJet.Phi());
@@ -276,7 +248,10 @@ void analyzeMatchedJets(MatchedJets *matchedjets,
 	      float truejt = truecross.Mag() / truthJet3.Mag();
 	      float recodphi = checkdPhi(recoJet.Phi() - recoCon.Phi());
 	      float truedphi = checkdPhi(truthJet.Phi() - truthMatch.Phi());
-	      
+
+	      truthRecoConstdPhi->Fill(checkdPhi(truthMatch.Phi() - recoCon.Phi()));
+	      truthRecoConstdEta->Fill(truthMatch.Eta() - recoCon.Eta());
+	      truthRecoConstdRap->Fill(truthMatch.Rapidity() - recoCon.Rapidity());
 
 	      float recor = sqrt(pow(recodphi ,2) +
 				 pow(recoJet.Rapidity() - recoCon.Rapidity(), 2));
@@ -298,6 +273,77 @@ void analyzeMatchedJets(MatchedJets *matchedjets,
 
 }
 
+void recoSDJetAnalysis(JetConstVec *recojets)
+{
+  for(int ijet = 0; ijet< recojets->size(); ijet++)
+    {
+      TLorentzVector jet = recojets->at(ijet).first;
+      TLorentzVectorVec constituents = recojets->at(ijet).second;
+      ///first two constituents are the subjets
+      TLorentzVector subjet1, subjet2;
+      subjet1 = constituents.at(0);
+      subjet2 = constituents.at(1);
+      float zg = std::min(subjet1.Pt(), subjet2.Pt()) / (subjet1.Pt() + subjet2.Pt());
+      float Rg = subjet1.DeltaR(subjet2);
+      recoSDjetzg->Fill(zg, jet.Pt());
+      recoSDjetrg->Fill(Rg, jet.Pt());
+    }
+
+}
+
+void truthSDJetAnalysis(JetConstVec *truthjets)
+{
+  for(int ijet = 0; ijet < truthjets->size(); ijet++)
+    {
+      TLorentzVector jet;
+      jet = truthjets->at(ijet).first;
+      
+      TLorentzVectorVec constituents;
+      constituents = truthjets->at(ijet).second;
+      ///first two constituents are the subjets
+      TLorentzVector subjet1, subjet2;
+      subjet1 = constituents.at(0);
+      subjet2 = constituents.at(1);
+      float zg = std::min(subjet1.Pt(), subjet2.Pt()) / (subjet1.Pt() + subjet2.Pt());
+      float Rg = subjet1.DeltaR(subjet2);
+      truthSDjetzg->Fill(zg, jet.Pt());
+      truthSDjetrg->Fill(Rg, jet.Pt());
+    }
+
+}
+
+void analyzeMatchedSDJets(MatchedJets *matchedjets)
+{
+  for(int i = 0; i < matchedjets->size(); i++)
+    {
+      JetConstPair truthJetConst = matchedjets->at(i).at(0);
+      JetConstPair recoJetConst = matchedjets->at(i).at(1);
+      
+      TLorentzVector truthJet = truthJetConst.first;
+      TLorentzVector recoJet = recoJetConst.first;
+      TLorentzVectorVec truthConst = truthJetConst.second;
+      TLorentzVectorVec recoConst = recoJetConst.second;
+
+      TLorentzVector truthSubjet1, truthSubjet2;
+      truthSubjet1 = truthConst.at(0);
+      truthSubjet2 = truthConst.at(1);
+
+      TLorentzVector recoSubjet1, recoSubjet2;
+      recoSubjet1 = recoConst.at(0);
+      recoSubjet2 = recoConst.at(1);
+      
+      float truthzg = std::min(truthSubjet1.Pt(), truthSubjet2.Pt())/(truthSubjet1.Pt() + truthSubjet2.Pt());
+      float truthrg = truthSubjet1.DeltaR(truthSubjet2);
+      float recozg = std::min(recoSubjet1.Pt(), recoSubjet2.Pt())/(recoSubjet1.Pt() + recoSubjet2.Pt());
+      float recorg = recoSubjet1.DeltaR(recoSubjet2);
+      truthrecozg->Fill(truthzg,recozg);
+      truthrecorg->Fill(truthrg,recorg);
+
+    }
+
+
+}
+
 void setupTree()
 {
 
@@ -315,7 +361,8 @@ void setupTree()
   jettree->SetBranchAddress("matchedR1SDJets", &matchedSDJets);
   jettree->SetBranchAddress("exchangeBoson", &truthExchangeBoson);
   jettree->SetBranchAddress("matchedParticles", &matchedParticles);
-  jettree->SetBranchAddress("smearedExchangeBoson", &smearedExchangeBoson);
+  jettree->SetBranchAddress("smearExchangeBoson", &smearedExchangeBoson);
+  jettree->SetBranchAddress("truthR1SDJets", &truthSDJets);
 }
 
 float checkdPhi(float dphi)
