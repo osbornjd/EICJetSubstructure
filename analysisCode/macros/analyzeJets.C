@@ -1,9 +1,13 @@
 
 #include "analyzeJets.h"
 #include "HistoManager.h"
+#include "sPhenixStyle.h"
+#include "sPhenixStyle.C"
 
 void analyzeJets(std::string file)
 {
+  SetsPhenixStyle();
+
   std::string filename = file;
   infile = TFile::Open(filename.c_str());
 
@@ -185,6 +189,9 @@ void analyzeMatchedJets(MatchedJets *matchedjets,
 	  recojetptetatruejetpt->Fill(truthJet.Pt(), truthJet.Eta());
 	}
       matchedJetDr->Fill((float)truthJet.DeltaR(recoJet));
+      if(truthJet.DeltaR(recoJet) > 0.5)
+	continue;
+
       matchedJetdPhi->Fill((float)truthJet.DeltaPhi(recoJet));
       matchedJetdEta->Fill((float)truthJet.Eta() - recoJet.Eta());
 
@@ -332,9 +339,17 @@ void analyzeMatchedSDJets(MatchedJets *matchedjets)
       recoSubjet1 = recoConst.at(0);
       recoSubjet2 = recoConst.at(1);
       
-      float truthzg = std::min(truthSubjet1.Pt(), truthSubjet2.Pt())/(truthSubjet1.Pt() + truthSubjet2.Pt());
+      truthrecosdjetdeltar->Fill(truthJet.DeltaR(recoJet));
+      if(truthJet.DeltaR(recoJet)>0.5)
+	continue;
+      if(truthJet.Pt() < minjetpt || fabs(truthJet.Eta()) > maxjeteta)
+	 continue;
+
+      float truthzg = std::min(truthSubjet1.Pt(), truthSubjet2.Pt())
+	/(truthSubjet1.Pt() + truthSubjet2.Pt());
       float truthrg = truthSubjet1.DeltaR(truthSubjet2);
-      float recozg = std::min(recoSubjet1.Pt(), recoSubjet2.Pt())/(recoSubjet1.Pt() + recoSubjet2.Pt());
+      float recozg = std::min(recoSubjet1.Pt(), recoSubjet2.Pt())
+	/(recoSubjet1.Pt() + recoSubjet2.Pt());
       float recorg = recoSubjet1.DeltaR(recoSubjet2);
       truthrecozg->Fill(truthzg,recozg);
       truthrecorg->Fill(truthrg,recorg);

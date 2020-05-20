@@ -18,7 +18,7 @@ TH1 *truthRecoConstdPhi, *truthRecoConstdEta, *truthRecoConstdRap;
 TH2 *truthSDjetzg, *truthSDjetrg;
 TH2 *recoSDjetzg, *recoSDjetrg;
 TH2 *truthrecozg, *truthrecorg;
-TH1 *sdenergygroomed;
+TH1 *sdenergygroomed, *truthrecosdjetdeltar;
 
 void write()
 {
@@ -63,6 +63,7 @@ void write()
   truthRecoConstdEta->Write();
   truthRecoConstdRap->Write();
   recojetptetatruejetpt->Write();
+  truthrecosdjetdeltar->Write();
 
   outfile->Write();
   outfile->Close();
@@ -70,6 +71,13 @@ void write()
 }
 void instantiateHistos()
 {
+  for(int i = 0; i< nzgbins+1; i++)
+    {
+      zgbins[i] = 0 + i * 0.5 / nzgbins;
+    }
+
+  truthrecosdjetdeltar = new TH1F("truthrecosdjetdeltar",";#DeltaR(truth,reco)",
+				  120,0,1.2);
   sdenergygroomed = new TH1F("sdenergygroomed",";E_{SD}/E_{AKT}",101,0,1.01);
   truthrecozg = new TH2F("truthrecozg",";z_{g}^{true}; z_{g}^{reco}",
 			 nzgbins, zgbins, nzgbins, zgbins);
