@@ -35,8 +35,7 @@ int main(int argc, char **argv)
   JetDef R1jetdef(fastjet::antikt_algorithm, 1.0);
   R1jetdef.setMinJetPt(2.);
   R1jetdef.setMaxJetRapidity(4);
-  SoftDropJetDef R1sd(0.01, 2, R1jetdef.getR());
-  
+  SoftDropJetDef R1sd(0.1, 0, R1jetdef.getR());
 
   std::cout<<"begin event loop"<<std::endl;
   for(int event = 0; event < mctree->GetEntries(); ++event)
@@ -49,7 +48,8 @@ int main(int argc, char **argv)
       truex = truthEvent->GetTrueX();
       truey = truthEvent->GetTrueY();
       trueq2 = truthEvent->GetTrueQ2();
-     
+      truenu = truthEvent->GetTrueNu();
+
       TruthEvent trueEvent(*truthEvent);
       trueEvent.setVerbosity(0);
       trueEvent.useBreitFrame(breitFrame);
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 
       /// Set event level cuts
       trueEvent.setMinQ2(16);
-      trueEvent.setMinY(0.01);
+      trueEvent.setMinY(0.05);
       trueEvent.setMaxY(0.95);
       trueEvent.setMinX(0.00001);
       /// Check the cuts
@@ -65,6 +65,11 @@ int main(int argc, char **argv)
 	continue;
       }
 
+      recx = smearEvent->GetX();
+      recy = smearEvent->GetY();
+      recq2 = smearEvent->GetQ2();
+      recnu = smearEvent->GetNu();
+ 
       trueEvent.processEvent();
 
       PseudoJetVec fjtruthR1Jets = trueEvent.getTruthJets(truthcs, R1jetdef);
@@ -78,9 +83,7 @@ int main(int argc, char **argv)
       smearedEvent.setVerbosity(0);     
       smearedEvent.useBreitFrame(breitFrame);
       smearedEvent.processEvent();
-      recx = smearEvent->GetX();
-      recy = smearEvent->GetY();
-      recq2 = smearEvent->GetQ2();
+
       smearExchangeBoson = smearedEvent.getExchangeBoson();
       matchedParticles = smearedEvent.getMatchedParticles();      
 
@@ -142,9 +145,11 @@ void setupJetTree(TTree *tree)
   jetTree->Branch("truex",&truex,"truex/D");
   jetTree->Branch("truey",&truey,"truey/D");
   jetTree->Branch("trueq2",&trueq2,"trueq2/D");
+  jetTree->Branch("truenu",&truenu,"truenu/D");
   jetTree->Branch("recx",&recx,"recx/D");
   jetTree->Branch("recy",&recy,"recy/D");
   jetTree->Branch("recq2",&recq2,"recq2/D");
+  jetTree->Branch("recnu",&recnu,"recnu/D");
   jetTree->Branch("matchedParticles",&matchedParticles);
   jetTree->Branch("truthR1SDJets", &truthR1SDJets);
   return;
