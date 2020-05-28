@@ -36,13 +36,32 @@ int main(int argc, char **argv)
   R1jetdef.setMinJetPt(2.);
   R1jetdef.setMaxJetRapidity(4);
   SoftDropJetDef R1sd(0.1, 0, R1jetdef.getR());
-
+  
+  TH2F *truthMaps[1000];
+  TH2F *recoMaps[1000];
+  TGraph *scategr[1000];
+  TGraph *tjetgr[1000];
+  ostringstream name;
+  for(int i =0; i<1000; i++)
+    {
+      name.str("");
+      name<<"truthMap_"<<i;
+      truthMaps[i] = new TH2F(name.str().c_str(),"",200,-3.14159,3.14159,
+			      200,-3.5,3.5);
+      name.str("");
+      name<<"recoMap_"<<i;
+      recoMaps[i] = new TH2F(name.str().c_str(),"",100,-3.14159,3.14159,
+			     100,-3.5,3.5);
+      
+    }
+  int counter = 0;
   std::cout<<"begin event loop"<<std::endl;
   for(int event = 0; event < mctree->GetEntries(); ++event)
     {
       if(event % 20000 == 0)
 	std::cout<<"Processed " << event << " events" << std::endl;
-
+      if(counter == 1000)
+	break;
       mctree->GetEntry(event);
 
       truex = truthEvent->GetTrueX();
@@ -64,7 +83,9 @@ int main(int argc, char **argv)
       if(!trueEvent.passCuts()){
 	continue;
       }
-
+      
+    
+      
       recx = smearEvent->GetX();
       recy = smearEvent->GetY();
       recq2 = smearEvent->GetQ2();
@@ -78,6 +99,39 @@ int main(int argc, char **argv)
 	{
 	  continue;
 	}
+
+
+      if(counter<1000){
+	scategr[counter] = fillTruthMaps(truthEvent, truthMaps[counter]);
+	//fillRecoMaps(smearEvent, recoMaps[counter]);
+	ostringstream namer;
+	namer.str("");
+	namer<<"truthMapGr_"<<counter;
+	scategr[counter]->SetName(namer.str().c_str());
+	scategr[counter]->SetMarkerStyle(24);
+	scategr[counter]->SetMarkerSize(2.1);
+	float highestpt = 0;
+	int num = 0;
+	for(int jet = 0; jet < fjtruthR1Jets.size(); jet++)
+	  {
+	    if(fjtruthR1Jets.at(jet).pt() > highestpt){
+	      highestpt = fjtruthR1Jets.at(jet).pt();
+	      num = jet;
+	    }
+	  }
+	float jetval[1],jetval2[1];
+	jetval[0] = fjtruthR1Jets.at(num).phi();
+	jetval2[0] = fjtruthR1Jets.at(num).eta();
+	tjetgr[counter] = new TGraph(1,jetval,jetval2);
+	namer.str("");
+	namer<<"truthMapJetGr_"<<counter;
+	tjetgr[counter]->SetName(namer.str().c_str());
+	tjetgr[counter]->SetMarkerStyle(24);
+	tjetgr[counter]->SetMarkerColor(kRed);
+	tjetgr[counter]->SetMarkerSize(2.1);
+	counter++;
+      }
+
 
       SmearedEvent smearedEvent(*truthEvent, *smearEvent);
       smearedEvent.setVerbosity(0);     
@@ -110,6 +164,13 @@ int main(int argc, char **argv)
   
   outfile->cd();
   jetTree->Write();
+  for(int i =0; i<1000; i++)
+    {
+      scategr[i]->Write();
+      truthMaps[i]->Write();
+      tjetgr[i]->Write();
+      //recoMaps[i]->Write();
+    }
   outfile->Close();
   mc.Close();
 
@@ -222,4 +283,48 @@ JetConstVec convertToTLorentzVectors(PseudoJetVec pseudoJets, bool SDJet)
 
   return jets;
 
+}
+
+
+TGraph* fillTruthMaps(erhic::EventPythia* event, TH2F *hist)
+{
+  BreitFrame breit(*event);
+  for(int i = 0; i < event->GetNTracks(); ++i)
+    {
+      if(i < 3 )
+	continue;
+      
+      const Particle *truthParticle = event->GetTrack(i);
+
+      if(truthParticle->GetStatus() != 1)
+	continue;
+      
+      if(fabs(truthParticle->GetEta()) > 3.5)
+	continue;
+      if(truthParticle->GetPt() < 0.25)
+	continue;
+
+      TLorentzVector vector = truthParticle->Get4Vector();
+      float phi = vector.Phi();
+      float eta = vector.Eta();
+      float pt = vector.Pt();
+      
+      int binx = hist->GetXaxis()->FindBin(phi);
+      int biny = hist->GetYaxis()->FindBin(eta);
+      hist->SetBinContent(binx,biny,pt);
+    }
+  
+  TLorentzVector scat = event->ScatteredLepton()->Get4Vector();
+  float scatphi[1], scateta[1];
+  scatphi[0] = scat.Phi();
+  scateta[0] = scat.Eta();
+  TGraph *gr = new TGraph(1,scatphi,scateta);
+
+  return gr;
+}
+
+TGraph* fillRecoMaps(Smear::Event* event, TH2F *hist)
+{
+
+  return nullptr;
 }

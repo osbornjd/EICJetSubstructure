@@ -10,6 +10,9 @@
 #include <TSystem.h>
 #include <TRint.h>
 #include <TROOT.h>
+#include <TH1.h>
+#include <TH2.h>
+#include <TGraph.h>
 
 /// EIC smear includes
 #include <eicsmear/erhic/EventPythia.h>
@@ -32,6 +35,8 @@ using TLorentzPairVec = std::vector<TLorentzPair>;
 using JetConstPair = std::pair<TLorentzVector, std::vector<TLorentzVector>>;
 using JetConstVec = std::vector<JetConstPair>;
 
+TGraph* fillTruthMaps(erhic::EventPythia* event, TH2F *hist);
+TGraph* fillRecoMaps(Smear::Event* event, TH2F *hist);
 
 void setupJetTree(TTree *tree);
 
