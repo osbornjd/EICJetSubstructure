@@ -41,8 +41,8 @@ std::vector<std::vector<JetConstPair>> convertMatchedJetVec(std::vector<PseudoJe
 /// Note - for SDJets, the first two entries in the constituent vector, i.e.
 /// first two entries in the second of the pair list are the two subjets
 JetConstVec truthR1Jets, recoR1Jets, recoR1SDJets, truthR1SDJets;
-double truex, truey, trueq2;
-double recx, recy, recq2;
+double truex, truey, trueq2, truenu;
+double recx, recy, recq2, recnu;
 TLorentzVector exchangeBoson, smearExchangeBoson;
 
 /// This structure is a vector of vector of matched truth-reco jets. 
