@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 
       /// Set event level cuts
       trueEvent.setMinQ2(16);
-      trueEvent.setMinY(0.01);
+      trueEvent.setMinY(0.05);
       trueEvent.setMaxY(0.95);
       trueEvent.setMinX(0.00001);
       /// Check the cuts
