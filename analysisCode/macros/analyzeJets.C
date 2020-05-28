@@ -42,7 +42,7 @@ void analyzeJets(std::string file)
 
 void recoJetAnalysis(JetConstVec *recojets)
 {
-
+  int njets = 0;
   for(int i = 0; i < recojets->size(); i++)
     {
       TLorentzVector jet;
@@ -53,12 +53,13 @@ void recoJetAnalysis(JetConstVec *recojets)
 	continue;
       if(fabs(jet.Eta()) > maxjeteta)
 	continue;
-
+      njets++;
       recojetpteta->Fill(jetpt, jet.Eta());
       recojetptphi->Fill(jetpt, jet.Phi());
 
       TVector3 jet3;
       jet3.SetXYZ(jet.Px(), jet.Py(), jet.Pz());
+      reconconst->Fill(jetpt, recojets->at(i).second.size());
 
       /// Iterate over constituents
       for(int j = 0; j < recojets->at(i).second.size(); ++j)
@@ -70,7 +71,7 @@ void recoJetAnalysis(JetConstVec *recojets)
 	  
 	  float z = jet3.Dot(con3) / (jet3.Mag2());
 	  float jt = cross.Mag() / jet3.Mag();
-	  float r = sqrt(pow(checkdPhi(jet.Phi() - con.Phi()), 2) + pow(jet.Eta() - con.Eta(),2));
+	  float r = sqrt(pow(checkdPhi(jet.Phi() - con.Phi()), 2) + pow(jet.Rapidity() - con.Rapidity(),2));
 
 	  recojetptz->Fill(z, jetpt);
 	  recojetptjt->Fill(jt, jetpt);
@@ -78,12 +79,14 @@ void recoJetAnalysis(JetConstVec *recojets)
 
 	}
     }
+  nrecojets->Fill(njets);
 }
 
 double truthJetAnalysis(JetConstVec *truthjets)
 {
 
   double jetpt = 0;
+  int njets = 0;
   for(int jet = 0; jet < truthJets->size(); jet++)
     {
       TLorentzVector jetVec;
@@ -95,7 +98,9 @@ double truthJetAnalysis(JetConstVec *truthjets)
 	continue;
       if(fabs(jetVec.Eta()) > maxjeteta)
 	continue;
-      
+      njets++;
+      truenconst->Fill(jetVec.Pt(), truthJets->at(jet).second.size());
+
       truejetptphi->Fill(jetVec.Pt(), jetVec.Phi());
       truejetpteta->Fill(jetVec.Pt(), jetVec.Eta());
       TVector3 jet3;
@@ -118,6 +123,8 @@ double truthJetAnalysis(JetConstVec *truthjets)
 	  truejetptr->Fill(r, jetpt);
 	} 
     }
+
+  ntruthjets->Fill(njets);
 
   return jetpt;
 }
@@ -192,6 +199,8 @@ void analyzeMatchedJets(MatchedJets *matchedjets,
       if(truthJet.DeltaR(recoJet) > 0.5)
 	continue;
 
+      truereconconst->Fill(truthConst.size(), recoConst.size());
+
       matchedJetdPhi->Fill((float)truthJet.DeltaPhi(recoJet));
       matchedJetdEta->Fill((float)truthJet.Eta() - recoJet.Eta());
 
@@ -235,8 +244,7 @@ void analyzeMatchedJets(MatchedJets *matchedjets,
 	  if(matched)
 	    {
 	      /// Found a matched truth constituent and it was in the truth jet
-	      ///recoCon and truthMatch
-	      ////truthJet and recoJet
+	 
 	      TVector3 truthJet3, recoJet3, recoCon3, truthMatch3;
 	      truthJet3.SetXYZ(truthJet.Px(), 
 			       truthJet.Py(), truthJet.Pz());
@@ -256,10 +264,13 @@ void analyzeMatchedJets(MatchedJets *matchedjets,
 	      float recodphi = checkdPhi(recoJet.Phi() - recoCon.Phi());
 	      float truedphi = checkdPhi(truthJet.Phi() - truthMatch.Phi());
 
+	      matchconstp->Fill(recoCon.P() / truthMatch.P());
+	      matchconstpt->Fill(recoCon.Pt() / truthMatch.Pt());
 	      truthRecoConstdPhi->Fill(checkdPhi(truthMatch.Phi() - recoCon.Phi()));
 	      truthRecoConstdEta->Fill(truthMatch.Eta() - recoCon.Eta());
 	      truthRecoConstdRap->Fill(truthMatch.Rapidity() - recoCon.Rapidity());
-
+	      float recodeltar = recoCon.DeltaR(recoJet);
+	      recomatchdr->Fill(recodeltar,recoJet.Pt());
 	      float recor = sqrt(pow(recodphi ,2) +
 				 pow(recoJet.Rapidity() - recoCon.Rapidity(), 2));
 	      float truer = sqrt(pow(truedphi ,2) +
@@ -344,12 +355,28 @@ void analyzeMatchedSDJets(MatchedJets *matchedjets)
 	continue;
       if(truthJet.Pt() < minjetpt || fabs(truthJet.Eta()) > maxjeteta)
 	 continue;
+      
+      /// Remove subjets where the soft drop criteria was already satisfied
+      /// by the antikt jet, so subjets are listed as (-999,-999,-999,-999)
+      if(truthSubjet1.E() < 0 || truthSubjet2.E() < 0)
+        continue;
+      if(recoSubjet1.E() < 0 || recoSubjet2.E() < 0)
+        continue;
+      if(truthSubjet1.Pt() < 0 || truthSubjet2.Pt() < 0)
+	std::cout<<truthSubjet1.Pt()<<"  "<<truthSubjet2.Pt()<<std::endl;
+      
+      truthsubjetpt->Fill(truthSubjet1.Pt(), truthSubjet2.Pt());
+      recosubjetpt->Fill(recoSubjet1.Pt(), recoSubjet2.Pt());
+
+      assert(truthSubjet1.Pt() + truthSubjet2.Pt() == truthJet.Pt());
+      assert(recoSubjet1.Pt() + recoSubjet2.Pt() == recoJet.Pt());
 
       float truthzg = std::min(truthSubjet1.Pt(), truthSubjet2.Pt())
 	/(truthSubjet1.Pt() + truthSubjet2.Pt());
       float truthrg = truthSubjet1.DeltaR(truthSubjet2);
       float recozg = std::min(recoSubjet1.Pt(), recoSubjet2.Pt())
 	/(recoSubjet1.Pt() + recoSubjet2.Pt());
+      
       float recorg = recoSubjet1.DeltaR(recoSubjet2);
       truthrecozg->Fill(truthzg,recozg);
       truthrecorg->Fill(truthrg,recorg);

@@ -3,6 +3,16 @@
  * the actual source code
  */
 
+TLorentzPairVec *matchedParticles;
+TLorentzVector *truthExchangeBoson, *smearedExchangeBoson;
+JetConstVec *truthJets, *recoJets, *recoSDJets, *truthSDJets;
+MatchedJets *matchedJets, *matchedSDJets;
+double recx, recy, recq2, truey, truex, trueq2;
+
+TFile *infile, *outfile;
+TTree *jettree;
+
+TH2 *truthsubjetpt, *recosubjetpt;
 TH2 *truerecoz, *truerecojt, *truerecor;
 TH2 *recojetpteta, *recojetptphi;
 TH2 *truerecx, *truerecy, *truerecq2;
@@ -19,10 +29,18 @@ TH2 *truthSDjetzg, *truthSDjetrg;
 TH2 *recoSDjetzg, *recoSDjetrg;
 TH2 *truthrecozg, *truthrecorg;
 TH1 *sdenergygroomed, *truthrecosdjetdeltar;
+TH2 *truereconconst;
+TH2 *truenconst, *reconconst;
+TH1 *matchconstp, *matchconstpt;
+TH2 *recomatchdr;
+TH1 *nrecojets, *ntruthjets;
 
 void write()
 {
   outfile = new TFile("histos.root","RECREATE");
+
+  recosubjetpt->Write();
+  truthsubjetpt->Write();
   sdenergygroomed->Write();
   truthSDjetzg->Write();
   truthSDjetrg->Write();
@@ -30,7 +48,8 @@ void write()
   recoSDjetrg->Write();
   truthrecozg->Write();
   truthrecorg->Write();
-
+  recomatchdr->Write();
+  truereconconst->Write();
   truerecx->Write();
   truerecy->Write();
   truerecq2->Write();
@@ -52,7 +71,8 @@ void write()
   recotruejeteta->Write();
   recotruejetp->Write();
   recotruejete->Write();
-  
+  matchconstp->Write();
+  matchconstpt->Write();
   truerecoz->Write();
   truerecojt->Write();
   truerecor->Write();
@@ -64,6 +84,10 @@ void write()
   truthRecoConstdRap->Write();
   recojetptetatruejetpt->Write();
   truthrecosdjetdeltar->Write();
+  truenconst->Write();
+  reconconst->Write();
+  ntruthjets->Write();
+  nrecojets->Write();
 
   outfile->Write();
   outfile->Close();
@@ -75,7 +99,19 @@ void instantiateHistos()
     {
       zgbins[i] = 0 + i * 0.5 / nzgbins;
     }
+  recosubjetpt = new TH2F("recosubjetpt",";p_{T}^{subjet,1} [GeV];p_{T}^{subjet,2} [GeV]", 40,0,40,40,0,40);
+  truthsubjetpt = new TH2F("truthsubjetpt",";p_{T}^{subjet,1} [GeV];p_{T}^{subjet,2} [GeV]", 40,0,40,40,0,40);
 
+  ntruthjets = new TH1F("ntruthjets",";N_{jets}",10,-0.5,9.5);
+  nrecojets = new TH1F("nrecojets",";N_{jets}",10,-0.5,9.5);
+  recomatchdr = new TH2F("recomatchdr",";#DeltaR;p_{T}^{jet,reco} [GeV]",
+			 30,0,3,30,4,34);
+
+  matchconstp = new TH1F("matchconstp",";p_{T}^{reco}/p_{T}^{true}",100,0.5,1.5);
+  matchconstpt = new TH1F("matchconstpt",";p_{T}^{reco}/p_{T}^{true}",100,0.5,1.5);
+  reconconst = new TH2F("reconconst",";p_{T}^{jet,reco} [GeV]; N_{const}^{reco}",30,4,34,30,0,30);
+  truenconst = new TH2F("truenconst",";p_{T}^{jet,true} [GeV];N_{const}^{true}",30,4,34,30,0,30);
+  truereconconst = new TH2F("truereconconst",";N_{const}^{true};N_{const}^{reco}",30,0,30,30,0,30);
   truthrecosdjetdeltar = new TH1F("truthrecosdjetdeltar",";#DeltaR(truth,reco)",
 				  120,0,1.2);
   sdenergygroomed = new TH1F("sdenergygroomed",";E_{SD}/E_{AKT}",101,0,1.01);

@@ -35,17 +35,6 @@ void compareAKTSDTruthJets(JetConstVec *truthjets, JetConstVec *truthsdjets);
 
 float checkdPhi(float dphi);
 
-
-TLorentzPairVec *matchedParticles;
-TLorentzVector *truthExchangeBoson, *smearedExchangeBoson;
-JetConstVec *truthJets, *recoJets, *recoSDJets, *truthSDJets;
-MatchedJets *matchedJets, *matchedSDJets;
-double recx, recy, recq2, truey, truex, trueq2;
-
-TFile *infile, *outfile;
-TTree *jettree;
-
-
 const float minjetpt = 4;
 const float maxjeteta = 2.5;
 
