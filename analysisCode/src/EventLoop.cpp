@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 
   JetDef R1jetdef(fastjet::antikt_algorithm, 1.0);
   R1jetdef.setMinJetPt(2.);
-  R1jetdef.setMaxJetRapidity(3.5);
+  R1jetdef.setMaxJetRapidity(4);
   
   /// Breit frame puts hard scattered jet at theta = 0 with minimal pT.
   /// So we need "loose" jet finding criteria to include everything, and then
@@ -70,6 +70,7 @@ int main(int argc, char **argv)
       trueEvent.setMaxY(0.95);
       trueEvent.setMinX(0.00001);
       trueEvent.setProcessId(99);
+      
       /// Check the cuts
       if(!trueEvent.passCuts()){
 	continue;

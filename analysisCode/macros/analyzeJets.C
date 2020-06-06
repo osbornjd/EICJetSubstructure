@@ -15,19 +15,7 @@ void analyzeJets(std::string file)
   if(filename.find("breit") != string::npos)
     {
       breitFrame = true;
-      // Swap the q binning around, since breit frame specifically boosts
-      // q to be -pz
-      float dummybins[nq2bins+1];
-      for(int i = 0; i < nq2bins+1; i++)
-	{
-	  dummybins[i] = qbins[i];
-	}
-      
-      for(int i = 0; i < nq2bins+1; i++)
-	{
-	  //qbins[i] = dummybins[nq2bins-i] * -1;
-	}
-      
+         
       /// minimum pT and jet eta are going to be affected also
       /// because hard scattered jet is now at theta ~ 0
       /// so we will actually cut on theta instead of eta
@@ -177,8 +165,8 @@ void loop()
       trueQ2x->Fill(truex,trueq2);
   
       trueQ2pT->Fill(trueq2, highestTruthJetPt);
-      //truthExchangeBoson;
-      
+    
+      /// Make some event level histograms of jets+exchange boson
       for(int jet = 0; jet < truthJets->size(); jet++)
 	{
 	  TLorentzVector jetVec;
