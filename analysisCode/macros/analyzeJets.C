@@ -14,7 +14,7 @@ void analyzeJets(std::string file)
   /// If filename contains breit
   if(filename.find("breit") != string::npos)
     {
-
+      breitFrame = true;
       // Swap the q binning around, since breit frame specifically boosts
       // q to be -pz
       float dummybins[nq2bins+1];
@@ -25,8 +25,14 @@ void analyzeJets(std::string file)
       
       for(int i = 0; i < nq2bins+1; i++)
 	{
-	  qbins[i] = dummybins[nq2bins-i] * -1;
+	  //qbins[i] = dummybins[nq2bins-i] * -1;
 	}
+      
+      /// minimum pT and jet eta are going to be affected also
+      /// because hard scattered jet is now at theta ~ 0
+      /// so we will actually cut on theta instead of eta
+      minjetpt = 0;
+      maxjeteta = 400;
     }
   
   gROOT->ProcessLine(".L ../src/fastJetLinker.C+");
@@ -53,6 +59,11 @@ void recoJetAnalysis(JetConstVec *recojets)
 	continue;
       if(fabs(jet.Eta()) > maxjeteta)
 	continue;
+
+      if(breitFrame)
+	if(jet.Theta() > maxjettheta)
+	  continue;
+
       njets++;
       recojetpteta->Fill(jetpt, jet.Eta());
       recojetptphi->Fill(jetpt, jet.Phi());
@@ -98,11 +109,20 @@ double truthJetAnalysis(JetConstVec *truthjets)
 	continue;
       if(fabs(jetVec.Eta()) > maxjeteta)
 	continue;
+      
+      if(breitFrame)
+	if(jetVec.Theta() > maxjettheta)
+	  continue;
+      
+    
+
       njets++;
       truenconst->Fill(jetVec.Pt(), truthJets->at(jet).second.size());
 
       truejetptphi->Fill(jetVec.Pt(), jetVec.Phi());
       truejetpteta->Fill(jetVec.Pt(), jetVec.Eta());
+      truejetpttheta->Fill(jetVec.Pt(), jetVec.Theta());
+      truejetptheta->Fill(jetVec.P(), jetVec.Theta());
       TVector3 jet3;
       jet3.SetXYZ(jetVec.Px(), jetVec.Py(), jetVec.Pz());
 
@@ -157,7 +177,22 @@ void loop()
       trueQ2x->Fill(truex,trueq2);
   
       trueQ2pT->Fill(trueq2, highestTruthJetPt);
+      //truthExchangeBoson;
       
+      for(int jet = 0; jet < truthJets->size(); jet++)
+	{
+	  TLorentzVector jetVec;
+	  jetVec = truthJets->at(jet).first;
+	  if(jetVec.Pt() > 1)
+	    continue;
+	  truthjetbosonphi->Fill(truthExchangeBoson->Phi(),
+				 jetVec.Phi());
+	  truthjetbosoneta->Fill(truthExchangeBoson->Eta(),
+				 jetVec.Eta());
+	  truthjetbosontheta->Fill(truthExchangeBoson->Theta(),
+				   jetVec.Theta());
+	  
+	}
 
     }
 
@@ -191,11 +226,18 @@ void analyzeMatchedJets(MatchedJets *matchedjets,
 
       if(truthJet.Pt() < minjetpt || fabs(truthJet.Eta()) > maxjeteta)
 	continue;
-      if(recoJet.Pt() >minjetpt && fabs(recoJet.Eta()) < maxjeteta)
+      
+      if(breitFrame)
+	if(truthJet.Theta() > maxjeteta)
+	  continue;
+
+      if(recoJet.Pt() > minjetpt && fabs(recoJet.Eta()) < maxjeteta)
 	{
 	  recojetptetatruejetpt->Fill(truthJet.Pt(), truthJet.Eta());
 	}
+      
       matchedJetDr->Fill((float)truthJet.DeltaR(recoJet));
+      
       if(truthJet.DeltaR(recoJet) > 0.5)
 	continue;
 
@@ -296,6 +338,14 @@ void recoSDJetAnalysis(JetConstVec *recojets)
   for(int ijet = 0; ijet< recojets->size(); ijet++)
     {
       TLorentzVector jet = recojets->at(ijet).first;
+      
+      if(jet.Pt() < minjetpt || fabs(jet.Eta()) > maxjeteta)
+	continue;
+
+      if(breitFrame)
+	if(jet.Theta() > maxjettheta)
+	  continue;
+
       TLorentzVectorVec constituents = recojets->at(ijet).second;
       ///first two constituents are the subjets
       TLorentzVector subjet1, subjet2;
@@ -315,7 +365,14 @@ void truthSDJetAnalysis(JetConstVec *truthjets)
     {
       TLorentzVector jet;
       jet = truthjets->at(ijet).first;
-      
+
+      if(jet.Pt() < minjetpt || fabs(jet.Eta()) > maxjeteta)
+	 continue;
+
+      if(breitFrame)
+	if(jet.Theta() > maxjettheta)
+	  continue;
+
       TLorentzVectorVec constituents;
       constituents = truthjets->at(ijet).second;
       ///first two constituents are the subjets
@@ -355,6 +412,10 @@ void analyzeMatchedSDJets(MatchedJets *matchedjets)
 	continue;
       if(truthJet.Pt() < minjetpt || fabs(truthJet.Eta()) > maxjeteta)
 	 continue;
+      
+      if(breitFrame)
+	if(truthJet.Theta() > maxjettheta)
+	  continue;
       
       /// Remove subjets where the soft drop criteria was already satisfied
       /// by the antikt jet, so subjets are listed as (-999,-999,-999,-999)

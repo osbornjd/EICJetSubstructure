@@ -34,7 +34,16 @@ int main(int argc, char **argv)
 
   JetDef R1jetdef(fastjet::antikt_algorithm, 1.0);
   R1jetdef.setMinJetPt(2.);
-  R1jetdef.setMaxJetRapidity(4);
+  R1jetdef.setMaxJetRapidity(3.5);
+  
+  /// Breit frame puts hard scattered jet at theta = 0 with minimal pT.
+  /// So we need "loose" jet finding criteria to include everything, and then
+  /// select jets based on cos(theta*) in analysis
+  if(breitFrame)
+    {
+      R1jetdef.setMinJetPt(0.);
+      R1jetdef.setMaxJetRapidity(400);
+    }
   SoftDropJetDef R1sd(0.1, 0, R1jetdef.getR());
 
   std::cout<<"begin event loop"<<std::endl;
@@ -44,7 +53,7 @@ int main(int argc, char **argv)
 	std::cout<<"Processed " << event << " events" << std::endl;
 
       mctree->GetEntry(event);
-
+      processId = truthEvent->GetProcess();
       truex = truthEvent->GetTrueX();
       truey = truthEvent->GetTrueY();
       trueq2 = truthEvent->GetTrueQ2();
@@ -60,6 +69,7 @@ int main(int argc, char **argv)
       trueEvent.setMinY(0.05);
       trueEvent.setMaxY(0.95);
       trueEvent.setMinX(0.00001);
+      trueEvent.setProcessId(99);
       /// Check the cuts
       if(!trueEvent.passCuts()){
 	continue;
@@ -134,7 +144,7 @@ std::vector<std::vector<JetConstPair>> convertMatchedJetVec(std::vector<PseudoJe
 
 void setupJetTree(TTree *tree)
 {
-
+  jetTree->Branch("processId",&processId,"processId/I");
   jetTree->Branch("truthR1Jets", &truthR1Jets);
   jetTree->Branch("recoR1Jets", &recoR1Jets);
   jetTree->Branch("recoR1SDJets", &recoR1SDJets);

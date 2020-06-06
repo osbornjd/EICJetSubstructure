@@ -16,6 +16,7 @@ using MatchedJets = std::vector<JetConstVec>;
 using TLorentzPair = std::pair<TLorentzVector, TLorentzVector>;
 using TLorentzPairVec = std::vector<TLorentzPair>;
 
+bool breitFrame = false;
 
 void setupTree();
 void instantiateHistos();
@@ -35,13 +36,14 @@ void compareAKTSDTruthJets(JetConstVec *truthjets, JetConstVec *truthsdjets);
 
 float checkdPhi(float dphi);
 
-const float minjetpt = 4;
-const float maxjeteta = 2.5;
-
+/// non-const so that they can be changed if breit frame
+float minjetpt = 3;
+float maxjeteta = 2.5;
+const float maxjettheta = 0.4;
 
 const int nxbins = 41;
 const int nq2bins = 101;
-const int nptbins = 14;
+const int nptbins = 18;
 const int npbins = 42;
 const int nzbins = 55;
 const int njtbins = 44;
@@ -52,7 +54,7 @@ float zgbins[nzgbins+1]; //zgbins set in instantiateHistos()
 
 float pbins[npbins+1] = {2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,24,26,28,30,32,34,36,38,40,44,48,52,56,60,70,80,90,100,120,140,160,180,200};
 
-float ptbins[nptbins+1]={4,5,6,7,8,9,10,11,12,14,16,18,20,24,30};
+float ptbins[nptbins+1]={0,1,2,3,4,5,6,7,8,9,10,11,12,14,16,18,20,24,30};
 
 float xbins[nxbins+1] = {0.0001,0.0002,0.0003,0.0004,0.0005,0.0006,0.0007,
 			 0.0008,0.0009,0.001,0.002,0.003,0.004,0.005,0.006,
