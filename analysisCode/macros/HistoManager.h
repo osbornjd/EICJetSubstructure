@@ -34,11 +34,19 @@ TH2 *truenconst, *reconconst;
 TH1 *matchconstp, *matchconstpt;
 TH2 *recomatchdr;
 TH1 *nrecojets, *ntruthjets;
+TH2 *truthjetbosonphi, *truthjetbosontheta, *truthjetbosoneta;
+TH2 *truejetpttheta, *truejetptheta;
 
 void write()
 {
   outfile = new TFile("histos.root","RECREATE");
 
+  truthjetbosonphi->Write();
+  truthjetbosontheta->Write();
+  truthjetbosoneta->Write();
+  truejetpttheta->Write();
+  truejetptheta->Write();
+  
   recosubjetpt->Write();
   truthsubjetpt->Write();
   sdenergygroomed->Write();
@@ -99,6 +107,12 @@ void instantiateHistos()
     {
       zgbins[i] = 0 + i * 0.5 / nzgbins;
     }
+  truejetptheta = new TH2F("truejetptheta",";p^{true} [GeV]; #theta_{jet}^{true} [rad]", 50,0,50,300,-4,4);
+  truejetpttheta = new TH2F("truejetpttheta",";p_{T}^{true} [GeV]; #theta_{jet}^{true} [rad]", 50,0,50,300,-4,4);
+  truthjetbosonphi = new TH2F("truthjetbosonphi",";#phi^{truth}_{boson} [rad]; #phi^{truth}_{jet} [rad]",300,-3.14159,3.14159, 300,-3.14159,3.14159);
+  truthjetbosoneta = new TH2F("truthjetbosoneta",";#eta^{truth}_{boson};#eta^{truth}_{jet}",300,-40,40,300,-40,40);
+  truthjetbosontheta = new TH2F("truthjetbosontheta",";#theta^{truth}_{boson} [rad]; #theta^{truth}_{jet} [rad]",300,-4,4,300,-4,4);
+
   recosubjetpt = new TH2F("recosubjetpt",";p_{T}^{subjet,1} [GeV];p_{T}^{subjet,2} [GeV]", 40,0,40,40,0,40);
   truthsubjetpt = new TH2F("truthsubjetpt",";p_{T}^{subjet,1} [GeV];p_{T}^{subjet,2} [GeV]", 40,0,40,40,0,40);
 
@@ -146,9 +160,9 @@ void instantiateHistos()
   trueQ2pT = new TH2F("trueq2pt",";Q_{true}^{2} [GeV^{2}]; p_{T}^{true} [GeV]",
 		      nq2bins,qbins,nptbins,ptbins);
   truejetpteta = new TH2F("truejetpteta",";p_{T}^{true} [GeV]; #eta",
-			  30,4,34,50,-3,3);
+			  34,0,34,500,-30,30);
   truejetptphi = new TH2F("truejetptphi",";p_{T}^{true} [GeV]; #phi [rad]",
-			  30,4,34,50,-3.14159,3.14159);
+			  34,0,34,50,-3.14159,3.14159);
   recojetptz = new TH2F("recojetptz",";z_{reco};p_{T}^{jet,reco} [GeV]",
 			nzbins,zbins,nptbins,ptbins);
   recojetptjt = new TH2F("recojetptjt",
@@ -164,7 +178,7 @@ void instantiateHistos()
   truejetptr = new TH2F("truejetptr",";r_{true}; p_{T}^{jet,true} [GeV]",
 			nrbins,rbins,nptbins,ptbins);
   recojetpteta = new TH2F("recojetpteta", ";p_{T}^{jet,reco} [GeV]; #eta",
-			  30,4,34,50,-3,3);
+			  30,4,34,500,-30,30);
   recojetptphi = new TH2F("recojetptphi",";p_{T}^{jet,reco} [GeV]; #phi",
 			  30,4,34,50,-3.14159,3.14159);
   recotruejetpt = new TH2F("recotruejetpt",";p_{T}^{jet,true} [GeV]; p_{T}^{jet,reco} [GeV]",

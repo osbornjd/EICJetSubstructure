@@ -43,6 +43,7 @@ std::vector<std::vector<JetConstPair>> convertMatchedJetVec(std::vector<PseudoJe
 JetConstVec truthR1Jets, recoR1Jets, recoR1SDJets, truthR1SDJets;
 double truex, truey, trueq2, truenu;
 double recx, recy, recq2, recnu;
+int processId;
 TLorentzVector exchangeBoson, smearExchangeBoson;
 
 /// This structure is a vector of vector of matched truth-reco jets. 

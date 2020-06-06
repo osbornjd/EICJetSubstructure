@@ -34,6 +34,7 @@ bool TruthEvent::passCuts()
   double y = m_truthEvent->GetTrueY();
   double x = m_truthEvent->GetTrueX();
   double q2 = m_truthEvent->GetTrueQ2();
+  int processId = m_truthEvent->GetProcess();
   
   if(m_verbosity > 3)
     {
@@ -41,7 +42,7 @@ bool TruthEvent::passCuts()
 		<< "," << y << std::endl;
     }
   
-  return x > m_minX && y > m_minY && y < m_maxY && q2 > m_minq2;
+  return x > m_minX && y > m_minY && y < m_maxY && q2 > m_minq2 && processId == m_processId;
 }
 void TruthEvent::setScatteredLepton()
 {

@@ -42,11 +42,12 @@ class TruthEvent {
   void setMinY(double y) {m_minY = y; }
   void setMaxY(double y) {m_maxY = y; }
   void setMinX(double x) {m_minX = x; }
+  void setProcessId(int id) {m_processId = id;}
   bool passCuts();
   TLorentzVector getExchangeBoson();
 
  private:
-
+  int m_processId;
   double m_minq2;
   double m_minY;
   double m_maxY;
