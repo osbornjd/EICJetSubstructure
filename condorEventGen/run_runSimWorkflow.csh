@@ -26,5 +26,6 @@ echo "electron beam energy: "$4
 echo "Min q2: "$5
 echo "nEvents: "$6
 echo "base path: "$7
+echo "process ID "$8
 
-py runSimWorkflow.py $1 $2 $3 $4 $5 $6 $7
+py runSimWorkflow.py $1 $2 $3 $4 $5 $6 $7 $8

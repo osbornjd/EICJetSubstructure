@@ -20,6 +20,7 @@ electronEnergy = sys.argv[4]
 minQ2 = sys.argv[5]
 nEvents = sys.argv[6]
 basePath = sys.argv[7]
+processID = sys.argv[8]
 
 # set the python path to include the subdirectories with the other scripts
 sys.path.insert(1, basePath + 'pythiaGeneration/')
@@ -34,7 +35,8 @@ runPythiaeRhic.runPythia(truthfile,
                          electronEnergy,
                          minQ2,
                          nEvents,
-                         basePath)
+                         basePath,
+                         processID)
 
 # run smearing
 smearTruth.smear(truthfile+".root", smearedfile+".root", basePath)
