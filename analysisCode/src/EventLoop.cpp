@@ -19,12 +19,13 @@ int main(int argc, char **argv)
 
   TFile mc(mcFile.c_str());
   TTree *mctree = (TTree*)mc.Get("EICTree");
-  
+
   TFile *outfile = new TFile(outputFile.c_str(), "recreate");
   jetTree = new TTree("jettree", "A tree with jets");
 
-  setupJetTree(jetTree);
-
+  setupJetTree();
+  setupRunTree();
+  
   mctree->AddFriend("Smeared", smearedFile.c_str());
   erhic::EventPythia* truthEvent(NULL);
   Smear::Event* smearEvent(NULL);
@@ -42,10 +43,31 @@ int main(int argc, char **argv)
   if(breitFrame)
     {
       R1jetdef.setMinJetPt(0.);
-      R1jetdef.setMaxJetRapidity(400);
+      R1jetdef.setMaxJetRapidity(std::numeric_limits<int>::max());
     }
   SoftDropJetDef R1sd(0.1, 0, R1jetdef.getR());
 
+  /// Collect information to write out integrated lumi from PYTHIA run
+  TObjString *nEventsString(NULL), *crossSectionString(NULL), 
+    *nEventsTriedString(NULL);
+  mc.GetObject("nTrials", nEventsTriedString);
+  mc.GetObject("nEvents", nEventsString);
+  mc.GetObject("crossSection", crossSectionString);
+  
+  stringstream stream;
+  if(nEventsString != nullptr){
+    stringstream(nEventsString->GetString().Data()) >> nEventsGen;
+  }
+  if(crossSectionString != nullptr){
+    stringstream(crossSectionString->GetString().Data()) >> totalCrossSection;
+  }
+  if(nEventsTriedString != nullptr){
+    stringstream(nEventsTriedString->GetString().Data()) >> nEventsTried;
+  }
+
+  integratedLumi = nEventsTried / totalCrossSection;
+  runTree->Fill();
+  
   std::cout<<"begin event loop"<<std::endl;
   for(int event = 0; event < mctree->GetEntries(); ++event)
     {
@@ -121,6 +143,7 @@ int main(int argc, char **argv)
   
   outfile->cd();
   jetTree->Write();
+  runTree->Write();
   outfile->Close();
   mc.Close();
 
@@ -143,7 +166,16 @@ std::vector<std::vector<JetConstPair>> convertMatchedJetVec(std::vector<PseudoJe
   return matchedJets;
 }
 
-void setupJetTree(TTree *tree)
+void setupRunTree()
+{
+  runTree->Branch("nEventsTried", &nEventsTried, "nEventsTried/F");
+  runTree->Branch("nEventsGen", &nEventsGen, "nEventsGen/F");
+  runTree->Branch("totalCrossSection", &totalCrossSection, "totalCrossSection/F");
+  runTree->Branch("integratedLumi", &integratedLumi, "integratedLumi/F");
+
+}
+
+void setupJetTree()
 {
   jetTree->Branch("processId",&processId,"processId/I");
   jetTree->Branch("truthR1Jets", &truthR1Jets);
