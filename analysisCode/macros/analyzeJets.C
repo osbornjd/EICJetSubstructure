@@ -30,7 +30,7 @@ void analyzeJets(std::string file)
 
   loop();
 
-  write();
+  write(filename);
 }
 
 

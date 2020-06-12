@@ -21,7 +21,7 @@ bool breitFrame = false;
 void setupTree();
 void instantiateHistos();
 void loop();
-void write();
+void write(std::string filename);
 
 
 void recoJetAnalysis(JetConstVec *recojets);

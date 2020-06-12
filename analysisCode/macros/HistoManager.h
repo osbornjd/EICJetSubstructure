@@ -37,9 +37,10 @@ TH1 *nrecojets, *ntruthjets;
 TH2 *truthjetbosonphi, *truthjetbosontheta, *truthjetbosoneta;
 TH2 *truejetpttheta, *truejetptheta;
 
-void write()
+void write(std::string filename)
 {
-  outfile = new TFile("histos.root","RECREATE");
+  std::string file = filename + "_histos.root";
+  outfile = new TFile(file.c_str(),"RECREATE");
 
   truthjetbosonphi->Write();
   truthjetbosontheta->Write();
