@@ -1,0 +1,24 @@
+Universe        = vanilla
+
+Notification    = Never
+Priority        = 1
+
+# Change this path to where ever jetSubstructure lives 
+basepath        = /sphenix/user/jdosbo/EICSmear/git/jetSubstructure/
+
+# Other arguments for script to run
+truthfile       = $(basepath)/MCData/largeJob100MEvents/truth_pE275_pE18_minqsq9_$(Process).root
+smearfile       = $(basepath)/MCData/largeJob100MEvents/smeared_pE275_pE18_minqsq9_$(Process).root
+breit           = 0
+outfile         = pE275_pE18_minqsq9_$(Process)_breit$(breit).root
+
+Arguments       = $(truthfile) $(smearfile) $(outfile) $(breit) $(basepath)
+
+Initialdir      = $(basepath)/analysisCode/condor
+Executable      = $(Initialdir)/RunEventLoop.csh
+Output          = $(Initialdir)/logfiles/job_$(Process).out
+Error           = $(Initialdir)/logfiles/job_$(Process).err
+Log             = $(Initialdir)/logfiles/job_$(Process).log
+
+
+Queue    100
