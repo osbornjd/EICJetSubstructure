@@ -46,7 +46,7 @@ int main(int argc, char **argv)
       R1jetdef.setMaxJetRapidity(std::numeric_limits<int>::max());
     }
   SoftDropJetDef R1sd(0.1, 0, R1jetdef.getR());
-
+  
   /// Collect information to write out integrated lumi from PYTHIA run
   TObjString *nEventsString(NULL), *crossSectionString(NULL), 
     *nEventsTriedString(NULL);
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
     stringstream(nEventsTriedString->GetString().Data()) >> nEventsTried;
   }
 
-  integratedLumi = nEventsTried / totalCrossSection;
+  integratedLumi = (float) nEventsGen / totalCrossSection;
   runTree->Fill();
   
   std::cout<<"begin event loop"<<std::endl;
@@ -168,6 +168,7 @@ std::vector<std::vector<JetConstPair>> convertMatchedJetVec(std::vector<PseudoJe
 
 void setupRunTree()
 {
+  runTree = new TTree("runTree","A tree with run info");
   runTree->Branch("nEventsTried", &nEventsTried, "nEventsTried/F");
   runTree->Branch("nEventsGen", &nEventsGen, "nEventsGen/F");
   runTree->Branch("totalCrossSection", &totalCrossSection, "totalCrossSection/F");
