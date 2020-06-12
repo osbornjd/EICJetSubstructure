@@ -10,7 +10,7 @@ basepath        = /sphenix/user/jdosbo/EICSmear/git/jetSubstructure/
 proton          = 275
 electron        = 18
 minq2           = 9
-nevents         = 1000
+nevents         = 1000000
 smear           = smeared_pE$(proton)_pE$(electron)_minqsq$(minq2)_$(Process)
 truth           = truth_pE$(proton)_pE$(electron)_minqsq$(minq2)_$(Process)
 
@@ -23,4 +23,4 @@ Error           = $(Initialdir)/logfiles/job_pE$(proton)_pE$(electron)_minqsq$(m
 Log             = $(Initialdir)/logfiles/job_pE$(proton)_pE$(electron)_minqsq$(minq2)_$(Process).log
 
 
-Queue    10
+Queue    100

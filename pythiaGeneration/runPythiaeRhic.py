@@ -53,15 +53,15 @@ def runPythia(outfile, protonEnergy, electronEnergy, minQ2,
     finalPythiaFile.write(defaultPythia)
     finalPythiaFile.close()
     
-    executable = "$EICDIRECTORY/bin/pythiaeRHIC < " + pythiafilename
+    executable = "$EICDIRECTORY/bin/pythiaeRHIC < " + pythiafilename + " > logfile_" + processID + ".log"
     os.system(executable)
     
     # Convert the ugly text file to a root tree with truth information
     import ROOT
     ROOT.gSystem.Load("libeicsmear")
-    ROOT.BuildTree(outfile, ".", -1)
+    ROOT.BuildTree(outfile, ".", -1,"logfile_"+processID+".log")
     
     # remove the files we created once we are finished with it
     os.system("rm " + pythiafilename)
     os.system("rm " + outfile)
-    
+    os.system("rm logfile_"+processID+".log")

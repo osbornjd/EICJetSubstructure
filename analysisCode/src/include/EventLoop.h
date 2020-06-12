@@ -33,7 +33,8 @@ using JetConstPair = std::pair<TLorentzVector, std::vector<TLorentzVector>>;
 using JetConstVec = std::vector<JetConstPair>;
 
 
-void setupJetTree(TTree *tree);
+void setupJetTree();
+void setupRunTree();
 
 JetConstVec convertToTLorentzVectors(PseudoJetVec pseudoJets, bool SDJet);
 std::vector<std::vector<JetConstPair>> convertMatchedJetVec(std::vector<PseudoJetVec> vec, bool SDJet);
@@ -44,6 +45,8 @@ JetConstVec truthR1Jets, recoR1Jets, recoR1SDJets, truthR1SDJets;
 double truex, truey, trueq2, truenu;
 double recx, recy, recq2, recnu;
 int processId;
+float nEventsTried, totalCrossSection, nEventsGen;
+float integratedLumi;
 TLorentzVector exchangeBoson, smearExchangeBoson;
 
 /// This structure is a vector of vector of matched truth-reco jets. 
@@ -53,4 +56,4 @@ std::vector<std::vector<JetConstPair>> matchedR1Jets, matchedR1SDJets;
 TLorentzPairVec matchedParticles;
 fastjet::ClusterSequence *cs, *truthcs;
 
-TTree *jetTree;
+TTree *jetTree, *runTree;
