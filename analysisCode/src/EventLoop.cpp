@@ -34,7 +34,7 @@ int main(int argc, char **argv)
   mctree->SetBranchAddress("eventS", &smearEvent);
 
   JetDef R1jetdef(fastjet::antikt_algorithm, 1.0);
-  R1jetdef.setMinJetPt(5.);
+  R1jetdef.setMinJetPt(4.);
   R1jetdef.setMaxJetRapidity(3.5);
   
   SoftDropJetDef R1sd(0.1, 0, R1jetdef.getR());
