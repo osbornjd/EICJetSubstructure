@@ -8,14 +8,14 @@ basepath        = /sphenix/user/jdosbo/EICSmear/git/jetSubstructure/
 
 # Other arguments for script to run
 breit           = 0
-infile          = data/pE275_pE18_minqsq9_$(Process)_breit$(breit).root
+infile          = data/lab/pE275_pE18_minqsq9_$(Process)_breit$(breit).root
 Arguments       = $(infile) $(basepath)
 
 Initialdir      = $(basepath)/analysisCode/macros/condor
 Executable      = $(Initialdir)/RunAnalyzeJets.csh
-Output          = $(Initialdir)/logfiles/job_$(Process).out
-Error           = $(Initialdir)/logfiles/job_$(Process).err
-Log             = $(Initialdir)/logfiles/job_$(Process).log
+Output          = $(Initialdir)/logfiles/job_$(Process)_$(breit).out
+Error           = $(Initialdir)/logfiles/job_$(Process)_$(breit).err
+Log             = $(Initialdir)/logfiles/job_$(Process)_$(breit).log
 
 
 Queue    100

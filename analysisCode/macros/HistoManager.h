@@ -36,12 +36,15 @@ TH2 *recomatchdr;
 TH1 *nrecojets, *ntruthjets;
 TH2 *truthjetbosonphi, *truthjetbosontheta, *truthjetbosoneta;
 TH2 *truejetpttheta, *truejetptheta;
+TH1 *h_lumi, *h_eventsGen, *h_xsec;
 
 void write(std::string filename)
 {
   std::string file = filename + "_histos.root";
   outfile = new TFile(file.c_str(),"RECREATE");
-
+  h_lumi->Write();
+  h_xsec->Write();
+  h_eventsGen->Write();
   truthjetbosonphi->Write();
   truthjetbosontheta->Write();
   truthjetbosoneta->Write();
@@ -108,6 +111,10 @@ void instantiateHistos()
     {
       zgbins[i] = 0 + i * 0.5 / nzgbins;
     }
+
+  h_xsec = new TH1F("h_xsec",";#sigma [#mub]",1000,0,0.0001);
+  h_lumi = new TH1F("h_lumi",";Luminosity [#mub]^{-1}",1000,10e9,10e11);
+  h_eventsGen = new TH1F("h_eventsGen",";N_{events}",10000000,0,10000000);
   truejetptheta = new TH2F("truejetptheta",";p^{true} [GeV]; #theta_{jet}^{true} [rad]", 50,0,50,300,-4,4);
   truejetpttheta = new TH2F("truejetpttheta",";p_{T}^{true} [GeV]; #theta_{jet}^{true} [rad]", 50,0,50,300,-4,4);
   truthjetbosonphi = new TH2F("truthjetbosonphi",";#phi^{truth}_{boson} [rad]; #phi^{truth}_{jet} [rad]",300,-3.14159,3.14159, 300,-3.14159,3.14159);

@@ -152,10 +152,16 @@ void SmearedEvent::setSmearedParticles()
 
       TLorentzVector *partFourVec = new TLorentzVector();
       partFourVec->SetPxPyPzE(px,py,pz,e);
-
-      if(m_breitFrame)
+      TLorentzVector *truthPartFourVec = new TLorentzVector();
+      truthPartFourVec->SetPxPyPzE(truthParticle->GetPx(),
+				   truthParticle->GetPy(),
+				   truthParticle->GetPz(),
+				   truthParticle->GetE());
+      if(m_breitFrame){
+	breit.labToBreitTruth( truthPartFourVec );
 	breit.labToBreitSmear( partFourVec );
 
+      }
       if(m_verbosity > 0)
 	{
 	  std::cout << "Smeared : " <<partFourVec->Px() << " " 
@@ -168,10 +174,10 @@ void SmearedEvent::setSmearedParticles()
 					       partFourVec->Pz(),
 					       partFourVec->E()));
       /// vectors will have a one-to-one correspondance
-      m_truthParticles.push_back(fastjet::PseudoJet(truthParticle->GetPx(),
-						    truthParticle->GetPy(),
-						    truthParticle->GetPz(),
-						    truthParticle->GetE()));
+      m_truthParticles.push_back(fastjet::PseudoJet(truthPartFourVec->Px(),
+						    truthPartFourVec->Py(),
+						    truthPartFourVec->Pz(),
+						    truthPartFourVec->E()));
     }
 
   return;

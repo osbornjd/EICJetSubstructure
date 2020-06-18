@@ -57,8 +57,7 @@ int main(int argc, char **argv)
     stringstream(nEventsTriedString->GetString().Data()) >> nEventsTried;
   }
 
-  /// total cross section is units of micro barn. Convert to nanobarn
-  totalCrossSection /= 1000;
+  /// total cross section is units of micro barn
   integratedLumi = (float) nEventsGen / totalCrossSection;
   runTree->Fill();
   

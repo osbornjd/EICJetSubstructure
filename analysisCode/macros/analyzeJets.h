@@ -22,7 +22,7 @@ void setupTree();
 void instantiateHistos();
 void loop();
 void write(std::string filename);
-
+void getLumi();
 
 void recoJetAnalysis(JetConstVec *recojets);
 /// Returns highest truth jet pt in event
@@ -35,6 +35,8 @@ void analyzeMatchedSDJets(MatchedJets *matchedjets);
 void compareAKTSDTruthJets(JetConstVec *truthjets, JetConstVec *truthsdjets);
 
 float checkdPhi(float dphi);
+
+float lumi;
 
 const float minjetpt = 3;
 const float maxjeteta = 2.5;

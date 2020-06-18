@@ -22,10 +22,41 @@ void analyzeJets(std::string file)
 
   instantiateHistos();
 
+  std::cout<<"Get int lumi"<<std::endl;
+  getLumi();
+
+
+  std::cout<<"looping over events"<<std::endl;
   loop();
 
+
+  std::cout<<"Write to outfile"<<std::endl;
   write(filename);
+
+  std::cout<<"Finished"<<std::endl;
 }
+
+void getLumi()
+{
+
+  TTree *runtree = (TTree*)infile->Get("runTree");
+ 
+  float xsec;
+  float events;
+  runtree->SetBranchAddress("totalCrossSection",&xsec);
+  runtree->SetBranchAddress("nEventsGen",&events);
+  runtree->SetBranchAddress("integratedLumi",&lumi);
+  for(int i = 0; i< runtree->GetEntries(); i++)
+    {
+      runtree->GetEntry(i);
+      h_lumi->Fill(lumi);
+      h_eventsGen->Fill(events);
+      h_xsec->Fill(xsec);
+      
+    }
+
+}
+
 
 
 void recoJetAnalysis(JetConstVec *recojets)
@@ -198,10 +229,6 @@ void analyzeMatchedJets(MatchedJets *matchedjets,
 
       if(truthJet.Pt() < minjetpt || fabs(truthJet.Eta()) > maxjeteta)
 	continue;
-      
-      if(breitFrame)
-	if(truthJet.Theta() > maxjeteta)
-	  continue;
 
       if(recoJet.Pt() > minjetpt && fabs(recoJet.Eta()) < maxjeteta)
 	{
@@ -212,6 +239,7 @@ void analyzeMatchedJets(MatchedJets *matchedjets,
       
       if(truthJet.DeltaR(recoJet) > 0.5)
 	continue;
+   
 
       truereconconst->Fill(truthConst.size(), recoConst.size());
 
@@ -408,6 +436,8 @@ void analyzeMatchedSDJets(MatchedJets *matchedjets)
 
 
 }
+
+
 
 void setupTree()
 {
