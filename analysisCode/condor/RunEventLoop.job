@@ -16,9 +16,9 @@ Arguments       = $(truthfile) $(smearfile) $(outfile) $(breit) $(basepath)
 
 Initialdir      = $(basepath)/analysisCode/condor
 Executable      = $(Initialdir)/RunEventLoop.csh
-Output          = $(Initialdir)/logfiles/job_$(Process).out
-Error           = $(Initialdir)/logfiles/job_$(Process).err
-Log             = $(Initialdir)/logfiles/job_$(Process).log
+Output          = $(Initialdir)/logfiles/job_$(Process)_$(breit).out
+Error           = $(Initialdir)/logfiles/job_$(Process)_$(breit).err
+Log             = $(Initialdir)/logfiles/job_$(Process)_$(breit).log
 
 
 Queue    100

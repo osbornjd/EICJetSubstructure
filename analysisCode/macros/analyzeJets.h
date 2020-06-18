@@ -22,7 +22,7 @@ void setupTree();
 void instantiateHistos();
 void loop();
 void write(std::string filename);
-
+void getLumi();
 
 void recoJetAnalysis(JetConstVec *recojets);
 /// Returns highest truth jet pt in event

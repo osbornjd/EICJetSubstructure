@@ -24,10 +24,32 @@ void analyzeJets(std::string file)
 
   loop();
 
+  getLumi();
+
   write(filename);
+
 }
 
+void getLumi()
+{
 
+  TTree *runtree = (TTree*)infile->Get("runTree");
+  float lumi;
+  float xsec;
+  float events;
+  runtree->SetBranchAddress("totalCrossSection",&xsec);
+  runtree->SetBranchAddress("nEventsGen",&events);
+  runtree->SetBranchAddress("integratedLumi",&lumi);
+  for(int i = 0; i< runtree->GetEntries(); i++)
+    {
+      runtree->GetEntry(i);
+      h_lumi->Fill(lumi);
+      h_eventsGen->Fill(events);
+      h_xsec->Fill(xsec);
+      std::cout<<xsec<<"  "<<lumi<<"  "<<events<<std::endl;
+    }
+
+}
 void recoJetAnalysis(JetConstVec *recojets)
 {
   int njets = 0;
@@ -208,6 +230,7 @@ void analyzeMatchedJets(MatchedJets *matchedjets,
       
       if(truthJet.DeltaR(recoJet) > 0.5)
 	continue;
+   
 
       truereconconst->Fill(truthConst.size(), recoConst.size());
 
@@ -404,6 +427,8 @@ void analyzeMatchedSDJets(MatchedJets *matchedjets)
 
 
 }
+
+
 
 void setupTree()
 {
