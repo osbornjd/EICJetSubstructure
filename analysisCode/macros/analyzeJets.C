@@ -198,10 +198,6 @@ void analyzeMatchedJets(MatchedJets *matchedjets,
 
       if(truthJet.Pt() < minjetpt || fabs(truthJet.Eta()) > maxjeteta)
 	continue;
-      
-      if(breitFrame)
-	if(truthJet.Theta() > maxjeteta)
-	  continue;
 
       if(recoJet.Pt() > minjetpt && fabs(recoJet.Eta()) < maxjeteta)
 	{
