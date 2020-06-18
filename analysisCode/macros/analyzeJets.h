@@ -36,10 +36,8 @@ void compareAKTSDTruthJets(JetConstVec *truthjets, JetConstVec *truthsdjets);
 
 float checkdPhi(float dphi);
 
-/// non-const so that they can be changed if breit frame
-float minjetpt = 3;
-float maxjeteta = 2.5;
-const float maxjettheta = 0.4;
+const float minjetpt = 3;
+const float maxjeteta = 2.5;
 
 const int nxbins = 41;
 const int nq2bins = 101;

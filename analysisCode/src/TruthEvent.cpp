@@ -42,7 +42,12 @@ bool TruthEvent::passCuts()
 		<< "," << y << std::endl;
     }
   
-  return x > m_minX && y > m_minY && y < m_maxY && q2 > m_minq2 && processId == m_processId;
+  /// Assume true, in case we don't want to check the process ID
+  bool processCheck = true;
+  if(m_processId > -1)
+    processCheck = processId == m_processId;
+
+  return x > m_minX && y > m_minY && y < m_maxY && q2 > m_minq2 && processCheck;
 }
 void TruthEvent::setScatteredLepton()
 {
@@ -76,9 +81,10 @@ void TruthEvent::setTruthParticles()
 	continue;
 
       /// Check that eta is within nominal detector acceptance
-      if(fabs(truthParticle->GetEta()) > 3.5)
+      if(fabs(truthParticle->GetEta()) > m_maxPartEta)
 	continue;
-      if(truthParticle->GetPt() < 0.25)
+
+      if(truthParticle->GetPt() < m_minPartPt)
 	continue;
 
       if(m_verbosity > 2)

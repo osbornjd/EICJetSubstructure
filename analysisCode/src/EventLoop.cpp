@@ -34,17 +34,9 @@ int main(int argc, char **argv)
   mctree->SetBranchAddress("eventS", &smearEvent);
 
   JetDef R1jetdef(fastjet::antikt_algorithm, 1.0);
-  R1jetdef.setMinJetPt(2.);
-  R1jetdef.setMaxJetRapidity(4);
+  R1jetdef.setMinJetPt(4.);
+  R1jetdef.setMaxJetRapidity(3.5);
   
-  /// Breit frame puts hard scattered jet at theta = 0 with minimal pT.
-  /// So we need "loose" jet finding criteria to include everything, and then
-  /// select jets based on cos(theta*) in analysis
-  if(breitFrame)
-    {
-      R1jetdef.setMinJetPt(0.);
-      R1jetdef.setMaxJetRapidity(std::numeric_limits<int>::max());
-    }
   SoftDropJetDef R1sd(0.1, 0, R1jetdef.getR());
   
   /// Collect information to write out integrated lumi from PYTHIA run
@@ -65,6 +57,8 @@ int main(int argc, char **argv)
     stringstream(nEventsTriedString->GetString().Data()) >> nEventsTried;
   }
 
+  /// total cross section is units of micro barn. Convert to nanobarn
+  totalCrossSection /= 1000;
   integratedLumi = (float) nEventsGen / totalCrossSection;
   runTree->Fill();
   
@@ -91,7 +85,8 @@ int main(int argc, char **argv)
       trueEvent.setMinY(0.05);
       trueEvent.setMaxY(0.95);
       trueEvent.setMinX(0.00001);
-      trueEvent.setProcessId(99);
+      trueEvent.setMinPartPt(0.25);
+      trueEvent.setMaxPartEta(3.5);
       
       /// Check the cuts
       if(!trueEvent.passCuts()){
@@ -107,6 +102,8 @@ int main(int argc, char **argv)
 
       PseudoJetVec fjtruthR1Jets = trueEvent.getTruthJets(truthcs, R1jetdef);
       PseudoJetVec fjtruthR1SDJets = trueEvent.getTruthSoftDropJets(fjtruthR1Jets, R1sd);
+      
+      /// skip events with no truth jets
       if(fjtruthR1Jets.size() == 0)
 	{
 	  continue;
@@ -115,6 +112,8 @@ int main(int argc, char **argv)
       SmearedEvent smearedEvent(*truthEvent, *smearEvent);
       smearedEvent.setVerbosity(0);     
       smearedEvent.useBreitFrame(breitFrame);
+      smearedEvent.setMaxPartEta(3.5);
+      smearedEvent.setMinPartPt(0.25);
       smearedEvent.processEvent();
 
       smearExchangeBoson = smearedEvent.getExchangeBoson();

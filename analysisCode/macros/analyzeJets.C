@@ -15,12 +15,6 @@ void analyzeJets(std::string file)
   if(filename.find("breit") != string::npos)
     {
       breitFrame = true;
-         
-      /// minimum pT and jet eta are going to be affected also
-      /// because hard scattered jet is now at theta ~ 0
-      /// so we will actually cut on theta instead of eta
-      minjetpt = 0;
-      maxjeteta = 400;
     }
   
   gROOT->ProcessLine(".L ../src/fastJetLinker.C+");
@@ -47,10 +41,6 @@ void recoJetAnalysis(JetConstVec *recojets)
 	continue;
       if(fabs(jet.Eta()) > maxjeteta)
 	continue;
-
-      if(breitFrame)
-	if(jet.Theta() > maxjettheta)
-	  continue;
 
       njets++;
       recojetpteta->Fill(jetpt, jet.Eta());
@@ -98,12 +88,6 @@ double truthJetAnalysis(JetConstVec *truthjets)
       if(fabs(jetVec.Eta()) > maxjeteta)
 	continue;
       
-      if(breitFrame)
-	if(jetVec.Theta() > maxjettheta)
-	  continue;
-      
-    
-
       njets++;
       truenconst->Fill(jetVec.Pt(), truthJets->at(jet).second.size());
 
@@ -330,10 +314,6 @@ void recoSDJetAnalysis(JetConstVec *recojets)
       if(jet.Pt() < minjetpt || fabs(jet.Eta()) > maxjeteta)
 	continue;
 
-      if(breitFrame)
-	if(jet.Theta() > maxjettheta)
-	  continue;
-
       TLorentzVectorVec constituents = recojets->at(ijet).second;
       ///first two constituents are the subjets
       TLorentzVector subjet1, subjet2;
@@ -357,9 +337,6 @@ void truthSDJetAnalysis(JetConstVec *truthjets)
       if(jet.Pt() < minjetpt || fabs(jet.Eta()) > maxjeteta)
 	 continue;
 
-      if(breitFrame)
-	if(jet.Theta() > maxjettheta)
-	  continue;
 
       TLorentzVectorVec constituents;
       constituents = truthjets->at(ijet).second;
@@ -401,9 +378,6 @@ void analyzeMatchedSDJets(MatchedJets *matchedjets)
       if(truthJet.Pt() < minjetpt || fabs(truthJet.Eta()) > maxjeteta)
 	 continue;
       
-      if(breitFrame)
-	if(truthJet.Theta() > maxjettheta)
-	  continue;
       
       /// Remove subjets where the soft drop criteria was already satisfied
       /// by the antikt jet, so subjets are listed as (-999,-999,-999,-999)

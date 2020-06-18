@@ -26,8 +26,7 @@ void SmearedEvent::setScatteredLepton()
 
 TLorentzVector SmearedEvent::getExchangeBoson()
 {
-  //TLorentzVector *init = new TLorentzVector( m_smearEvent->BeamLepton()->Get4Vector());
-  //TLorentzVector *scat = new TLorentzVector( m_smearEvent->ScatteredLepton()->Get4Vector());
+ 
   TLorentzVector init(m_smearEvent->BeamLepton()->Get4Vector());
   TLorentzVector scat(m_smearEvent->ScatteredLepton()->Get4Vector());
   
@@ -38,6 +37,7 @@ TLorentzVector SmearedEvent::getExchangeBoson()
       BreitFrame breit(*m_truthEvent, *m_smearEvent);
       breit.labToBreitSmear(&exchangeBoson);
     }
+ 
   return exchangeBoson;
 
 }
@@ -58,8 +58,11 @@ void SmearedEvent::setSmearedParticles()
       /// only want final state particles
       if(truthParticle->GetStatus() != 1)
 	continue;
+      
       /// only particles that could nominally be in the detector
-      if(fabs(truthParticle->GetEta()) > 3.5)
+      if(fabs(truthParticle->GetEta()) > m_maxPartEta)
+	continue;
+      if(truthParticle->GetPt() < m_minPartPt)
 	continue;
 
       /// If truth particle wasn't smeared (e.g. out of acceptance), skip
@@ -143,8 +146,8 @@ void SmearedEvent::setSmearedParticles()
 	}
 
 
-      // Check if it passes some nominal pT cut
-      if(sqrt(px * px + py * py) < 0.25)
+      // Check if smeared particle also passes some nominal pT cut
+      if(sqrt(px * px + py * py) < m_minPartPt)
 	continue;
 
       TLorentzVector *partFourVec = new TLorentzVector();

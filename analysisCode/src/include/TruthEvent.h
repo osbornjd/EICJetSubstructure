@@ -29,7 +29,7 @@ class TruthEvent {
   ~TruthEvent(){}
 
   // member functions //
-  void processEvent( );
+  void processEvent();
   void setVerbosity(int verb) { m_verbosity = verb; }
 
   PseudoJetVec getTruthJets(fastjet::ClusterSequence *cs,
@@ -43,15 +43,19 @@ class TruthEvent {
   void setMaxY(double y) {m_maxY = y; }
   void setMinX(double x) {m_minX = x; }
   void setProcessId(int id) {m_processId = id;}
+  void setMinPartPt(double pt) {m_minPartPt = pt;}
+  void setMaxPartEta(double eta) {m_maxPartEta = eta;}
   bool passCuts();
   TLorentzVector getExchangeBoson();
 
  private:
-  int m_processId;
+  int m_processId = -1;
   double m_minq2;
   double m_minY;
   double m_maxY;
   double m_minX;
+  double m_minPartPt;
+  double m_maxPartEta;
   bool m_breitFrame;
 
   erhic::EventPythia *m_truthEvent;

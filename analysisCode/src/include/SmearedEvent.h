@@ -36,7 +36,8 @@ class SmearedEvent {
   void setVerbosity(int verb) { m_verbosity = verb; }
   TLorentzVector getExchangeBoson();
 
-
+  void setMaxPartEta(double eta){m_maxPartEta = eta;}
+  void setMinPartPt(double pt){m_minPartPt = pt;}
   void setScatteredLepton();
   void setSmearedParticles();
   TLorentzPairVec getMatchedParticles();
@@ -55,6 +56,9 @@ class SmearedEvent {
   /// Need truth event for identifying only final state particles
   erhic::EventPythia *m_truthEvent;
   Smear::Event *m_smearEvent;
+
+  double m_maxPartEta;
+  double m_minPartPt;
 
   const Smear::ParticleMCS *m_scatLepton;
   bool m_breitFrame;
