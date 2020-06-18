@@ -112,8 +112,8 @@ void instantiateHistos()
       zgbins[i] = 0 + i * 0.5 / nzgbins;
     }
 
-  h_xsec = new TH1F("h_xsec",";#sigma [nb]",1000,0,0.0001);
-  h_lumi = new TH1F("h_lumi",";Luminosity [nb]^{-1}",1000,10e9,10e11);
+  h_xsec = new TH1F("h_xsec",";#sigma [#mub]",1000,0,0.0001);
+  h_lumi = new TH1F("h_lumi",";Luminosity [#mub]^{-1}",1000,10e9,10e11);
   h_eventsGen = new TH1F("h_eventsGen",";N_{events}",10000000,0,10000000);
   truejetptheta = new TH2F("truejetptheta",";p^{true} [GeV]; #theta_{jet}^{true} [rad]", 50,0,50,300,-4,4);
   truejetpttheta = new TH2F("truejetpttheta",";p_{T}^{true} [GeV]; #theta_{jet}^{true} [rad]", 50,0,50,300,-4,4);
