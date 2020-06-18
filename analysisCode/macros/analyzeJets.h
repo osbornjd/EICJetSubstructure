@@ -36,6 +36,8 @@ void compareAKTSDTruthJets(JetConstVec *truthjets, JetConstVec *truthsdjets);
 
 float checkdPhi(float dphi);
 
+float lumi;
+
 const float minjetpt = 3;
 const float maxjeteta = 2.5;
 

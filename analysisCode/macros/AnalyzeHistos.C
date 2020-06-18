@@ -20,17 +20,24 @@ void AnalyzeHistos()
 {
   SetsPhenixStyle();
   TFile *file = TFile::Open("lab.root");
-  TFile *bfile = TFile::Open("breithistos.root");
+  TFile *bfile = TFile::Open("breit.root");
   
   TH2 *truejetptz = (TH2F*)file->Get("truejetptz");
   TH2 *truejetptr = (TH2F*)file->Get("truejetptr");
   TH2 *truejetptjt = (TH2F*)file->Get("truejetptjt");
   TH2 *truenconst = (TH2F*)file->Get("truenconst");
+  TH2 *trueSDrg = (TH2F*)file->Get("truthSDjetrg");
+  TH2 *trueSDzg = (TH2F*)file->Get("truthSDjetzg");
   
+  TH2 *btrueSDrg = (TH2F*)bfile->Get("truthSDjetrg");
+  TH2 *btrueSDzg = (TH2F*)bfile->Get("truthSDjetzg");
   TH2 *btruejetptz = (TH2F*)bfile->Get("truejetptz");
   TH2 *btruejetptr = (TH2F*)bfile->Get("truejetptr");
   TH2 *btruejetptjt = (TH2F*)bfile->Get("truejetptjt");
   TH2 *btruenconst = (TH2F*)bfile->Get("truenconst");
+
+  btrueSDrg->SetName("btruthSDjetrg");
+  btrueSDzg->SetName("btruthSDjetzg");
   btruenconst->SetName("btruenconst");
   btruejetptz->SetName("btruejetptz");
   btruejetptr->SetName("btruejetptr");
@@ -49,6 +56,38 @@ void AnalyzeHistos()
   drawFitProfile(truenconst, truenconstfit);
   drawFitProfile(btruenconst, btruenconstfit);
 
+  TH1D *zgproj = trueSDzg->ProjectionX("zgproj",10,11);
+  TH1D *bzgproj = btrueSDzg->ProjectionX("bzgproj",10,11);
+  TH1D *rgproj = trueSDrg->ProjectionX("rgproj",10,11);
+  TH1D *brgproj = btrueSDrg->ProjectionX("brgproj",10,11);
+
+  TCanvas *zgbreitlabcan = new TCanvas("zgbreitlabcan","zgbreitlabcan",
+				       200,200,1000,800);
+  zgproj->Scale(1./zgproj->GetEntries());
+  bzgproj->Scale(1./bzgproj->GetEntries());
+  bzgproj->GetXaxis()->SetTitle("z_{g}^{true}");
+  bzgproj->GetYaxis()->SetTitle("Normalized Counts");
+  bzgproj->SetLineColor(kRed);
+  bzgproj->SetMarkerColor(kRed);
+  bzgproj->Draw("hist");
+  zgproj->Draw("histsame");
+  TLegend *leggg = new TLegend(0.7,0.6,0.8,0.8);
+  leggg->AddEntry(zgproj,"Lab","L");
+  leggg->AddEntry(bzgproj,"Breit","L");
+  leggg->AddEntry((TObject*)0,"9<p_{T}^{jet}<10 GeV","");
+  leggg->Draw("same");
+  
+  TCanvas *rgbreitlabcan = new TCanvas("rgbreitlabcan","rgbreitlabcan",
+				       200,200,1000,800);
+  rgproj->Scale(1./rgproj->GetEntries());
+  brgproj->Scale(1./brgproj->GetEntries());
+  brgproj->GetXaxis()->SetTitle("R_{g}^{true}");
+  brgproj->GetYaxis()->SetTitle("Normalized Counts");
+  brgproj->SetLineColor(kRed);
+  brgproj->SetMarkerColor(kRed);
+  brgproj->Draw("hist");
+  rgproj->Draw("histsame");
+  leggg->Draw("same");
 
 
   TCanvas *zbreitlabcan = new TCanvas("zbreitlabcan","zbreitlabcan",

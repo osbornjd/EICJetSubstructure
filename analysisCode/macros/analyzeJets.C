@@ -22,19 +22,25 @@ void analyzeJets(std::string file)
 
   instantiateHistos();
 
-  loop();
-
+  std::cout<<"Get int lumi"<<std::endl;
   getLumi();
 
+
+  std::cout<<"looping over events"<<std::endl;
+  loop();
+
+
+  std::cout<<"Write to outfile"<<std::endl;
   write(filename);
 
+  std::cout<<"Finished"<<std::endl;
 }
 
 void getLumi()
 {
 
   TTree *runtree = (TTree*)infile->Get("runTree");
-  float lumi;
+ 
   float xsec;
   float events;
   runtree->SetBranchAddress("totalCrossSection",&xsec);
@@ -46,10 +52,13 @@ void getLumi()
       h_lumi->Fill(lumi);
       h_eventsGen->Fill(events);
       h_xsec->Fill(xsec);
-      std::cout<<xsec<<"  "<<lumi<<"  "<<events<<std::endl;
+      
     }
 
 }
+
+
+
 void recoJetAnalysis(JetConstVec *recojets)
 {
   int njets = 0;
