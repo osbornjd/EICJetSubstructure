@@ -29,7 +29,7 @@ class TruthEvent {
   ~TruthEvent(){}
 
   // member functions //
-  void processEvent( );
+  void processEvent();
   void setVerbosity(int verb) { m_verbosity = verb; }
 
   PseudoJetVec getTruthJets(fastjet::ClusterSequence *cs,
@@ -47,7 +47,7 @@ class TruthEvent {
   TLorentzVector getExchangeBoson();
 
  private:
-  int m_processId;
+  int m_processId = -1;
   double m_minq2;
   double m_minY;
   double m_maxY;

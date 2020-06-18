@@ -42,7 +42,12 @@ bool TruthEvent::passCuts()
 		<< "," << y << std::endl;
     }
   
-  return x > m_minX && y > m_minY && y < m_maxY && q2 > m_minq2 && processId == m_processId;
+  /// Assume true, in case we don't want to check the process ID
+  bool processCheck = true;
+  if(processId > -1)
+    processCheck = processId == m_processId;
+
+  return x > m_minX && y > m_minY && y < m_maxY && q2 > m_minq2 && processCheck;
 }
 void TruthEvent::setScatteredLepton()
 {
