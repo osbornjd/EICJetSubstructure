@@ -93,12 +93,21 @@ void recoJetAnalysis(JetConstVec *recojets)
 	  float jt = cross.Mag() / jet3.Mag();
 	  float r = sqrt(pow(checkdPhi(jet.Phi() - con.Phi()), 2) + pow(jet.Rapidity() - con.Rapidity(),2));
 
-	  recojetptz->Fill(z, jetpt);
-	  recojetptjt->Fill(jt, jetpt);
-	  recojetptr->Fill(r, jetpt);
+	  float mass = con.M();
+	  /// Make a crude selection on charged hadrons
+	  bool pion = fabs(mass - 0.14) < 0.03;
+	  bool kaon = fabs(mass - 0.493) < 0.03;
+	  bool proton = fabs(mass - 0.938) < 0.03;
 
+	  if(pion || kaon || proton)
+	    {
+	      recojetptz->Fill(z, jetpt);
+	      recojetptjt->Fill(jt, jetpt);
+	      recojetptr->Fill(r, jetpt);
+	    }
 	}
     }
+
   nrecojets->Fill(njets);
 }
 
@@ -252,6 +261,12 @@ void analyzeMatchedJets(MatchedJets *matchedjets,
       
       recotruejetp->Fill(truthJet.P(), recoJet.P());
       recotruejete->Fill(truthJet.E(), recoJet.E());
+
+      for(int pb = 0; pb < npbins; ++pb)
+	{
+	  if(truthJet.E() > pbins[pb] && truthJet.E() <= pbins[pb+1])
+	    jes[pb]->Fill(recoJet.E() / truthJet.E());
+	}
 
       /// Match constituents up
       for(int j = 0; j< recoConst.size(); j++)

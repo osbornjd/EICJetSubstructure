@@ -37,6 +37,7 @@ TH1 *nrecojets, *ntruthjets;
 TH2 *truthjetbosonphi, *truthjetbosontheta, *truthjetbosoneta;
 TH2 *truejetpttheta, *truejetptheta;
 TH1 *h_lumi, *h_eventsGen, *h_xsec;
+TH1 *jes[npbins];
 
 void write(std::string filename)
 {
@@ -101,6 +102,9 @@ void write(std::string filename)
   ntruthjets->Write();
   nrecojets->Write();
 
+  for(int i=0; i<npbins; i++)
+    jes[i]->Write();
+
   outfile->Write();
   outfile->Close();
 
@@ -110,6 +114,14 @@ void instantiateHistos()
   for(int i = 0; i< nzgbins+1; i++)
     {
       zgbins[i] = 0 + i * 0.5 / nzgbins;
+    }
+  ostringstream name;
+  for(int i=0; i<npbins; i++)
+    {
+      name.str("");
+      name<<"jes"<<i;
+      jes[i] = new TH1F(name.str().c_str(),";E_{jet}^{reco}/E_{jet}^{true}",
+		        200,0,2);
     }
 
   h_xsec = new TH1F("h_xsec",";#sigma [#mub]",1000,0,0.0001);
