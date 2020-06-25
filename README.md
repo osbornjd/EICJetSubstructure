@@ -22,6 +22,14 @@ The detector smearing is set in `smear/ePHENIXDetector.cpp` and `smear/smearHand
 
 The output truth and smeared files can be befriended for further analysis within ROOT, as in the directory `analysisCode`.
 
+An example command to run the python script would be
+
+```
+python runSimWorkflow.py smeared truth 275 18 9 100 /path/to/directory/EICJetSubstructure/ 0
+```
+
+This would run the script and produce a file `smeared.root` and `truth.root` which contain the truth and smeared output from EICSmear. The proton and electron energy would be 275 and 18 GeV, respectively, with a minimum Q2 of 9. The job would process 100 events. The path argument allows python to find the necessary files it needs to run, and should just be the global path to where you cloned the repository. The final integer is a number which identifies the job, if running on condor (otherwise it is arbitrary).
+
 ### Repository setup
 
 The repository has three main analysis steps - event generation, event analysis, and macro. Each step and the relevant location of the code are described in more detail here. An example single DIS event truth and smeared output can be found in `MCData/example`, which corresponds to the event generation output for 1 event. In principle, one could run the analysis chain on this example output (although you won't get any interesting results!).
@@ -29,6 +37,7 @@ The repository has three main analysis steps - event generation, event analysis,
 #### Event generation
 
 The event generation is controlled by the `runSimWorkflow.py` script, which calls separate python scripts in the directories `pythiaGeneration` and `smear` to do the truth event generation and smearing, respectively. For those working on RCF who have access to the condor node farm, condor scripts are available to run the event generation in `condorEventGen`. 
+
 #### Event analysis
 
 After a truth and smeared file are created, the code to analyze the output events is available in the `analysisCode` directory. Please see that directory for another README describing its use. A basic example analysis code with Makefile can be found in the `example` directory, should you want to create your own analysis code.
