@@ -1,8 +1,8 @@
 # Short script to smear out the truth pythia MC. Smears with default 
-# detector based around sPHENIX solenoid
-# take an input file (truth pythia file) and output file (smeared output)
-# as arguments
-
+# handbook detector as defined in smearHandBook.cxx
+# Note: smearHandBook.cxx needs to be updated as it is updated by the 
+# detector working group, as it is just checked out of the EICSmear package
+# here
 import ROOT
 import sys
 
@@ -16,6 +16,7 @@ def smear(inputfile, outputfile, basePath):
     basePath   - the full path leading to the jetSubstructure directory,
                  defined in runSimWorkflow.py
     """
+
     # process commands in root
     ROOT.gSystem.Load("libeicsmear")
     ROOT.gROOT.ProcessLine(".L " + basePath + "smear/smearHandBook.cxx")

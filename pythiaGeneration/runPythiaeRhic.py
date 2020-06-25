@@ -1,14 +1,7 @@
 # Simple python script that runs the pythiaeRHIC executable
-# See the enclosed directories for examples, or for the "official"
+# Tor the "official"
 # EICSmear example see: 
 # $EICDIRECTORY/PACKAGES/PYTHIA-RAD-CORR/STEER-FILES-Other/ep_noradcor.20x250.quicktest 
-
-# arguments: 
-# output text file to contain the pythia events
-# proton beam energy
-# lepton beam energy
-# number of events to process
-
 
 import os
 import sys
@@ -18,25 +11,31 @@ def runPythia(outfile, protonEnergy, electronEnergy, minQ2,
     """
     This function takes several arguments and runs the pythia truth generation
     with the parameters given as arguments and the "default file", which 
-    contains a number of pythia parameters tuned to various data.
-    outfile        - string of truth output root file
+    contains a number of pythia parameters tuned to various HERA data.
+
+    outfile        - output text file to contain the pythia events
     protonEnergy   - proton beam energy
-    electronEnergy - electron beam energy
-    nEvents        - number of events to run
-    processID      - an integer to identify the process number from condor
+    electronEnergy - lepton beam energy
+    minQ2          - minimum Q2 of events
+    nEvents        - number of events to process
+    basePath       - basePath provided by runSimWorkflow.py 
+                     to the jetSubstructure/ directory
+    processID      - processId to identify output if running batch jobs
     """
 
-    # get the default pythia parameters that we don't want to fuss with
+    # Get the default pythia parameters that we don't want to fuss with
+    # parameters tuned to HERA data
     defaultPythiaFile = open(basePath + "pythiaGeneration/pythiaeRHICSettingsHera.txt", "r")
     defaultPythia = defaultPythiaFile.read()
     
-    # construct the header with the arguments 
+    # Construct the header with the arguments we do want to fuss with
     output = outfile + " ! output file name\n"
     leptonBeam = "11 ! lepton beam type\n"
     energies = protonEnergy + "," + electronEnergy + " ! proton and electron beam energy\n"
     events = nEvents + ",1 ! Number of events, number of events to print to stdout\n"
     
-    # write all the stuff to a dummyfile to be passed to the erhic executable
+    # Write all the pythia gen info to a dummyfile to be passed 
+    # to the erhic executable
     pythiafilename = "pythiafile_" + processID + ".txt"
     finalPythiaFile = open(pythiafilename,"w")
     finalPythiaFile.write(output)
@@ -44,15 +43,16 @@ def runPythia(outfile, protonEnergy, electronEnergy, minQ2,
     finalPythiaFile.write(energies)
     finalPythiaFile.write(events)
     
-    # add the x, q, and y, which we might want to add as arguments later
+    # Add the x, q, and y ranges to run minimum bias pythia (other than minq2)
     finalPythiaFile.write("1e-09, 0.99       ! xmin and xmax\n")
     finalPythiaFile.write("1e-04,1.00        ! ymin and ymax\n")
     finalPythiaFile.write(minQ2 +",20000         ! Q2min and Q2max\n")
     
-    # add all the other parameters
+    # Add all the other (HERA tuned) parameters
     finalPythiaFile.write(defaultPythia)
     finalPythiaFile.close()
     
+    # Execute the pythiaeRHIC generation executable in EICSmear
     executable = "$EICDIRECTORY/bin/pythiaeRHIC < " + pythiafilename + " > logfile_" + processID + ".log"
     os.system(executable)
     
@@ -61,7 +61,7 @@ def runPythia(outfile, protonEnergy, electronEnergy, minQ2,
     ROOT.gSystem.Load("libeicsmear")
     ROOT.BuildTree(outfile, ".", -1,"logfile_"+processID+".log")
     
-    # remove the files we created once we are finished with it
+    # Remove the dummy files we created once we are finished with it
     os.system("rm " + pythiafilename)
     os.system("rm " + outfile)
     os.system("rm logfile_"+processID+".log")

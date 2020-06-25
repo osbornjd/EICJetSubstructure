@@ -66,11 +66,13 @@ void SmearedEvent::setSmearedParticles()
 	continue;
 
       /// If truth particle wasn't smeared (e.g. out of acceptance), skip
+      /// This can also manifest itself as E==0 && p==0
       if(particle == NULL || 
 	 (fabs(particle->GetE()) <= epsilon && fabs(particle->GetP()) <= epsilon))
 	continue;
       
-      /// Skip the scattered electron, since it is special (nd we don't want it in jet finding, anyway)
+      /// Skip the scattered electron, since it is special 
+      /// (and we don't want it in jet finding, anyway)
       if(particle->GetE() == m_scatLepton->GetE())
 	continue;
       
@@ -132,7 +134,7 @@ void SmearedEvent::setSmearedParticles()
 
 	  auto phi = particle->GetPhi();
 	  auto theta = particle->GetTheta();
-	
+	  
 	  px = p * sin(theta) * cos(phi);
 	  py = p * sin(theta) * sin(phi);
 	  pz = p * cos(theta);
@@ -157,11 +159,13 @@ void SmearedEvent::setSmearedParticles()
 				   truthParticle->GetPy(),
 				   truthParticle->GetPz(),
 				   truthParticle->GetE());
+
+      /// boost to breit frame if desired
       if(m_breitFrame){
 	breit.labToBreitTruth( truthPartFourVec );
 	breit.labToBreitSmear( partFourVec );
-
       }
+
       if(m_verbosity > 0)
 	{
 	  std::cout << "Smeared : " <<partFourVec->Px() << " " 
@@ -269,7 +273,6 @@ std::vector<PseudoJetVec> SmearedEvent::matchTruthRecoJets(
   PseudoJetVec matchJetPair;
   std::vector<PseudoJetVec> matchedVector;
   
-
   for(int reco = 0; reco < recojets.size(); ++reco)
     {
       matchJetPair.clear();
@@ -277,6 +280,8 @@ std::vector<PseudoJetVec> SmearedEvent::matchTruthRecoJets(
       fastjet::PseudoJet recojet = recojets[reco];
       double mindR = 9999;
       fastjet::PseudoJet matchedTruthJet;
+      
+      /// Find the closest truth jet in DeltaR space
       for(int truth = 0; truth < truthjets.size(); ++truth)
 	{
 	  fastjet::PseudoJet truthjet = truthjets[truth];

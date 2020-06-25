@@ -4,7 +4,7 @@
 int main(int argc, char **argv)
 {
   /// Link the libraries to be able to write std::vector<TLorentzVector>
-  /// and std::pairs to TTreess
+  /// and std::pairs to TTrees
   gROOT->ProcessLine(".L src/fastJetLinker.C+");
   
   /// Collect arguments
@@ -23,16 +23,19 @@ int main(int argc, char **argv)
   TFile *outfile = new TFile(outputFile.c_str(), "recreate");
   jetTree = new TTree("jettree", "A tree with jets");
 
+  /// Create branches for trees
   setupJetTree();
   setupRunTree();
   
   mctree->AddFriend("Smeared", smearedFile.c_str());
+  
   erhic::EventPythia* truthEvent(NULL);
   Smear::Event* smearEvent(NULL);
 
   mctree->SetBranchAddress("event", &truthEvent);
   mctree->SetBranchAddress("eventS", &smearEvent);
 
+  /// Make a basic R=1 jet definition
   JetDef R1jetdef(fastjet::antikt_algorithm, 1.0);
   R1jetdef.setMinJetPt(4.);
   R1jetdef.setMaxJetRapidity(3.5);
@@ -46,15 +49,15 @@ int main(int argc, char **argv)
   mc.GetObject("nEvents", nEventsString);
   mc.GetObject("crossSection", crossSectionString);
   
-  stringstream stream;
+  std::stringstream stream;
   if(nEventsString != nullptr){
-    stringstream(nEventsString->GetString().Data()) >> nEventsGen;
+    std::stringstream(nEventsString->GetString().Data()) >> nEventsGen;
   }
   if(crossSectionString != nullptr){
-    stringstream(crossSectionString->GetString().Data()) >> totalCrossSection;
+    std::stringstream(crossSectionString->GetString().Data()) >> totalCrossSection;
   }
   if(nEventsTriedString != nullptr){
-    stringstream(nEventsTriedString->GetString().Data()) >> nEventsTried;
+    std::stringstream(nEventsTriedString->GetString().Data()) >> nEventsTried;
   }
 
   /// total cross section is units of micro barn
@@ -68,12 +71,18 @@ int main(int argc, char **argv)
 	std::cout<<"Processed " << event << " events" << std::endl;
 
       mctree->GetEntry(event);
+
+      /// Get event level information
       processId = truthEvent->GetProcess();
       truex = truthEvent->GetTrueX();
       truey = truthEvent->GetTrueY();
       trueq2 = truthEvent->GetTrueQ2();
       truenu = truthEvent->GetTrueNu();
-
+      recx = smearEvent->GetX();
+      recy = smearEvent->GetY();
+      recq2 = smearEvent->GetQ2();
+      recnu = smearEvent->GetNu();
+ 
       TruthEvent trueEvent(*truthEvent);
       trueEvent.setVerbosity(0);
       trueEvent.useBreitFrame(breitFrame);
@@ -92,17 +101,14 @@ int main(int argc, char **argv)
 	continue;
       }
 
-      recx = smearEvent->GetX();
-      recy = smearEvent->GetY();
-      recq2 = smearEvent->GetQ2();
-      recnu = smearEvent->GetNu();
- 
+      /// Set particle vectors in trueEvent
       trueEvent.processEvent();
 
+      /// Perform truth jet clustering
       PseudoJetVec fjtruthR1Jets = trueEvent.getTruthJets(truthcs, R1jetdef);
       PseudoJetVec fjtruthR1SDJets = trueEvent.getTruthSoftDropJets(fjtruthR1Jets, R1sd);
       
-      /// skip events with no truth jets
+      /// Skip events with no truth jets that pass jet cuts
       if(fjtruthR1Jets.size() == 0)
 	{
 	  continue;
@@ -113,11 +119,13 @@ int main(int argc, char **argv)
       smearedEvent.useBreitFrame(breitFrame);
       smearedEvent.setMaxPartEta(3.5);
       smearedEvent.setMinPartPt(0.25);
+      /// Set smeared particle vectors, apply cuts to particles
       smearedEvent.processEvent();
 
       smearExchangeBoson = smearedEvent.getExchangeBoson();
       matchedParticles = smearedEvent.getMatchedParticles();      
-
+      
+      /// Get reco jets and corresponding matched truth jets
       PseudoJetVec fjrecoR1Jets = smearedEvent.getRecoJets(cs, R1jetdef);
       std::vector<PseudoJetVec> fjmatchedR1Jets = 
       	smearedEvent.matchTruthRecoJets(fjtruthR1Jets, fjrecoR1Jets);
@@ -127,18 +135,19 @@ int main(int argc, char **argv)
       std::vector<PseudoJetVec> fjmatchedR1SDJets = 
 	smearedEvent.matchTruthRecoJets(fjtruthR1SDJets, fjrecoR1SDJets);
 
+      /// Everything is in fastjet::PseudoJet right now. Convert to
+      /// TLorentzVectors so that they can be written to trees easily
       truthR1Jets  = convertToTLorentzVectors(fjtruthR1Jets, false);
       recoR1Jets   = convertToTLorentzVectors(fjrecoR1Jets, false);
-
       recoR1SDJets = convertToTLorentzVectors(fjrecoR1SDJets, true);
       truthR1SDJets = convertToTLorentzVectors(fjtruthR1SDJets, true);
-
       matchedR1Jets = convertMatchedJetVec(fjmatchedR1Jets, false);
       matchedR1SDJets = convertMatchedJetVec(fjmatchedR1SDJets, true);
       
       jetTree->Fill();
     }
   
+  /// Write the tree out
   outfile->cd();
   jetTree->Write();
   runTree->Write();
@@ -149,10 +158,13 @@ int main(int argc, char **argv)
 
 }
 
-std::vector<std::vector<JetConstPair>> convertMatchedJetVec(std::vector<PseudoJetVec> vec, bool SDJet)
+std::vector<std::vector<JetConstPair>> convertMatchedJetVec(
+				       std::vector<PseudoJetVec> vec, 
+				       bool SDJet)
 {
   std::vector<std::vector<JetConstPair>> matchedJets;
-  //num jets per event
+
+  /// Call the convert function for each entry in the vector
   for(int i = 0; i < vec.size(); i++)
     {
       PseudoJetVec pair = vec.at(i);
@@ -206,7 +218,7 @@ JetConstVec convertToTLorentzVectors(PseudoJetVec pseudoJets, bool SDJet)
     {
       fastjet::PseudoJet pseudojet = pseudoJets.at(jet);
       
-      /// swap fastjet::pseudojet with a TLorentzVector
+      /// Swap fastjet::pseudojet with a TLorentzVector
       TLorentzVector tJet;
       tJet.SetPxPyPzE(pseudojet.px(),
 		      pseudojet.py(),
@@ -218,7 +230,8 @@ JetConstVec convertToTLorentzVectors(PseudoJetVec pseudoJets, bool SDJet)
       /// If it is SDJets first add the two subjets
       if(SDJet)
 	{
-	  /// This is always size 2 since it has two subjets by definition
+	  /// This is size 2 since it has two subjets by definition
+	  /// If it is size 0 then no grooming was performed
 	  PseudoJetVec subjets = pseudojet.pieces();
 	  TLorentzVector subjet1, subjet2;
 	  if(subjets.size() != 2)
