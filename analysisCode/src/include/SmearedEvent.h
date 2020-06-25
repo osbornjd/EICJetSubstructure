@@ -20,6 +20,11 @@ using JetConstVec = std::vector<JetConstPair>;
 using TLorentzPair = std::pair<TLorentzVector, TLorentzVector>;
 using TLorentzPairVec = std::vector<TLorentzPair>;
 
+/**
+ * This class is the analagous class to TruthEvent but for smeared particles.
+ * The functionality is largely the same as TruthEvent, but with some additional
+ * considerations for smeared particles from EICSmear.
+ */
 class SmearedEvent {
   
  public:
@@ -36,10 +41,14 @@ class SmearedEvent {
   void setVerbosity(int verb) { m_verbosity = verb; }
   TLorentzVector getExchangeBoson();
 
+  /// Set some event level criteria
   void setMaxPartEta(double eta){m_maxPartEta = eta;}
   void setMinPartPt(double pt){m_minPartPt = pt;}
   void setScatteredLepton();
   void setSmearedParticles();
+
+  /// Returns a TLorentzPairVec matching truth and smeared particles used
+  // in the jet clustering. Useful for identifying e.g. response matrices
   TLorentzPairVec getMatchedParticles();
 
   PseudoJetVec getRecoJets(fastjet::ClusterSequence *cs,
@@ -47,6 +56,7 @@ class SmearedEvent {
   PseudoJetVec getRecoSoftDropJets(PseudoJetVec recoJets, 
 				   SoftDropJetDef sdJetDef);
 
+  /// Match truth and reco jets via their deltaR separation
   std::vector<PseudoJetVec> matchTruthRecoJets(PseudoJetVec truthjets, 
 					       PseudoJetVec recojets);
 
@@ -63,12 +73,11 @@ class SmearedEvent {
   const Smear::ParticleMCS *m_scatLepton;
   bool m_breitFrame;
   std::vector<PseudoJetVec> m_matchedJets;
-  
+
+  /// Vectors of particles to be kept
   PseudoJetVec m_particles;
   PseudoJetVec m_truthParticles;
   int m_verbosity = 0;
-
- 
 
 };
 

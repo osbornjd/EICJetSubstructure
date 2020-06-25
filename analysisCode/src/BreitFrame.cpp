@@ -11,16 +11,15 @@ void BreitFrame::labToBreitTruth( TLorentzVector *l )
   TVector3 z_axis(0,0,-1);
   l->Boost(-beta);
   q_lab.Boost(-beta);
-  // Double check signage or if inverse rotation is needed... 
   l->Rotate(q_lab.Vect().Angle(z_axis), q_lab.Vect().Cross(z_axis).Unit());
 
 }
 
 void BreitFrame::labToBreitSmear( TLorentzVector *l )
 {
+  /// Construct q vector for smeared event
   TLorentzVector lprime(m_smearEvent->ScatteredLepton()->Get4Vector());
   TLorentzVector lo(m_smearEvent->BeamLepton()->Get4Vector());
-
   TLorentzVector q = lo - lprime;
 
   TLorentzVector P = m_smearEvent->BeamHadron()->PxPyPzE();
@@ -30,7 +29,6 @@ void BreitFrame::labToBreitSmear( TLorentzVector *l )
   TVector3 z_axis(0,0,-1);
   l->Boost(-beta);
   q.Boost(-beta);
-  // Double check signage or if inverse rotation is needed... 
   l->Rotate(q.Vect().Angle(z_axis), q.Vect().Cross(z_axis).Unit());
 
 }

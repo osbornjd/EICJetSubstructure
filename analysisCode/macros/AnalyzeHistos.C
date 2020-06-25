@@ -18,11 +18,11 @@ void projectBin(TH2 *hist);
 void plotJER();
 TFile *file, *bfile;
 
-void AnalyzeHistos()
+void AnalyzeHistos(std::string labfile, std::string breitfile)
 {
   SetsPhenixStyle();
-  file = TFile::Open("data/lab.root");
-  bfile = TFile::Open("data/breit.root");
+  file = TFile::Open(labfile.c_str());
+  bfile = TFile::Open(breitfile.c_str());
   
   TH2 *truejetptz = (TH2F*)file->Get("truejetptz");
   TH2 *truejetptr = (TH2F*)file->Get("truejetptr");

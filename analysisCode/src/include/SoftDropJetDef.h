@@ -4,6 +4,9 @@
 #include "JetDef.h"
 #include <fastjet/contrib/SoftDrop.hh>
 
+/**
+ * Soft drop jet definition class that has additional parameters for jet finding
+ */
 class SoftDropJetDef : public JetDef
 {
  public:

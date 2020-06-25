@@ -6,6 +6,10 @@
 
 #include <vector>
 
+/**
+ * A jet definition class to hold the type of jet algorithm, jet radius, and 
+ * some cuts like pT and pseudorapidity
+ */
 class JetDef {
   
  public:

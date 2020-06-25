@@ -14,9 +14,11 @@
 #include "BreitFrame.h"
 
 using PseudoJetVec = std::vector<fastjet::PseudoJet>;
-using namespace fastjet;
-using namespace std;
 
+/**
+ * This class stores truth information, like final state particles, and also
+ * defines various truth level cuts on those particles
+ */
 class TruthEvent {
   
  public:
@@ -28,15 +30,17 @@ class TruthEvent {
 
   ~TruthEvent(){}
 
-  // member functions //
+  /// Processes event by getting all final state particles 
   void processEvent();
   void setVerbosity(int verb) { m_verbosity = verb; }
 
+  /// Get truth jets from list of final state particles
   PseudoJetVec getTruthJets(fastjet::ClusterSequence *cs,
 			   JetDef jetDef);
   PseudoJetVec getTruthSoftDropJets(PseudoJetVec recoJets, 
 				   SoftDropJetDef sdJetDef);
 
+  /// Setters for various cuts
   void useBreitFrame(bool yesorno) { m_breitFrame = yesorno; }
   void setMinQ2(double q2) { m_minq2 = q2; }
   void setMinY(double y) {m_minY = y; }
@@ -45,10 +49,12 @@ class TruthEvent {
   void setProcessId(int id) {m_processId = id;}
   void setMinPartPt(double pt) {m_minPartPt = pt;}
   void setMaxPartEta(double eta) {m_maxPartEta = eta;}
+  /// Return boolean whether or not event passes truth event cuts
   bool passCuts();
   TLorentzVector getExchangeBoson();
 
  private:
+  /// Member variables defining the truth level cuts
   int m_processId = -1;
   double m_minq2;
   double m_minY;

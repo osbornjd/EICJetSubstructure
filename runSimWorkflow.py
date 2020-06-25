@@ -2,9 +2,7 @@ import os
 import sys
 import subprocess
 
-
-
-# This script runs the whole workflow and generates, and smears, pythia events
+# This script runs the workflow and generates, and smears, pythia events.
 # The output are two files in the directory where you run this script
 # given by the arguments collected for the truth and smeared files. These
 # root files can be "befriended" for analysis. 

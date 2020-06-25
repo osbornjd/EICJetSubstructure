@@ -21,6 +21,7 @@
 #include "JetDef.h"
 #include "SoftDropJetDef.h"
 
+#include <sstream>
 #include <iostream>
 #include <vector>
 
@@ -32,16 +33,23 @@ using TLorentzPairVec = std::vector<TLorentzPair>;
 using JetConstPair = std::pair<TLorentzVector, std::vector<TLorentzVector>>;
 using JetConstVec = std::vector<JetConstPair>;
 
-
+/// Functions to set branch addresses for trees
 void setupJetTree();
 void setupRunTree();
 
+/// Takes a PseudoJetVec and converts it to a JetConstVec. SDJet boolean
+/// flag notifies if the first two entries in the constituent vector
+/// are the subjets
 JetConstVec convertToTLorentzVectors(PseudoJetVec pseudoJets, bool SDJet);
-std::vector<std::vector<JetConstPair>> convertMatchedJetVec(std::vector<PseudoJetVec> vec, bool SDJet);
+
+/// Function that calls convertToTLorentzVectors for the matched jet data structure
+std::vector<std::vector<JetConstPair>> 
+     convertMatchedJetVec(std::vector<PseudoJetVec> vec, bool SDJet);
 
 /// Note - for SDJets, the first two entries in the constituent vector, i.e.
 /// first two entries in the second of the pair list are the two subjets
 JetConstVec truthR1Jets, recoR1Jets, recoR1SDJets, truthR1SDJets;
+
 double truex, truey, trueq2, truenu;
 double recx, recy, recq2, recnu;
 int processId;
