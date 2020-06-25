@@ -8,19 +8,21 @@
 #include <TH2.h>
 #include <TFile.h>
 #include <TGraphErrors.h>
-#include "../sPhenixStyle.h"
-#include "../sPhenixStyle.C"
+#include "sPhenixStyle.h"
+#include "sPhenixStyle.C"
 
 TGraphErrors *FitProfile(const TH2 *h2);
 void drawFitProfile(TH2 *hist, TGraphErrors *gr);
 void draw2DHisto(TH2 *hist);
 void projectBin(TH2 *hist);
+void plotJER();
+TFile *file, *bfile;
 
 void AnalyzeHistos()
 {
   SetsPhenixStyle();
-  TFile *file = TFile::Open("lab.root");
-  TFile *bfile = TFile::Open("breit.root");
+  file = TFile::Open("data/lab.root");
+  bfile = TFile::Open("data/breit.root");
   
   TH2 *truejetptz = (TH2F*)file->Get("truejetptz");
   TH2 *truejetptr = (TH2F*)file->Get("truejetptr");
@@ -28,7 +30,10 @@ void AnalyzeHistos()
   TH2 *truenconst = (TH2F*)file->Get("truenconst");
   TH2 *trueSDrg = (TH2F*)file->Get("truthSDjetrg");
   TH2 *trueSDzg = (TH2F*)file->Get("truthSDjetzg");
+  TH2 *JER = (TH2F*)file->Get("recotruejete");
   
+  plotJER();
+
   TH2 *btrueSDrg = (TH2F*)bfile->Get("truthSDjetrg");
   TH2 *btrueSDzg = (TH2F*)bfile->Get("truthSDjetzg");
   TH2 *btruejetptz = (TH2F*)bfile->Get("truejetptz");
@@ -127,6 +132,54 @@ void AnalyzeHistos()
   leg->Draw("same");
 
 }
+
+void plotJER()
+{
+  const int nbins = 42;
+  TH1F *hists[nbins];
+  TF1 *fits[nbins];
+  float jes[nbins], jeserr[nbins];
+  float jer[nbins], jererr[nbins];
+  float e[nbins];
+  /// Taken from analyzeJets.h
+  float pbins[nbins+1] = {2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,24,26,28,30,32,34,36,38,40,44,48,52,56,60,70,80,90,100,120,140,160,180,200};
+
+  ostringstream name;
+  TCanvas *fitcan = new TCanvas("fitcan","fitcan",200,200,1000,1000);
+  fitcan->Divide(6,7);
+  for(int i=0; i<nbins; i++)
+    {
+      name.str("");
+      name<<"jes"<<i;
+      hists[i] = (TH1F*)file->Get(name.str().c_str());
+    
+      fits[i] = new TF1(name.str().c_str(),"gaus",0.7,1.3);
+      hists[i]->Fit(fits[i],"nqr");
+      jes[i] = fits[i]->GetParameter(1);
+      jeserr[i] = fits[i]->GetParError(1);
+      jer[i] = fits[i]->GetParameter(2);
+      jererr[i] = fits[i]->GetParError(2);
+      e[i] = pbins[i] + (pbins[i+1] - pbins[i]) / 2.;
+      
+      fitcan->cd(i+1);
+      hists[i]->Draw();
+      fits[i]->SetLineColor(kRed);
+      fits[i]->Draw("same");
+ 
+    }
+
+  TGraphErrors *jergr = new TGraphErrors(nbins,e,jer,0,jererr);
+  TGraphErrors *jesgr = new TGraphErrors(nbins,e,jes,0,jeserr);
+  TFile *outfile = new TFile("jesjerfile.root","recreate");
+  jergr->SetTitle("");
+  jesgr->SetTitle("");
+  jergr->Write("jer");
+  jesgr->Write("jes");
+  outfile->Close();
+
+
+}
+
 
 void projectBin(TH2 *hist)
 {
