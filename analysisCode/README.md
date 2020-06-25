@@ -1,6 +1,6 @@
 ## Analysis Code
 
-This directory holds the code that is responsible for analyzing the output truth and smeared files that were created by EICSmear. The source code is collected in the `src` directory, and macros to analyze the output are stored in `macros` directory.
+This directory holds the code that is responsible for analyzing the output truth and smeared files that were created by EICSmear. The source code is collected in the `src` directory, and macros to analyze the output are stored in `macros` directory. Note that this has only been tested on RCF and thus it is assumed you are working on an RCF account with the EICSmear libraries available. 
 
 
 ## Building and running
@@ -12,6 +12,8 @@ All that is required to build the code is to use the `Makefile` via `make all`. 
 ```
 
 The `truth` and `smeared` are the relative paths to the truth and smeared output as generated from EICSmear after running `runSimWorkflow.py`. The `outputfile` is the output ROOT file that contains a variety of jet trees. The final argument should either be a 0 or 1 depending on whether or not you want to boost the final state particles and do the jet clustering in the Breit frame (1) or the lab frame (0).
+
+You can also take advantage of the `RunAnalysisChain.csh` script, which runs the analysis code and associated macro to generate histograms.
 
 
 ## ROOT output

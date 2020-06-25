@@ -13,7 +13,7 @@ $ source /afs/rhic.bnl.gov/eic/restructured/etc/eic_cshrc.csh
 
 ```
 
-In principle, if you have EICSmear and ROOT installed on your local computer with a similar environment setup to the RCF version, this code would be functional. 
+In principle, if you have EICSmear and ROOT installed on your local computer with a similar environment setup to the RCF version, this code would be functional. One would have to change, in the scripts, the directory where their EIC environment setup script exists.
 
 ### Usage
 All that is necessary to use this is to run the main `runSimWorkflow.py` with the arguments as documented in the file. Alternatively, there is a `.csh` script in `condorEventGen` that runs the same thing - this may be more intuitive for some users. The output is a truth root file, which contains a tree with truth particle information from PYTHIA, and a smeared root file, which contains the particles after undergoing detector smearing.
