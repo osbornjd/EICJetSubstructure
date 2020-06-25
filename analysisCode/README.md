@@ -23,3 +23,7 @@ The output ROOT file has several trees in it. For descriptions of the data types
 ## Macros
 
 A macro to analyze the output from running `./EventLoop` can be found in `macros/analyzeJets.C`. The macro simply takes as an argument the output ROOT file with the jet trees produced by `./EventLoop`. The final output is a variety of histograms, as described in `macros/HistoManager.h`. Additionally, the macro `macros/AnalyzeHistos.C` can be run on the output of `analyzeJets.C` to create some plots.
+
+## Condor
+
+There is also a condor directory that can run the analysis chain in batch jobs, if desired. This is useful if, for example, you have a large MC simulation sample and want to parse down the amount that has to be processed in a single job.
