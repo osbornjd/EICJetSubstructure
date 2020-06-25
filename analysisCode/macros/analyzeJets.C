@@ -170,16 +170,13 @@ void loop()
 	std::cout << "Processed " << i << " events " << std::endl;
       jettree->GetEntry(i);
       
+      /// Analyze various branches in the jet tree
       recoJetAnalysis(recoJets);
-
       float highestTruthJetPt = truthJetAnalysis(truthJets);
-
       analyzeMatchedJets(matchedJets, matchedParticles);
-
       recoSDJetAnalysis(recoSDJets);
       truthSDJetAnalysis(truthSDJets);
       analyzeMatchedSDJets(matchedSDJets);
-
       compareAKTSDTruthJets(truthJets, truthSDJets);
 
       /// Event level kinematics
@@ -187,7 +184,6 @@ void loop()
       truerecy->Fill(truey,recy);
       truerecq2->Fill(trueq2,recq2);
       trueQ2x->Fill(truex,trueq2);
-  
       trueQ2pT->Fill(trueq2, highestTruthJetPt);
     
       /// Make some event level histograms of jets+exchange boson
@@ -195,8 +191,17 @@ void loop()
 	{
 	  TLorentzVector jetVec;
 	  jetVec = truthJets->at(jet).first;
-	  if(jetVec.Pt() > 1)
-	    continue;
+
+	  /// Require this to check if scattered quark jet and photon
+	  /// are aligned on z axis and/or such that cos(theta)~1
+	  if(breitFrame){
+	    if(jetVec.Pt() > 1)
+	      continue;
+	  }
+	  else
+	    if(jetVec.Pt() < minjetpt)
+	      continue;
+	  
 	  truthjetbosonphi->Fill(truthExchangeBoson->Phi(),
 				 jetVec.Phi());
 	  truthjetbosoneta->Fill(truthExchangeBoson->Eta(),
