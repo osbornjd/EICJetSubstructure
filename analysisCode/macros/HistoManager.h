@@ -8,6 +8,8 @@ TLorentzVector *truthExchangeBoson, *smearedExchangeBoson;
 JetConstVec *truthJets, *recoJets, *recoSDJets, *truthSDJets;
 MatchedJets *matchedJets, *matchedSDJets;
 double recx, recy, recq2, truey, truex, trueq2;
+float lumi;
+int processId;
 
 TFile *infile, *outfile;
 TTree *jettree;
@@ -38,11 +40,16 @@ TH2 *truthjetbosonphi, *truthjetbosontheta, *truthjetbosoneta;
 TH2 *truejetpttheta, *truejetptheta;
 TH1 *h_lumi, *h_eventsGen, *h_xsec;
 TH1 *jes[npbins];
+TH1 *h_processID;
 
 void write(std::string filename)
 {
   std::string file = filename + "_histos.root";
+
   outfile = new TFile(file.c_str(),"RECREATE");
+
+  h_processID->Write();
+
   h_lumi->Write();
   h_xsec->Write();
   h_eventsGen->Write();
@@ -123,6 +130,8 @@ void instantiateHistos()
       jes[i] = new TH1F(name.str().c_str(),";E_{jet}^{reco}/E_{jet}^{true}",
 		        200,0,2);
     }
+
+  h_processID = new TH1I("h_processID",";Process ID",1000,0,1000);
 
   h_xsec = new TH1F("h_xsec",";#sigma [#mub]",1000,0,0.0001);
   h_lumi = new TH1F("h_lumi",";Luminosity [#mub]^{-1}",1000,10e9,10e11);
