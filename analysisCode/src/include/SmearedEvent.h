@@ -40,6 +40,7 @@ class SmearedEvent {
   void processEvent();
   void setVerbosity(int verb) { m_verbosity = verb; }
   TLorentzVector getExchangeBoson();
+  TLorentzVector getScatteredLepton(){return m_scatLepton->Get4Vector();}
 
   /// Set some event level criteria
   void setMaxPartEta(double eta){m_maxPartEta = eta;}
