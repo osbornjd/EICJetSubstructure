@@ -5,13 +5,9 @@
 
   TFile *f=new TFile("data/lab_minpt250.root");
   
-
   //Please keep the following binning so that we can compare across different WG
   TH2D *h=(TH2D*)f->Get("h_scatJet");
   
-  // --------- Plotting ---------------- //
-  //     (code by R. Seidl) 
-
   gStyle->SetOptStat(0);
   gStyle->SetTitleX(.5);
   gStyle->SetTitleY(.87);
