@@ -128,6 +128,9 @@ double truthJetAnalysis(JetConstVec *truthjets)
       
       if(jetVec.Pt() < minjetpt)
 	continue;
+
+      h_scatJet->Fill(jetVec.Theta(), jetVec.P());
+
       if(fabs(jetVec.Eta()) > maxjeteta)
 	continue;
       
@@ -190,7 +193,10 @@ void loop()
       truerecq2->Fill(trueq2,recq2);
       trueQ2x->Fill(truex,trueq2);
       trueQ2pT->Fill(trueq2, highestTruthJetPt);
-      h_processID->Fill(processId);
+      if(highestTruthJetPt > 5)
+	h_processID->Fill(processId);
+     
+      h_scatLept->Fill(scatteredLepton->Theta(), scatteredLepton->P());
 
       /// Make some event level histograms of jets+exchange boson
       for(int jet = 0; jet < truthJets->size(); jet++)
@@ -487,6 +493,7 @@ void setupTree()
   jettree->SetBranchAddress("smearExchangeBoson", &smearedExchangeBoson);
   jettree->SetBranchAddress("truthR1SDJets", &truthSDJets);
   jettree->SetBranchAddress("processId", &processId);
+  jettree->SetBranchAddress("scatteredLepton", &scatteredLepton);
 }
 
 float checkdPhi(float dphi)
