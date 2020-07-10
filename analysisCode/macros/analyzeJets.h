@@ -39,11 +39,10 @@ void compareAKTSDTruthJets(JetConstVec *truthjets, JetConstVec *truthsdjets);
 /// Helper function to put -pi < phi < pi
 float checkdPhi(float dphi);
 
-float lumi;
-
 /// Some jet cuts for the events
 const float minjetpt = 4;
 const float maxjeteta = 2.5;
+const float minconstpt = 0.25;
 
 /// Binning definitions for some observables
 const int nxbins = 41;

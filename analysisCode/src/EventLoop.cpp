@@ -87,7 +87,7 @@ int main(int argc, char **argv)
       trueEvent.setVerbosity(0);
       trueEvent.useBreitFrame(breitFrame);
       exchangeBoson = trueEvent.getExchangeBoson();
-
+     
       /// Set event level cuts
       trueEvent.setMinQ2(16);
       trueEvent.setMinY(0.05);
@@ -103,6 +103,8 @@ int main(int argc, char **argv)
 
       /// Set particle vectors in trueEvent
       trueEvent.processEvent();
+
+      scatteredE = trueEvent.getScatteredLepton();
 
       /// Perform truth jet clustering
       PseudoJetVec fjtruthR1Jets = trueEvent.getTruthJets(truthcs, R1jetdef);
@@ -122,6 +124,7 @@ int main(int argc, char **argv)
       /// Set smeared particle vectors, apply cuts to particles
       smearedEvent.processEvent();
 
+      smearScatteredE = smearedEvent.getScatteredLepton();
       smearExchangeBoson = smearedEvent.getExchangeBoson();
       matchedParticles = smearedEvent.getMatchedParticles();      
       
@@ -206,6 +209,9 @@ void setupJetTree()
   jetTree->Branch("recnu",&recnu,"recnu/D");
   jetTree->Branch("matchedParticles",&matchedParticles);
   jetTree->Branch("truthR1SDJets", &truthR1SDJets);
+  jetTree->Branch("scatteredLepton", &scatteredE);
+  jetTree->Branch("smearedScatteredLepton", &smearScatteredE);
+
   return;
 }
 

@@ -52,6 +52,7 @@ class TruthEvent {
   /// Return boolean whether or not event passes truth event cuts
   bool passCuts();
   TLorentzVector getExchangeBoson();
+  TLorentzVector getScatteredLepton(){return m_scatLepton->Get4Vector();}
 
  private:
   /// Member variables defining the truth level cuts
