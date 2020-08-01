@@ -119,6 +119,10 @@ int main(int argc, char **argv)
       SmearedEvent smearedEvent(*truthEvent, *smearEvent);
       smearedEvent.setVerbosity(0);     
       smearedEvent.useBreitFrame(breitFrame);
+      /// We can smear out the energy of tracks that are not matched to a calo cluster to 
+      /// get a better representation of a particle flow algorithm
+      /// hcal resolution is set in smearedEvent constructor to 10% + 50%/E
+      smearedEvent.smearHCal(false);
       smearedEvent.setMaxPartEta(3.5);
       smearedEvent.setMinPartPt(0.25);
       /// Set smeared particle vectors, apply cuts to particles
