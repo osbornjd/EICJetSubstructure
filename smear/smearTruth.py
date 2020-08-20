@@ -19,5 +19,5 @@ def smear(inputfile, outputfile, basePath):
 
     # process commands in root
     ROOT.gSystem.Load("libeicsmear")
-    ROOT.gROOT.ProcessLine(".L " + basePath + "smear/smearHandBook.cxx")
-    ROOT.gROOT.ProcessLine("SmearTree(BuildHandBookDetector(), \""+inputfile+"\", \""+outputfile+"\")")
+    ROOT.gROOT.ProcessLine(".L " + basePath + "smear/SmearMatrixDetector_0_1.cxx")
+    ROOT.gROOT.ProcessLine("SmearTree(BuildMatrixDetector_0_1(), \""+inputfile+"\", \""+outputfile+"\")")
