@@ -5,7 +5,7 @@
 #include <fastjet/contrib/SoftDrop.hh>
 
 #include <iostream>
-
+#include <random>
 
 void SmearedEvent::processEvent()
 {
@@ -108,10 +108,33 @@ void SmearedEvent::setSmearedParticles()
 	    {
 	      /// must be an electron since there is a track
 	      e = std::sqrt(p * p + 0.000511 * 0.000511);
-	    } else {
-	    ///else assume a charged pion
-	    e = std::sqrt(p * p + 0.139 * 0.139);
-	  }
+	    } 
+	  else 
+	    {
+	      /// Get truth mass
+	      double m = truthParticle->GetM();
+
+	      /// Calculate truth energy
+	      e = std::sqrt(p * p + m * m);
+	      
+	      /// Smear energy out based on truth mass
+	      if(m_smearHCal)
+		{
+		  float res = m_HCalRes->Eval(e);
+		  /// Smear it by a gaussian with width of this resolution value
+		  std::default_random_engine generator;
+		  std::normal_distribution<double> distribution(0,res);
+		  float smear = distribution(generator);
+		  /// add the smearing term
+		  e += (smear * e);
+		}
+	      else
+		{
+		  /// otherwise just assume it is a pion
+		  e = std::sqrt(p * p + 0.139 * 0.139);
+		}
+
+	    }
 	}
       
       /// Cal cluster only, no momentum info
@@ -123,14 +146,16 @@ void SmearedEvent::setSmearedParticles()
 	  if(EM){
 	    /// assume m = 0 since electron mass is so small
 	    p = e;	    
-	  } else {
-	    /// check truth mass
-	    double m = truthParticle->GetM();
-	    p = std::sqrt(e * e - m * m);
-	    /// if particle was smeared such that e*e-m*m is negative, just set to e
-	    if(p != p)
-	      p = e;
-	  }
+	  } 
+	  else 
+	    {
+	      /// check truth mass
+	      double m = truthParticle->GetM();
+	      p = std::sqrt(e * e - m * m);
+	      /// if particle was smeared such that e*e-m*m is negative, just set to e
+	      if(p != p)
+		p = e;
+	    }
 
 	  auto phi = particle->GetPhi();
 	  auto theta = particle->GetTheta();

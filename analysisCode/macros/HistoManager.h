@@ -42,13 +42,14 @@ TH2 *h_scatJet;
 TH1 *h_lumi, *h_eventsGen, *h_xsec;
 TH1 *jes[npbins];
 TH1 *h_processID;
+TH2 *h_constpT;
 
 void write(std::string filename)
 {
   std::string file = filename + "_histos.root";
 
   outfile = new TFile(file.c_str(),"RECREATE");
-
+  h_constpT->Write();
   h_processID->Write();
   h_scatJet->Write();
   h_scatLept->Write();
@@ -133,6 +134,7 @@ void instantiateHistos()
 		        200,0,2);
     }
 
+  h_constpT = new TH2F("h_constpT",";p [GeV]; #eta",200,-100,100,100,-3.5,3.5);
   h_processID = new TH1I("h_processID",";Process ID",1000,0,1000);
   h_scatJet = new TH2F("h_scatJet","",36,0.,TMath::Pi(), 200.,0.,200.);
   

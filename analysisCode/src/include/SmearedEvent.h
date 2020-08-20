@@ -8,6 +8,7 @@
 #include <eicsmear/erhic/EventPythia.h>
 
 #include <TLorentzVector.h>
+#include <TF1.h>
 
 #include "JetDef.h"
 #include "SoftDropJetDef.h"
@@ -32,7 +33,10 @@ class SmearedEvent {
   SmearedEvent(erhic::EventPythia &truthEvent, Smear::Event &smearEvent)
    : m_truthEvent(&truthEvent)
    , m_smearEvent(&smearEvent)
-  {}
+   , m_smearHCal(false)
+  {
+    m_HCalRes = new TF1("hcalres","sqrt(0.1*0.1+0.5*0.5/x)",0.1,275);
+  }
 
   ~SmearedEvent(){}
 
@@ -61,8 +65,8 @@ class SmearedEvent {
   std::vector<PseudoJetVec> matchTruthRecoJets(PseudoJetVec truthjets, 
 					       PseudoJetVec recojets);
 
-  void useBreitFrame(bool yesorno) { m_breitFrame = yesorno; }
-
+  void useBreitFrame(bool breit) { m_breitFrame = breit; }
+  void smearHCal(bool smear) { m_smearHCal = smear;}
  private:
   /// Need truth event for identifying only final state particles
   erhic::EventPythia *m_truthEvent;
@@ -74,6 +78,9 @@ class SmearedEvent {
   const Smear::ParticleMCS *m_scatLepton;
   bool m_breitFrame;
   std::vector<PseudoJetVec> m_matchedJets;
+
+  TF1 *m_HCalRes;
+  bool m_smearHCal;
 
   /// Vectors of particles to be kept
   PseudoJetVec m_particles;
