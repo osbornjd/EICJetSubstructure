@@ -50,8 +50,11 @@ void getLumi()
     {
       runtree->GetEntry(i);
       h_lumi->Fill(lumi);
+      std::cout << "lumi is " << lumi << std::endl;
       h_eventsGen->Fill(events);
+      std::cout<<"events " << events<<std::endl;
       h_xsec->Fill(xsec);
+      std::cout << "xsec is " << xsec << std::endl;
       
     }
 
@@ -103,6 +106,7 @@ void recoJetAnalysis(JetConstVec *recojets)
 	    {
 	      if(con.Pt() > minconstpt)
 		{
+		  h_constpT->Fill(con.P(), con.Eta());
 		  recojetptz->Fill(z, jetpt);
 		  recojetptjt->Fill(jt, jetpt);
 		  recojetptr->Fill(r, jetpt);
@@ -191,7 +195,8 @@ void loop()
       truerecx->Fill(truex,recx);
       truerecy->Fill(truey,recy);
       truerecq2->Fill(trueq2,recq2);
-      trueQ2x->Fill(truex,trueq2);
+      if(highestTruthJetPt>5.)
+	trueQ2x->Fill(truex,trueq2);
       trueQ2pT->Fill(trueq2, highestTruthJetPt);
       if(highestTruthJetPt > 5)
 	h_processID->Fill(processId);
@@ -307,9 +312,9 @@ void analyzeMatchedJets(MatchedJets *matchedjets,
 	  for(int k = 0; k < truthConst.size(); k++)
 	    {
 	      TLorentzVector truthCon = truthConst.at(k);
-	      if(truthCon.Px() == truthMatch.Px() &&
-		 truthCon.Py() == truthMatch.Py() &&
-		 truthCon.Pz() == truthMatch.Pz())
+	      if(fabs(truthCon.Px() - truthMatch.Px()) < 0.0001 &&
+		 fabs(truthCon.Py() - truthMatch.Py()) < 0.0001 &&
+		 fabs(truthCon.Pz() - truthMatch.Pz()) < 0.0001)
 		{
 		  matched = true;
 		  break;
