@@ -67,10 +67,18 @@ class SmearedEvent {
 
   void useBreitFrame(bool breit) { m_breitFrame = breit; }
   void smearHCal(bool smear) { m_smearHCal = smear;}
+  void setMaxPPID(float maxPPID[14]){for(int i=0; i<14; i++)m_maxPPID[i] = maxPPID[i];}
+
  private:
   /// Need truth event for identifying only final state particles
   erhic::EventPythia *m_truthEvent;
   Smear::Event *m_smearEvent;
+
+  /// set eta bins for pid requirements
+  const static int m_nEtaBins = 14;
+  float m_etaBins[m_nEtaBins+1] = {-3.5,-3.,-2.5,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3,3.5};
+  float m_maxPPID[m_nEtaBins];
+
 
   double m_maxPartEta;
   double m_minPartPt;

@@ -96,7 +96,16 @@ void SmearedEvent::setSmearedParticles()
       /// We need to handle edge cases from EICsmear where e.g. a track
       /// is found but not connected to a calorimeter cluster
       double p = sqrt(px * px + py * py + pz * pz);
-    
+      float eta = particle->GetEta();
+      int etabin = -1;
+      for(int etacheck = 0; etacheck < m_nEtaBins; etacheck++)
+	{
+	 
+	  if(eta > m_etaBins[etacheck] && eta <= m_etaBins[etacheck+1])
+	    etabin = etacheck;
+	}     
+      float maxPIDp = m_maxPPID[etabin];
+
       /// Track found but not connected to calo cluster
       if(fabs(p) > epsilon && fabs(e) <= epsilon)
 	{
@@ -111,12 +120,16 @@ void SmearedEvent::setSmearedParticles()
 	    } 
 	  else 
 	    {
+	      /// Check the PID requirement
 	      /// Get truth mass
 	      double m = truthParticle->GetM();
+	      if(p < maxPIDp)
+		/// Calculate truth energy
+		e = std::sqrt(p * p + m * m);
+	      else
+		/// otherwise just assume it is a pion
+		e = std::sqrt(p * p + 0.139 * 0.139);
 
-	      /// Calculate truth energy
-	      e = std::sqrt(p * p + m * m);
-	      
 	      /// Smear energy out based on truth mass
 	      if(m_smearHCal)
 		{
@@ -128,12 +141,6 @@ void SmearedEvent::setSmearedParticles()
 		  /// add the smearing term
 		  e += (smear * e);
 		}
-	      else
-		{
-		  /// otherwise just assume it is a pion
-		  e = std::sqrt(p * p + 0.139 * 0.139);
-		}
-
 	    }
 	}
       
@@ -151,7 +158,12 @@ void SmearedEvent::setSmearedParticles()
 	    {
 	      /// check truth mass
 	      double m = truthParticle->GetM();
-	      p = std::sqrt(e * e - m * m);
+	      ///check truth momentum to see if we would have been able to PID it
+	      if(truthParticle->GetP() < maxPIDp)
+		p = std::sqrt(e * e - m * m);
+	      
+	      else
+		p = std::sqrt(e * e - m * m);
 	      /// if particle was smeared such that e*e-m*m is negative, just set to e
 	      if(p != p)
 		p = e;

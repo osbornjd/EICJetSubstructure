@@ -65,3 +65,6 @@ TLorentzPairVec matchedParticles;
 fastjet::ClusterSequence *cs, *truthcs;
 
 TTree *jetTree, *runTree;
+
+
+float maxPPID[14] = {0,0,0,0,0,20,20,30,30,30,50,20,20,45};

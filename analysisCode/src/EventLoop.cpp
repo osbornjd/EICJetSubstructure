@@ -125,6 +125,7 @@ int main(int argc, char **argv)
       smearedEvent.smearHCal(false);
       smearedEvent.setMaxPartEta(3.5);
       smearedEvent.setMinPartPt(0.25);
+      smearedEvent.setMaxPPID(maxPPID);
       /// Set smeared particle vectors, apply cuts to particles
       smearedEvent.processEvent();
 
