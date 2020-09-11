@@ -123,6 +123,14 @@ double truthJetAnalysis(JetConstVec *truthjets)
 
   double jetpt = 0;
   int njets = 0;
+  
+  /// jet and hf group
+  //float maxPPID[14] = {7,7,7,7,7,20,20,30,30,30,50,20,20,45};
+
+  /// detector matrix
+  float maxPPID[14] = {7,7,7,7,7,5,5,5,5,8,8,20,20,45};
+  
+  float etabins[15] = {-3.5,-3.,-2.5,-2.,-1.5,-1,-0.5,0,0.5,1.,1.5,2.,2.5,3.,3.5};
   for(int jet = 0; jet < truthJets->size(); jet++)
     {
       TLorentzVector jetVec;
@@ -152,6 +160,17 @@ double truthJetAnalysis(JetConstVec *truthjets)
 	{
 	  TLorentzVector con;
 	  con = truthJets->at(jet).second.at(i);
+
+	  int etabin = -1;
+	  for(int j =0; j< 14; j++)
+	    if(con.Eta() > etabins[j] && con.Eta() <= etabins[j+1])
+	      etabin = j;
+
+	  if(etabin == -1)
+	    continue;
+	  if(con.P() > maxPPID[etabin])
+	    continue;
+
 	  TVector3 con3;
 	  con3.SetXYZ(con.Px(), con.Py(), con.Pz());
 	  TVector3 cross = jet3.Cross(con3);
@@ -161,6 +180,12 @@ double truthJetAnalysis(JetConstVec *truthjets)
 	  float r = sqrt(pow(checkdPhi(jetVec.Phi() - con.Phi()), 2) + pow(jetVec.Eta() - con.Eta(),2));
 	  if(con.Pt() > minconstpt)
 	    {
+	      //if( fabs(con.M() - 0.493) < 0.05)
+	      if(fabs(con.M() - 0.139) < 0.02)
+		{
+		  truthzjt->Fill(z, jt);
+		  truthzr->Fill(z, r);
+		}
 	      truejetptz->Fill(z, jetpt);
 	      truejetptjt->Fill(jt, jetpt);
 	      truejetptr->Fill(r, jetpt);
@@ -181,7 +206,7 @@ void loop()
       if(i%10000 == 0)
 	std::cout << "Processed " << i << " events " << std::endl;
       jettree->GetEntry(i);
-      
+  
       /// Analyze various branches in the jet tree
       recoJetAnalysis(recoJets);
       float highestTruthJetPt = truthJetAnalysis(truthJets);
@@ -470,6 +495,9 @@ void analyzeMatchedSDJets(MatchedJets *matchedjets)
       float recorg = recoSubjet1.DeltaR(recoSubjet2);
       truthrecozg->Fill(truthzg,recozg);
       truthrecorg->Fill(truthrg,recorg);
+
+      truthrecozgtruthzg->Fill(truthzg,recozg/truthzg);
+      truthrecorgtruthrg->Fill(truthrg,recorg-truthrg);
 
     }
 

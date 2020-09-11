@@ -66,5 +66,8 @@ fastjet::ClusterSequence *cs, *truthcs;
 
 TTree *jetTree, *runTree;
 
+/// jet and hf group
+float maxPPID[14] = {7,7,7,7,7,20,20,30,30,30,50,20,20,45};
 
-float maxPPID[14] = {0,0,0,0,0,20,20,30,30,30,50,20,20,45};
+/// detector matrix
+//float maxPPID[14] = {7,7,7,7,7,5,5,5,5,8,8,20,20,45};

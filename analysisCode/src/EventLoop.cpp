@@ -89,13 +89,13 @@ int main(int argc, char **argv)
       exchangeBoson = trueEvent.getExchangeBoson();
      
       /// Set event level cuts
-      trueEvent.setMinQ2(16);
+      trueEvent.setMinQ2(9);
       trueEvent.setMinY(0.05);
       trueEvent.setMaxY(0.95);
       trueEvent.setMinX(0.00001);
       trueEvent.setMinPartPt(0.25);
       trueEvent.setMaxPartEta(3.5);
-      
+      //std::cout<<"check cuts"<<std::endl;
       /// Check the cuts
       if(!trueEvent.passCuts()){
 	continue;
@@ -109,7 +109,7 @@ int main(int argc, char **argv)
       /// Perform truth jet clustering
       PseudoJetVec fjtruthR1Jets = trueEvent.getTruthJets(truthcs, R1jetdef);
       PseudoJetVec fjtruthR1SDJets = trueEvent.getTruthSoftDropJets(fjtruthR1Jets, R1sd);
-      
+      //std::cout<<"check truth jet size"<<std::endl;
       /// Skip events with no truth jets that pass jet cuts
       if(fjtruthR1Jets.size() == 0)
 	{
@@ -142,7 +142,7 @@ int main(int argc, char **argv)
 	smearedEvent.getRecoSoftDropJets(fjrecoR1Jets, R1sd);
       std::vector<PseudoJetVec> fjmatchedR1SDJets = 
 	smearedEvent.matchTruthRecoJets(fjtruthR1SDJets, fjrecoR1SDJets);
-
+      //std::cout<<"fjrecosize "<<fjrecoR1Jets.size()<<std::endl;
       /// Everything is in fastjet::PseudoJet right now. Convert to
       /// TLorentzVectors so that they can be written to trees easily
       truthR1Jets  = convertToTLorentzVectors(fjtruthR1Jets, false);

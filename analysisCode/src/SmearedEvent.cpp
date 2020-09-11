@@ -163,7 +163,7 @@ void SmearedEvent::setSmearedParticles()
 		p = std::sqrt(e * e - m * m);
 	      
 	      else
-		p = std::sqrt(e * e - m * m);
+		p = std::sqrt(e * e - 0.139 * 0.139);
 	      /// if particle was smeared such that e*e-m*m is negative, just set to e
 	      if(p != p)
 		p = e;

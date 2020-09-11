@@ -40,7 +40,7 @@ void compareAKTSDTruthJets(JetConstVec *truthjets, JetConstVec *truthsdjets);
 float checkdPhi(float dphi);
 
 /// Some jet cuts for the events
-const float minjetpt = 4;
+const float minjetpt = 10;
 const float maxjeteta = 2.5;
 const float minconstpt = 0.25;
 

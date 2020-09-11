@@ -14,11 +14,13 @@ int processId;
 TFile *infile, *outfile;
 TTree *jettree;
 
+TH2 *truthrecozgtruthzg, *truthrecorgtruthrg;
 TH2 *truthsubjetpt, *recosubjetpt;
 TH2 *truerecoz, *truerecojt, *truerecor;
 TH2 *recojetpteta, *recojetptphi;
 TH2 *truerecx, *truerecy, *truerecq2;
 TH2 *trueQ2x, *trueQ2pT;
+TH2 *truthzjt, *truthzr;
 TH2 *truejetpteta, *truejetptphi;
 TH2 *recojetptz, *recojetptjt, *recojetptr;
 TH2 *truejetptz, *truejetptjt, *truejetptr;
@@ -49,6 +51,10 @@ void write(std::string filename)
   std::string file = filename + "_histos.root";
 
   outfile = new TFile(file.c_str(),"RECREATE");
+  truthrecozgtruthzg->Write();
+  truthrecorgtruthrg->Write();
+  truthzr->Write();
+  truthzjt->Write();
   h_constpT->Write();
   h_processID->Write();
   h_scatJet->Write();
@@ -165,6 +171,8 @@ void instantiateHistos()
   truthrecosdjetdeltar = new TH1F("truthrecosdjetdeltar",";#DeltaR(truth,reco)",
 				  120,0,1.2);
   sdenergygroomed = new TH1F("sdenergygroomed",";E_{SD}/E_{AKT}",101,0,1.01);
+  truthrecozgtruthzg = new TH2F("truthrecozgtruthzg", ";z_{g}^{reco}/z_{g}^{true}; z_{g}^{true}",10,0,0.5,100,0,2);
+  truthrecorgtruthrg = new TH2F("truthrecorgtruthrg",";R_{g}^{reco}-R_{g}^{true}; R_{g}^{true}",10,0,1,100,-1,1);
   truthrecozg = new TH2F("truthrecozg",";z_{g}^{true}; z_{g}^{reco}",
 			 nzgbins, zgbins, nzgbins, zgbins);
   truthrecorg = new TH2F("truthrecorg",";R_{g}^{true}; R_{g}^{reco}",
@@ -182,7 +190,8 @@ void instantiateHistos()
 			  ";R_{g}^{reco};p_{T}^{Soft Drop, reco} [GeV]",
 			  nrbins,rbins,nptbins,ptbins);
 
-
+  truthzjt = new TH2F("truthzjt",";z; j_{T} [GeV]",nzbins,zbins, njtbins, jtbins);
+  truthzr = new TH2F("truthzr",";z; r", nzbins,zbins, nrbins, rbins);
 
   truerecx = new TH2F("truerecx",";x_{true}; x_{rec}",nxbins, xbins, 
 		      nxbins, xbins);
