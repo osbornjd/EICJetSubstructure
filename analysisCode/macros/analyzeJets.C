@@ -1,13 +1,9 @@
 
 #include "analyzeJets.h"
 #include "HistoManager.h"
-#include "sPhenixStyle.h"
-#include "sPhenixStyle.C"
 
 void analyzeJets(std::string file)
 {
-  SetsPhenixStyle();
-
   std::string filename = file;
   infile = TFile::Open(filename.c_str());
 
@@ -147,7 +143,11 @@ double truthJetAnalysis(JetConstVec *truthjets)
       truejetptheta->Fill(jetVec.P(), jetVec.Theta());
       TVector3 jet3;
       jet3.SetXYZ(jetVec.Px(), jetVec.Py(), jetVec.Pz());
-
+      
+      int nPhoton = 0;
+      int nChgHad = 0;
+      int nLepton = 0;
+      int nNeutHad = 0;
       for(int i = 0; i < truthJets->at(jet).second.size(); ++i)
 	{
 	  TLorentzVector con;
@@ -159,13 +159,31 @@ double truthJetAnalysis(JetConstVec *truthjets)
 	  float z = jet3.Dot(con3) / (jet3.Mag2());
 	  float jt = cross.Mag() / jet3.Mag();
 	  float r = sqrt(pow(checkdPhi(jetVec.Phi() - con.Phi()), 2) + pow(jetVec.Eta() - con.Eta(),2));
+	  
 	  if(con.Pt() > minconstpt)
 	    {
+
+	      float mass = con.M();
+	      h_mass->Fill(mass);
+	      if(mass < 0.01)
+		nPhoton++;
+	      else if(fabs(mass-0.1056) < 0.001)
+		nLepton++;
+	      else if(fabs(mass-0.1395)<0.004 or fabs(mass-0.493) < 0.001
+		      or fabs(mass-0.938)<0.0005)
+		nChgHad++;
+	      else if(fabs(mass-0.4975)<0.001 or fabs(mass-0.9395)<0.0005)
+		nNeutHad++;
+	      
 	      truejetptz->Fill(z, jetpt);
 	      truejetptjt->Fill(jt, jetpt);
 	      truejetptr->Fill(r, jetpt);
 	    } 
 	}
+      h_jetNeutralHadron->Fill(jetVec.Pt(), nNeutHad);
+      h_jetChargedHadron->Fill(jetVec.Pt(), nChgHad);
+      h_jetLepton->Fill(jetVec.Pt(), nLepton);
+      h_jetPhoton->Fill(jetVec.Pt(), nPhoton);
     }
 
   ntruthjets->Fill(njets);
@@ -415,6 +433,54 @@ void truthSDJetAnalysis(JetConstVec *truthjets)
       float Rg = subjet1.DeltaR(subjet2);
       truthSDjetzg->Fill(zg, jet.Pt());
       truthSDjetrg->Fill(Rg, jet.Pt());
+      
+      TVector3 jet3;
+      jet3.SetXYZ(jet.Px(), jet.Py(), jet.Pz());
+
+      int nPhoton = 0;
+      int nLepton = 0;
+      int nChgHad = 0;
+      int nNeutHad = 0;
+      int nConst = 0;
+      /// skip the subjets and just look at the constituents
+      for(int j = 2; j < truthjets->at(ijet).second.size(); ++j)
+	{
+	  TLorentzVector con;
+	  con = truthjets->at(ijet).second.at(j);
+	  TVector3 con3;
+	  con3.SetXYZ(con.Px(), con.Py(), con.Pz());
+	  TVector3 cross = jet3.Cross(con3);
+	  
+	  float z = jet3.Dot(con3) / (jet3.Mag2());
+	  float jt = cross.Mag() / jet3.Mag();
+	  float r = sqrt(pow(checkdPhi(jet.Phi() - con.Phi()), 2) + pow(jet.Eta() - con.Eta(),2));
+	  	  
+	  if(con.Pt() > minconstpt)
+	    {
+	      nConst++;
+	      float mass = con.M();
+	      h_mass->Fill(mass);
+	      if(mass < 0.01)
+		nPhoton++;
+	      else if(fabs(mass-0.1056) < 0.001)
+		nLepton++;
+	      else if(fabs(mass-0.1395)<0.004 or fabs(mass-0.493) < 0.001
+		      or fabs(mass-0.938)<0.0005)
+		nChgHad++;
+	      else if(fabs(mass-0.4975)<0.001 or fabs(mass-0.9395)<0.0005)
+		nNeutHad++;
+	      
+	      trueSDjetptz->Fill(z, jet.Pt());
+	      trueSDjetptjt->Fill(jt, jet.Pt());
+	      trueSDjetptr->Fill(r, jet.Pt());
+	    } 
+
+	}
+      h_SDjetChargedHadron->Fill(jet.Pt(), nChgHad);
+      h_SDjetLepton->Fill(jet.Pt(), nLepton);
+      h_SDjetNeutralHadron->Fill(jet.Pt(), nNeutHad);
+      h_SDjetPhoton->Fill(jet.Pt(), nPhoton);
+      trueSDnconst->Fill(jet.Pt(), nConst);
     }
 
 }
