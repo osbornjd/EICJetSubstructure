@@ -44,11 +44,33 @@ TH1 *jes[npbins];
 TH1 *h_processID;
 TH2 *h_constpT;
 
+TH2 *h_jetChargedHadron, *h_jetNeutralHadron, *h_jetPhoton, *h_jetLepton;
+TH1 *h_mass;
+
+TH2 *trueSDjetptz, *trueSDjetptjt, *trueSDjetptr;
+TH2 *h_SDjetChargedHadron, *h_SDjetNeutralHadron, *h_SDjetPhoton, *h_SDjetLepton;
+TH2 *trueSDnconst;
+
 void write(std::string filename)
 {
   std::string file = filename + "_histos.root";
 
   outfile = new TFile(file.c_str(),"RECREATE");
+  
+  trueSDnconst->Write();
+  trueSDjetptz->Write();
+  trueSDjetptjt->Write();
+  trueSDjetptr->Write();
+  h_SDjetLepton->Write();
+  h_SDjetChargedHadron->Write();
+  h_SDjetNeutralHadron->Write();
+  h_SDjetPhoton->Write();
+
+  h_mass->Write();
+  h_jetLepton->Write();
+  h_jetChargedHadron->Write();
+  h_jetNeutralHadron->Write();
+  h_jetPhoton->Write();
   h_constpT->Write();
   h_processID->Write();
   h_scatJet->Write();
@@ -134,6 +156,16 @@ void instantiateHistos()
 		        200,0,2);
     }
 
+  h_mass = new TH1F("h_mass",";mass [GeV]",10000,0,2);
+  h_jetChargedHadron = new TH2F("h_jetChargedHadron",";p_{T} [GeV]; N_{chg}", 50,0,50,30,0,30);
+  h_jetNeutralHadron = new TH2F("h_jetNeutralHadron",";p_{T} [GeV]; N_{neut}",50,0,50,30,0,30);
+  h_jetPhoton = new TH2F("h_jetPhoton",";p_{T} [GeV]; N_{photon}",50,0,50,30,0,30);
+  h_jetLepton = new TH2F("h_jetLepton",";p_{T} [GeV]; N_{muon}", 50,0,50,30,0,30);
+  h_SDjetChargedHadron = new TH2F("h_SDjetChargedHadron",";p_{T}^{SD} [GeV]; N_{chg}", 50,0,50,30,0,30);
+  h_SDjetNeutralHadron = new TH2F("h_SDjetNeutralHadron",";p_{T}^{SD} [GeV]; N_{neut}",50,0,50,30,0,30);
+  h_SDjetPhoton = new TH2F("h_SDjetPhoton",";p_{T}^{SD} [GeV]; N_{photon}",50,0,50,30,0,30);
+  h_SDjetLepton = new TH2F("h_SDjetLepton",";p_{T}^{SD} [GeV]; N_{muon}", 50,0,50,30,0,30);
+
   h_constpT = new TH2F("h_constpT",";p [GeV]; #eta",200,-100,100,100,-3.5,3.5);
   h_processID = new TH1I("h_processID",";Process ID",1000,0,1000);
   h_scatJet = new TH2F("h_scatJet","",36,0.,TMath::Pi(), 200.,0.,200.);
@@ -160,7 +192,8 @@ void instantiateHistos()
   matchconstp = new TH1F("matchconstp",";p_{T}^{reco}/p_{T}^{true}",100,0.5,1.5);
   matchconstpt = new TH1F("matchconstpt",";p_{T}^{reco}/p_{T}^{true}",100,0.5,1.5);
   reconconst = new TH2F("reconconst",";p_{T}^{jet,reco} [GeV]; N_{const}^{reco}",30,4,34,30,0,30);
-  truenconst = new TH2F("truenconst",";p_{T}^{jet,true} [GeV];N_{const}^{true}",30,4,34,30,0,30);
+  truenconst = new TH2F("truenconst",";p_{T} [GeV];N_{const}",30,4,34,30,0,30);
+   trueSDnconst = new TH2F("trueSDnconst",";p_{T}^{SD} [GeV];N_{const}",30,4,34,30,0,30);
   truereconconst = new TH2F("truereconconst",";N_{const}^{true};N_{const}^{reco}",30,0,30,30,0,30);
   truthrecosdjetdeltar = new TH1F("truthrecosdjetdeltar",";#DeltaR(truth,reco)",
 				  120,0,1.2);
@@ -206,12 +239,19 @@ void instantiateHistos()
 			 njtbins,jtbins,nptbins,ptbins);
   recojetptr = new TH2F("recojetptr",";r_{reco}; p_{T}^{jet,reco} [GeV]",
 			nrbins,rbins,nptbins,ptbins);
-  truejetptz = new TH2F("truejetptz",";z_{true};p_{T}^{jet,true} [GeV]",
+  trueSDjetptz = new TH2F("trueSDjetptz",";z;p_{T}^{SD} [GeV]",
+			nzbins,zbins,nptbins,ptbins);
+  trueSDjetptjt = new TH2F("trueSDjetptjt",
+			 ";j_{T} [GeV]; p_{T}^{SD} [GeV]",
+			 njtbins,jtbins,nptbins,ptbins);
+  trueSDjetptr = new TH2F("trueSDjetptr",";r; p_{T}^{SD} [GeV]",
+			nrbins,rbins,nptbins,ptbins);
+  truejetptz = new TH2F("truejetptz",";z;p_{T} [GeV]",
 			nzbins,zbins,nptbins,ptbins);
   truejetptjt = new TH2F("truejetptjt",
-			 ";j_{T}^{true} [GeV]; p_{T}^{jet,true} [GeV]",
+			 ";j_{T} [GeV]; p_{T} [GeV]",
 			 njtbins,jtbins,nptbins,ptbins);
-  truejetptr = new TH2F("truejetptr",";r_{true}; p_{T}^{jet,true} [GeV]",
+  truejetptr = new TH2F("truejetptr",";r; p_{T} [GeV]",
 			nrbins,rbins,nptbins,ptbins);
   recojetpteta = new TH2F("recojetpteta", ";p_{T}^{jet,reco} [GeV]; #eta",
 			  30,4,34,500,-30,30);

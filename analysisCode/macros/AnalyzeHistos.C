@@ -8,8 +8,6 @@
 #include <TH2.h>
 #include <TFile.h>
 #include <TGraphErrors.h>
-#include "sPhenixStyle.h"
-#include "sPhenixStyle.C"
 
 TGraphErrors *FitProfile(const TH2 *h2);
 void drawFitProfile(TH2 *hist, TGraphErrors *gr);
@@ -20,7 +18,6 @@ TFile *file, *bfile;
 
 void AnalyzeHistos(std::string labfile, std::string breitfile)
 {
-  SetsPhenixStyle();
   file = TFile::Open(labfile.c_str());
   bfile = TFile::Open(breitfile.c_str());
   
